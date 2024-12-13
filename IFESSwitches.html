@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFES Switches and IP Addresses</title>
+    <style>
+        /* Material Design Inspired Styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #6200ea;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .switch-columns {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1600px; /* Increased max width */
+            flex-wrap: wrap; /* Allow wrapping in case of smaller screen sizes */
+        }
+        .column {
+            width: 30%; /* Adjusted to make columns wider */
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+        }
+        .switch-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .switch-list li {
+            background-color: #333333;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .switch-list li:hover {
+            background-color: #444444;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .switch-name {
+            font-size: 1.25rem;
+            color: #bb86fc;
+            font-weight: bold;
+        }
+        .switch-name a {
+            text-decoration: none;
+            color: #bb86fc;
+            font-weight: bold;
+        }
+        .switch-name a:hover {
+            text-decoration: underline;
+        }
+        .switch-ip {
+            font-size: 1rem;
+            color: #b0bec5;
+        }
+        .switch-ip::before {
+            content: 'IP: ';
+            font-weight: bold;
+            color: #9c4dcc; /* Adjusted color for better contrast */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>IFES Switches and IP Addresses</h1>
+
+    <div class="switch-columns">
+        <!-- MDF Column -->
+        <div class="column">
+            <h2 style="color: #bb86fc; text-align: center;">MDF</h2>
+            <ul class="switch-list">
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.116" target="_blank">IFES-CORE</a></span>
+                    <span class="switch-ip">172.18.9.116</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.124" target="_blank">IFES-MDF-A117A-01-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.124</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.173" target="_blank">IFES-MDF-A117A-02-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.173</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- C107A IDF (Art hallway) Column -->
+        <div class="column">
+            <h2 style="color: #bb86fc; text-align: center;">C107A IDF (Art hallway)</h2>
+            <ul class="switch-list">
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.125" target="_blank">IFES-IDF-C107A-01-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.125</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.134" target="_blank">IFES-IDF-C107A-02-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.134</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- C209A IDF (elevator/storage) Column -->
+        <div class="column">
+            <h2 style="color: #bb86fc; text-align: center;">C209A IDF (elevator/storage)</h2>
+            <ul class="switch-list">
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.127" target="_blank">IFES-IDF-C209A-01-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.127</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.133" target="_blank">IFES-IDF-C209A-02-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.133</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="switch-columns">
+        <!-- C218A IDF (Solar panel room) Column -->
+        <div class="column">
+            <h2 style="color: #bb86fc; text-align: center;">C218A IDF (Solar panel room)</h2>
+            <ul class="switch-list">
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.129" target="_blank">IFES-IDF-C218A-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.129</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- D209A IDF (above art hallway IDF) Column -->
+        <div class="column">
+            <h2 style="color: #bb86fc; text-align: center;">D209A IDF (above art hallway IDF)</h2>
+            <ul class="switch-list">
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.131" target="_blank">IFES-IDF-D209A-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.131</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- E105A IDF (Music hallway) Column -->
+        <div class="column">
+            <h2 style="color: #bb86fc; text-align: center;">E105A IDF (Music hallway)</h2>
+            <ul class="switch-list">
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.123" target="_blank">IFES-IDF-E105A-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.123</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.163" target="_blank">PressBoxAruba</a></span>
+                    <span class="switch-ip">172.18.9.163</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- E106B IDF (Gym) Column -->
+        <div class="column">
+            <h2 style="color: #bb86fc; text-align: center;">E106B IDF (Gym)</h2>
+            <ul class="switch-list">
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.126" target="_blank">IFES-IDF-E106B-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.126</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>
