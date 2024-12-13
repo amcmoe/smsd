@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSHS Switches and IP Addresses</title>
+    <style>
+        /* Material Design Inspired Styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #6200ea;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .switch-columns {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1600px; /* Increased max width */
+            flex-wrap: wrap; /* Allow wrapping in case of smaller screen sizes */
+        }
+        .column {
+            width: 30%; /* Adjusted to make columns wider */
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+        }
+        .switch-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .switch-list li {
+            background-color: #333333;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .switch-list li:hover {
+            background-color: #444444;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .switch-name {
+            font-size: 1.25rem;
+            color: #bb86fc;
+            font-weight: bold;
+        }
+        .switch-name a {
+            text-decoration: none;
+            color: #bb86fc;
+            font-weight: bold;
+        }
+        .switch-name a:hover {
+            text-decoration: underline;
+        }
+        .switch-ip {
+            font-size: 1rem;
+            color: #b0bec5;
+        }
+        .switch-ip::before {
+            content: 'IP: ';
+            font-weight: bold;
+            color: #9c4dcc; /* Adjusted color for better contrast */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>BSHS Switches and IP Addresses</h1>
+
+    <div class="switch-columns">
+        <!-- MDF Column -->
+        <div class="column">
+            <h2 style="color: #bb86fc; text-align: center;">MDF</h2>
+            <ul class="switch-list">
+                <li>
+                    <span class="switch-name"><a href="http://172.18.8.51" target="_blank">BSHS-MDF-1-ARUBA</a></span>
+                    <span class="switch-ip">172.18.8.51</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.8.52" target="_blank">BSHS-MDF-2-ARUBA</a></span>
+                    <span class="switch-ip">172.18.8.52</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.8.53" target="_blank">BSHS-MDF-3-ARUBA</a></span>
+                    <span class="switch-ip">172.18.8.53</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.8.76" target="_blank">BSHS-MDF-COREzl</a></span>
+                    <span class="switch-ip">172.18.8.76</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://10.3.6.10" target="_blank">BSHS-MDF-SecCamSwitch</a></span>
+                    <span class="switch-ip">10.3.6.10</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.20.2" target="_blank">Southmiddleton.smsd.local</a></span>
+                    <span class="switch-ip">172.18.20.2</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Library IDF Column -->
+        <div class="column">
+            <h2 style="color: #bb86fc; text-align: center;">Library IDF</h2>
+            <ul class="switch-list">
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.119" target="_blank">BSHS-LIB-ARUBA-NEW</a></span>
+                    <span class="switch-ip">172.18.9.119</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.8.72" target="_blank">BSHS-LIB-CORE</a></span>
+                    <span class="switch-ip">172.18.8.72</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.8.57" target="_blank">BSHS-LIB-2-ARUBA</a></span>
+                    <span class="switch-ip">172.18.8.57</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.167" target="_blank">BSHS-LIB-6-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.167</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.168" target="_blank">BSHS-LIB-7-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.168</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://10.3.6.32" target="_blank">BSHS-Lib-SecCamSwitch</a></span>
+                    <span class="switch-ip">10.3.6.32</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Copy Room IDF Column -->
+        <div class="column">
+            <h2 style="color: #bb86fc; text-align: center;">Copy Room IDF</h2>
+            <ul class="switch-list">
+                <li>
+                    <span class="switch-name"><a href="http://172.18.8.60" target="_blank">BSHS-COPY-1-ARUBA</a></span>
+                    <span class="switch-ip">172.18.8.60</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.8.74" target="_blank">BSHS-COPY-3-ARUBA</a></span>
+                    <span class="switch-ip">172.18.8.74</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.120" target="_blank">BSHS-COPY-2-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.120</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://10.3.6.33" target="_blank">BSHS-CopyRm-Cam-1</a></span>
+                    <span class="switch-ip">10.3.6.33</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="switch-columns">
+        <!-- Shop IDF Column -->
+        <div class="column">
+            <h2 style="color: #bb86fc; text-align: center;">Shop IDF</h2>
+            <ul class="switch-list">
+                <li>
+                    <span class="switch-name"><a href="http://172.18.8.62" target="_blank">BSHS-SHOP-1-ARUBA</a></span>
+                    <span class="switch-ip">172.18.8.62</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.121" target="_blank">BSHS-SHOP-2-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.121</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.174" target="_blank">BSHS-SHOP-3-ARUBA</a></span>
+                    <span class="switch-ip">172.18.9.174</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://10.3.6.59" target="_blank">BSHS-Shop-CamSwitch</a></span>
+                    <span class="switch-ip">10.3.6.59</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.175" target="_blank">BSHS-TechED1</a></span>
+                    <span class="switch-ip">172.18.9.175</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Other Switches Column -->
+        <div class="column">
+            <h2 style="color: #bb86fc; text-align: center;">Other Switches</h2>
+            <ul class="switch-list">
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.176" target="_blank">BSHS-BoilerRm</a></span>
+                    <span class="switch-ip">172.18.9.176</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.166" target="_blank">BSHS-StudentTechCtr</a></span>
+                    <span class="switch-ip">172.18.9.166</span>
+                </li>
+                <li>
+                    <span class="switch-name"><a href="http://172.18.9.147" target="_blank">BSHS-MAINT-2600</a></span>
+                    <span class="switch-ip">172.18.9.147</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>
