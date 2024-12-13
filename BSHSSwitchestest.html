@@ -83,6 +83,18 @@
             font-weight: bold;
             color: #9c4dcc; /* Adjusted color for better contrast */
         }
+
+        /* Media Query for screens smaller than 1024px (tablets and mobile devices) */
+        @media (max-width: 1024px) {
+            .switch-columns {
+                flex-direction: column; /* Stack the columns vertically */
+                align-items: stretch; /* Ensure each column takes the full width */
+            }
+            .column {
+                width: 100%; /* Each column takes full width on smaller screens */
+                margin-bottom: 20px; /* Space between stacked columns */
+            }
+        }
     </style>
 </head>
 <body>
