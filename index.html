@@ -1,154 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMSD Tech Team Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-    <style>
-/* Positioning for body and overall page layout */
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMSD Tech Team Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url('https://cmd-q.net/background3.jpg');
+      background-size: cover;
+      background-position: center;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+min-height: 100vh;
+      flex-direction: column;
+      overflow: auto; 
+      position: relative;  
+padding-top: 20px;
+    }
 
-body {
-    margin: 0;
-    padding: 0;
-    background-image: url('https://cmd-q.net/background3.jpg');
-    background-size: cover;
-    background-position: center;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* Align items at the top */
-    height: 100vh;
-    flex-direction: column;
-    overflow: auto;
-    position: relative; /* Make sure the absolute positioning works for switch icons */
-}
+    .container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding-top: 20px;
+      align-items: center;
+      gap: 20px;
+      margin-top: 80px;
+    }
 
-/* Create a container for both top-right icons and the main icon container */
-.container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding-top: 20px; /* Space for top-right icons */
-    align-items: center; /* Center icons horizontally */
-}
-
-/* Positioning for the top-right icons to stay fixed in the top-right */
 .top-right-icons {
-    position: absolute;  /* Keep them in the top-right corner */
-    top: 20px; /* Adjust distance from the top */
-    right: 20px; /* Adjust distance from the right */
-    display: flex;
+    padding: 2vh 2vw;
+    /* top: 20px;  Remove this */
+    /* right: 20px; Remove this */
+    display: flex; 
     flex-direction: row;
     gap: 15px;
-    z-index: 10;
+    z-index: 5;
+    position: relative; /* Change to relative */
+
 }
 
-/* Main icons container below the top-right icons */
-.icon-container {
-    display: flex;
-    flex-wrap: wrap; /* Allow main icons to wrap */
-    justify-content: center;
-    gap: 25px;
-    margin: 20px;
-    max-width: 90%;  /* Limit width to 90% of viewport */
-    margin-left: auto;
-    margin-right: auto;
-}
+    .icon-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+      margin: 25px;
+      max-width: 70%;
+      margin-left: auto;
+      margin-right: auto;
+      z-index: 10;
+      /* overflow: auto; Remove this */ 
+    }
 
-/* Icon styling */
-.icon {
-    display: inline-block;
-    width: 120px;
-    height: 120px;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out;
-    text-align: center;
-    background-color: transparent;
-    margin-bottom: 25px;
-}
-
-.icon:hover {
-    transform: scale(1.2);
-}
-
-.icon img {
-    width: 100%;
-    height: 100%;
-    border-radius: 15px;
-}
-
-.icon-title {
-    font-family: 'Roboto', sans-serif;
-    font-size: 12px;
-    margin-top: 5px;
-    color: white;
-    word-wrap: break-word;
-    text-align: center;
-}
-
-/* Mobile responsiveness adjustments */
-@media (max-width: 768px) {
     .icon {
+      display: inline-block;
+      width: 120px;
+      height: 120px;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: transform 0.15s ease-in-out;
+      text-align: center;
+      background-color: transparent;
+      margin-bottom: 25px;
+    }
+
+    .icon:hover {
+      transform: scale(1.2);
+    }
+
+    .icon img {
+      width: 100%;
+      height: 100%;
+      border-radius: 15px;
+    }
+
+    .icon-title {
+      font-family: 'Roboto', sans-serif;
+      font-size: 12px;
+      margin-top: 5px;
+      color: white;
+      word-wrap: break-word;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .icon {
         width: 90px;
         height: 90px;
-    }
+      }
 
-    .icon-title {
+      .icon-title {
         font-size: 10px;
+      }
+
+      .top-right-icons {
+        gap: 10px; 
+      }
     }
 
-    .top-right-icons {
-        gap: 10px; /* Reduce space between icons */
-    }
-}
-
-@media (max-width: 480px) {
-    .icon {
+    @media (max-width: 480px) {
+      .icon {
         width: 70px;
         height: 70px;
-    }
+      }
 
-    .icon-title {
+      .icon-title {
         font-size: 8px;
-    }
+      }
 
-    .top-right-icons {
+      .top-right-icons {
         gap: 8px;
+      }
     }
-}
-    </style>
+  </style>
 </head>
 <body>
 
-    <!-- Top-right icons container -->
-    <div class="icon-container top-right-icons">
-        <div class="icon">
-            <a href="https://cmd-q.net/BSHSSwitches.html" target="_blank">
-                <img src="https://cmd-q.net/Icons/Networkstack.png" alt="BSHS Switches">
-            </a>
-            <div class="icon-title">BSHS Switches</div>
-        </div>
-        <div class="icon">
-            <a href="https://cmd-q.net/YBMSSwitches.html" target="_blank">
-                <img src="https://cmd-q.net/Icons/Networkstack.png" alt="YBMS Switches">
-            </a>
-            <div class="icon-title">YBMS Switches</div>
-        </div>
-        <div class="icon">
-            <a href="https://cmd-q.net/IFESSwitches.html" target="_blank">
-                <img src="https://cmd-q.net/Icons/Networkstack.png" alt="IFES Switches">
-            </a>
-            <div class="icon-title">IFES Switches</div>
-        </div>
-        <div class="icon">
-            <a href="https://cmd-q.net/RiceSwitches.html" target="_blank">
-                <img src="https://cmd-q.net/Icons/Networkstack.png" alt="Rice Switches">
-            </a>
-            <div class="icon-title">Rice Switches</div>
-        </div>
+  <div class="icon-container top-right-icons">
+    <div class="icon">
+      <a href="https://cmd-q.net/BSHSSwitches.html" target="_blank">
+        <img src="https://cmd-q.net/Icons/Networkstack.png" alt="BSHS Switches">
+      </a>
+      <div class="icon-title">BSHS Switches</div>
+    </div>
+    <div class="icon">
+      <a href="https://cmd-q.net/YBMSSwitches.html" target="_blank">
+        <img src="https://cmd-q.net/Icons/Networkstack.png" alt="YBMS Switches">
+      </a>
+      <div class="icon-title">YBMS Switches</div>
+    </div>
+    <div class="icon">
+      <a href="https://cmd-q.net/IFESSwitches.html" target="_blank">
+        <img src="https://cmd-q.net/Icons/Networkstack.png" alt="IFES Switches">
+      </a>
+      <div class="icon-title">IFES Switches</div>
+    </div>
+    <div class="icon">
+      <a href="https://cmd-q.net/RiceSwitches.html" target="_blank">
+        <img src="https://cmd-q.net/Icons/Networkstack.png" alt="Rice Switches">
+      </a>
+      <div class="icon-title">Rice Switches</div>
+    </div>
+  </div>
+
+  <div class="icon-container" id="iconContainer">
     </div>
 
     <!-- Main icons container -->
@@ -344,43 +346,39 @@ body {
             <div class="icon-title">Synology NAS</div>
 
         </div>
-        <!-- Add more icons here as needed -->
     </div>
 
-    <script>
-        // Function to save the order of icons in a cookie
-        function saveIconOrder() {
-            const iconContainer = document.getElementById('iconContainer');
-            const iconIds = Array.from(iconContainer.children).map(icon => icon.innerHTML);
-            document.cookie = "iconOrder=" + JSON.stringify(iconIds) + "; path=/; max-age=" + 60 * 60 * 24 * 365; // 1 year
-        }
+ <script>
+    function saveIconOrder() {
+      const iconContainer = document.getElementById('iconContainer');
+      // Use data attributes for IDs
+      const iconIds = Array.from(iconContainer.children).map(icon => icon.dataset.id); 
+      document.cookie = "iconOrder=" + JSON.stringify(iconIds) + "; path=/; max-age=" + 60 * 60 * 24 * 365; 
+    }
 
-        // Function to load the icon order from the cookie
-        function loadIconOrder() {
-            const cookies = document.cookie.split(';');
-            const iconOrderCookie = cookies.find(cookie => cookie.trim().startsWith('iconOrder='));
+    function loadIconOrder() {
+      const cookies = document.cookie.split(';');
+      const iconOrderCookie = cookies.find(cookie => cookie.trim().startsWith('iconOrder='));
 
-            if (iconOrderCookie) {
-                const iconOrder = JSON.parse(iconOrderCookie.split('=')[1]);
-                const iconContainer = document.getElementById('iconContainer');
-                
-                // Re-order the icons based on the saved order
-                iconOrder.forEach(html => {
-                    const icon = Array.from(iconContainer.children).find(icon => icon.innerHTML === html);
-                    if (icon) iconContainer.appendChild(icon);
-                });
-            }
-        }
-
-        // Make icons sortable
+      if (iconOrderCookie) {
+        const iconOrder = JSON.parse(iconOrderCookie.split('=')[1]);
         const iconContainer = document.getElementById('iconContainer');
-        new Sortable(iconContainer, {
-            onEnd: saveIconOrder  // Save the order when sorting is done
+        
+        // Re-order the icons based on the saved order using data attributes
+        iconOrder.forEach(id => {
+          const icon = Array.from(iconContainer.children).find(icon => icon.dataset.id === id);
+          if (icon) iconContainer.appendChild(icon);
         });
+      }
+    }
 
-        // Load the icon order when the page is loaded
-        window.onload = loadIconOrder;
-    </script>
+    const iconContainer = document.getElementById('iconContainer');
+    new Sortable(iconContainer, {
+      onEnd: saveIconOrder 
+    });
+
+    window.onload = loadIconOrder;
+  </script>
 
 </body>
 </html>
