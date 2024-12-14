@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMSD Tech Team Dashboard</title>
-    <!-- Link to Google Fonts for Roboto -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-image: url('https://amcmoe.github.io/smsd/background.jpg');
+            background-image: url('https://amcmoe.github.io/smsd/background3.jpg');
             background-size: cover;
             background-position: center;
             font-family: Arial, sans-serif;
@@ -68,7 +68,7 @@
     </style>
 </head>
 <body>
-    <div class="icon-container">
+    <div class="icon-container" id="iconContainer">
         <div class="icon">
             <a href="http://papercut.smsd.local:9191/admin" target="_blank">
                 <img src="https://amcmoe.github.io/smsd/Icons/papercutnewlogo.webp">
@@ -76,7 +76,7 @@
             <div class="icon-title">Papercut Login</div>
         </div>
     
-    <div class="icon">
+        <div class="icon">
             <a href="https://smsd-sapphire.k12system.com/Gradebook/main.cfm" target="_blank">
                 <img src="https://amcmoe.github.io/smsd/Icons/Sapphire.png">
             </a>
@@ -111,6 +111,49 @@
             <div class="icon-title">Google Admin Console</div>
         </div>
 
+    <div class="icon">
+            <a href="https://support.smsd.us/a/tickets/filters/search?label=Unresolved%20tickets&orderBy=created_at&orderType=desc&q[]=status%3A%5B0%5D&ref=unresolved" target="_blank">
+                <img src="https://amcmoe.github.io/smsd/Icons/freshdesk.png">
+            </a>
+            <div class="icon-title">Helpdesk</div>
+        </div>
+
+
     </div>
+ <script>
+        // Function to save the order of icons in a cookie
+        function saveIconOrder() {
+            const iconContainer = document.getElementById('iconContainer');
+            const iconIds = Array.from(iconContainer.children).map(icon => icon.innerHTML);
+            document.cookie = "iconOrder=" + JSON.stringify(iconIds) + "; path=/; max-age=" + 60 * 60 * 24 * 365; // 1 year
+        }
+
+        // Function to load the icon order from the cookie
+        function loadIconOrder() {
+            const cookies = document.cookie.split(';');
+            const iconOrderCookie = cookies.find(cookie => cookie.trim().startsWith('iconOrder='));
+
+            if (iconOrderCookie) {
+                const iconOrder = JSON.parse(iconOrderCookie.split('=')[1]);
+                const iconContainer = document.getElementById('iconContainer');
+                
+                // Re-order the icons based on the saved order
+                iconOrder.forEach(html => {
+                    const icon = Array.from(iconContainer.children).find(icon => icon.innerHTML === html);
+                    if (icon) iconContainer.appendChild(icon);
+                });
+            }
+        }
+
+        // Make icons sortable
+        const iconContainer = document.getElementById('iconContainer');
+        new Sortable(iconContainer, {
+            onEnd: saveIconOrder  // Save the order when sorting is done
+        });
+
+        // Load the icon order when the page is loaded
+        window.onload = loadIconOrder;
+    </script>
+
 </body>
 </html>
