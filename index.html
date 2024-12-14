@@ -7,293 +7,343 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
-body {
-    margin: 0;
-    padding: 0;
-    background-image: url('https://amcmoe.github.io/smsd/background3.jpg');
-    background-size: cover;
-    background-position: center;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
-    overflow: auto; /* Allow scrolling on mobile */
-}
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('https://cmd-q.net/background3.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            overflow: auto; /* Allow scrolling on mobile */
+        }
 
-.icon-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 35px; /* Consistent space between both icons and rows */
-    margin: 20px;
-}
+        /* Position the top-right icons */
+        .top-right-icons {
+            position: absolute;
+            top: 10px;
+            right: 30px;
+            display: flex;
+            gap: 20px;
+            flex-direction: row;
+	    z-index: 10;
+        }
 
-/* Default size for icons */
-.icon {
-    display: inline-block;
-    width: 120px;
-    height: 120px;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out;
-    text-align: center;
-    background-color: transparent;
-}
+        .icon-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px;
+            gap: 25px; /* Increased horizontal space between icons */
+            max-width: 65%; /* Limit width to 65% of the viewport */
+            margin-left: auto; /* Center the container horizontally */
+            margin-right: auto; /* Center the container horizontally */
+        }
 
-.icon:hover {
-    transform: scale(1.2);
-}
+        /* Default size for icons */
+        .icon {
+            display: inline-block;
+            width: 120px;
+            height: 120px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+            text-align: center;
+            background-color: transparent;
+            margin-bottom: 25px; /* Increased vertical space between rows */
+        }
 
-.icon img {
-    width: 100%;
-    height: 100%;
-    border-radius: 15px;
-}
+        .icon:hover {
+            transform: scale(1.2);
+        }
 
-.icon-title {
-    font-family: 'Roboto', sans-serif;
-    font-size: 12px;
-    margin-top: 5px;
-    color: white;
-    word-wrap: break-word;
-    text-align: center;
-}
+        .icon img {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+        }
 
-.icon a {
-    display: block;
-    width: 100%;
-    height: 100%;
-    text-decoration: none;
-}
+        .icon-title {
+            font-family: 'Roboto', sans-serif;
+            font-size: 12px;
+            margin-top: 5px;
+            color: white;
+            word-wrap: break-word;
+            text-align: center;
+        }
 
-/* Adjustments for mobile devices */
-@media (max-width: 768px) {
-    .icon {
-        width: 80px; /* Smaller icons */
-        height: 80px; /* Smaller icons */
-    }
+        .icon a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+        }
 
-    .icon-title {
-        font-size: 10px; /* Smaller text on mobile */
-    }
+        /* Adjustments for mobile devices */
+        @media (max-width: 768px) {
+            .icon {
+                width: 90px; /* Slightly larger icons on mobile */
+                height: 90px;
+                margin-bottom: 25px; /* Maintain larger spacing on mobile */
+            }
 
-    .icon-container {
-        gap: 35px; /* Increase space to maintain consistency between icons and rows */
-    }
-}
+            .icon-title {
+                font-size: 10px; /* Smaller text on mobile */
+            }
 
-@media (max-width: 480px) {
-    .icon {
-        width: 60px; /* Even smaller icons on very small screens */
-        height: 60px;
-    }
+            .icon-container {
+                gap: 20px; /* Reduce the space between icons on mobile */
+            }
+        }
 
-    .icon-title {
-        font-size: 8px; /* Even smaller text on very small screens */
-    }
+        @media (max-width: 480px) {
+            .icon {
+                width: 70px; /* Even smaller icons on very small screens */
+                height: 70px;
+                margin-bottom: 25px; /* Maintain vertical spacing */
+            }
 
-    .icon-container {
-        gap: 35px; /* Increase space for better mobile appearance */
-    }
-}
+            .icon-title {
+                font-size: 8px; /* Even smaller text on very small screens */
+            }
+
+            .icon-container {
+                gap: 15px; /* Further reduce space on very small screens */
+            }
+        }
     </style>
 </head>
 <body>
+
+    <!-- Top-right icons container -->
+    <div class="icon-container top-right-icons">
+        <div class="icon">
+            <a href="https://cmd-q.net/BSHSSwitches.html" target="_blank">
+                <img src="https://cmd-q.net/Icons/Networkstack.png" alt="BSHS Switches">
+            </a>
+            <div class="icon-title">BSHS Switches</div>
+        </div>
+        <div class="icon">
+            <a href="https://cmd-q.net/YBMSSwitches.html" target="_blank">
+                <img src="https://cmd-q.net/Icons/Networkstack.png" alt="YBMS Switches">
+            </a>
+            <div class="icon-title">YBMS Switches</div>
+        </div>
+        <div class="icon">
+            <a href="https://cmd-q.net/IFESSwitches.html" target="_blank">
+                <img src="https://cmd-q.net/Icons/Networkstack.png" alt="IFES Switches">
+            </a>
+            <div class="icon-title">IFES Switches</div>
+        </div>
+        <div class="icon">
+            <a href="https://cmd-q.net/RiceSwitches.html" target="_blank">
+                <img src="https://cmd-q.net/Icons/Networkstack.png" alt="Rice Switches">
+            </a>
+            <div class="icon-title">Rice Switches</div>
+        </div>
+    </div>
+
+    <!-- Main icons container -->
     <div class="icon-container" id="iconContainer">
         <div class="icon">
             <a href="https://support.smsd.us/a/tickets/filters/search?label=Unresolved%20tickets&orderBy=created_at&orderType=desc&q[]=status%3A%5B0%5D&ref=unresolved" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/freshdesk.png">
+                <img src="https://cmd-q.net/Icons/freshdesk.png">
             </a>
             <div class="icon-title">Helpdesk</div>
         </div>
     <div class="icon">
            <a href="http://papercut.smsd.local:9191/admin" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/papercutnewlogo.webp">
+                <img src="https://cmd-q.net/Icons/papercutnewlogo.webp">
             </a>
             <div class="icon-title">Papercut Login</div> 
         </div>    
         <div class="icon">
             <a href="https://smsd-sapphire.k12system.com/Gradebook/main.cfm" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/Sapphire.png">
+                <img src="https://cmd-q.net/Icons/Sapphire.png">
             </a>
             <div class="icon-title">Sapphire Suite</div>
         </div>
     
     <div class="icon">
             <a href="https://smsd.screenconnect.com/Host#Access" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/Connectwise.png">
+                <img src="https://cmd-q.net/Icons/Connectwise.png">
             </a>
             <div class="icon-title">ConnectWise</div>
          </div>
 
     <div class="icon">
             <a href="https://n21.meraki.com/Systems-Manager/n/kM3LDav/manage/pcc/list" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/Meraki.png">
+                <img src="https://cmd-q.net/Icons/Meraki.png">
             </a>
             <div class="icon-title">Meraki Dashboard</div>
         </div>
 
     <div class="icon">
             <a href="https://teams.microsoft.com/_#/school/conversations/General?threadId=19:2f3862a9ffd54c86993615905f54019a@thread.skype&ctx=channel" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/teams.png">
+                <img src="https://cmd-q.net/Icons/teams.png">
             </a>
             <div class="icon-title">Tech Team Teams</div>
         </div>
 
     <div class="icon">
             <a href="https://admin.google.com/?pli=1" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/GoogleAdmin.png">
+                <img src="https://cmd-q.net/Icons/GoogleAdmin.png">
             </a>
             <div class="icon-title">Google Admin Console</div>
         </div>
     <div class="icon">
             <a href="https://fis5.csiu-technology.org/SMID/Account/LogOn" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/csiu.png">
+                <img src="https://cmd-q.net/Icons/csiu.png">
             </a>
             <div class="icon-title">Employee Portal</div>
         </div>
             <div class="icon">
             <a href="https://login.frontlineeducation.com/login?signin=8586737d8e747615575cdd17cfc958a0&productId=ABSMGMT&clientId=ABSMGMT#/login" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/frontline.webp">
+                <img src="https://cmd-q.net/Icons/frontline.webp">
             </a>
             <div class="icon-title">Absence Management</div>
         </div>
         <div class="icon">
             <a href="https://app.myglue.com/" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/Myglue.webp">
+                <img src="https://cmd-q.net/Icons/Myglue.webp">
             </a>
             <div class="icon-title">MyGlue</div>
         </div>
         <div class="icon">
             <a href="https://vcsa.smsd.local/ui/" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/vmware.png">
+                <img src="https://cmd-q.net/Icons/vmware.png">
             </a>
             <div class="icon-title">vSphere</div>
         </div>
         <div class="icon">
             <a href="https://school.apple.com/" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/Apple.png">
+                <img src="https://cmd-q.net/Icons/Apple.png">
             </a>
             <div class="icon-title">Apple School Manager</div>
         </div>
         <div class="icon">
             <a href="https://southmiddleton.sharepoint.com/:x:/r/sites/BoilingSpringsSchoolDistrict/_layouts/15/doc2.aspx?sourcedoc=%7B1F342A92-8DEF-4F37-9403-528DEB08D945%7D&file=Student%20technology%20invoice%20sheet.xlsx&action=default&mobileredirect=true&DefaultItemOpen=1&cid=93745ffc-8857-48dd-9ac2-dc198f12cc7b" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/laptop.png">
+                <img src="https://cmd-q.net/Icons/laptop.png">
             </a>
             <div class="icon-title">Student Invoice Sheet</div>
         </div>
         <div class="icon">
             <a href="https://fortivoice.smsd.local/admin/AdminLogin.html" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/fortinet.svg">
+                <img src="https://cmd-q.net/Icons/fortinet.svg">
             </a>
             <div class="icon-title">Fortivoice</div>
         </div>
         <div class="icon">
             <a href="https://clever.com/oauth/district_admin/login?target=%3BbzRrcGh2aDJ5Z252eDgzdnhjNjQ%3D%3BaHR0cHM6Ly9zY2hvb2xzLmNsZXZlci5jb20vYXV0aC1jYWxsYmFjaw%3D%3D%3BNmNhMWZlZWNmZDQyNDA4NjRhMDE3YzU5NDUxZTUzMTgzMjg3OGE1NTIxOTZiZWU0M2UxZDZjOGU2ZTc0ZDZiZQ%3D%3D%3BY29kZQ%3D%3D%3BZGlzdHJpY3RfYWRtaW4%3D" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/clever.png">
+                <img src="https://cmd-q.net/Icons/clever.png">
             </a>
             <div class="icon-title">Clever Admin</div>
         </div>
         <div class="icon">
             <a href="https://backup.barracudanetworks.com/all/status/" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/barracuda.png">
+                <img src="https://cmd-q.net/Icons/barracuda.png">
             </a>
             <div class="icon-title">Barracuda Backup</div>
         </div>
         <div class="icon">
             <a href="https://usea1-paiu.sentinelone.net/login" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/SentinelOne.png">
+                <img src="https://cmd-q.net/Icons/SentinelOne.png">
             </a>
             <div class="icon-title">SentinelOne Console</div>
         </div>
         <div class="icon">
             <a href="http://lansweeper.smsd.us:81/default.aspx" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/lansweeper.png">
+                <img src="https://cmd-q.net/Icons/lansweeper.png">
             </a>
             <div class="icon-title">Lansweeper</div>
         </div>
         <div class="icon">
             <a href="https://planner.cloud.microsoft/" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/Planner.png">
+                <img src="https://cmd-q.net/Icons/Planner.png">
             </a>
             <div class="icon-title">Planner</div>
         </div>
         <div class="icon">
             <a href="https://entra.microsoft.com/" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/AAD.svg">
+                <img src="https://cmd-q.net/Icons/AAD.svg">
             </a>
             <div class="icon-title">Entra Admin Console</div>
         </div>
         <div class="icon">
             <a href="https://intune.microsoft.com/#home" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/microsoft-intune.png">
+                <img src="https://cmd-q.net/Icons/microsoft-intune.png">
             </a>
             <div class="icon-title">Intune Console</div>
         </div>
         <div class="icon">
             <a href="https://admin.exchange.microsoft.com" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/Exchange.svg">
+                <img src="https://cmd-q.net/Icons/Exchange.svg">
             </a>
             <div class="icon-title">Exchange Admin Console</div>
         </div>
         <div class="icon">
             <a href="https://www.microsoft.com/licensing/ServiceCenter/default.aspx" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/VPP.png">
+                <img src="https://cmd-q.net/Icons/VPP.png">
             </a>
             <div class="icon-title">Volume Licensing Center</div>
         </div>
         <div class="icon">
             <a href="https://admin.microsoft.com" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/MSAdmin.svg">
+                <img src="https://cmd-q.net/Icons/MSAdmin.svg">
             </a>
             <div class="icon-title">Microsoft Admin Center</div>
         </div>
         <div class="icon">
             <a href="https://smsd.us1.my.auvik.com/#entity/root/dashboard" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/auvik.svg">
+                <img src="https://cmd-q.net/Icons/auvik.svg">
             </a>
             <div class="icon-title">Auvik</div>
         </div>
         <div class="icon">
             <a href="http://10.128.128.126/#connection" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/Wifi.png">
+                <img src="https://cmd-q.net/Icons/Wifi.png">
             </a>
             <div class="icon-title">Meraki AP Info</div>
         </div>
         <div class="icon">
             <a href="https://filter.smsd.local/ck/#/login" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/ContentKeeper.webp">
+                <img src="https://cmd-q.net/Icons/ContentKeeper.webp">
             </a>
             <div class="icon-title">ContentKeeper</div>
         </div>
         <div class="icon">
             <a href="https://caiu.myportallogin.com/" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/CAIU.png">
+                <img src="https://cmd-q.net/Icons/CAIU.png">
             </a>
             <div class="icon-title">CAIU Helpdesk</div>
         </div>
         <div class="icon">
             <a href="https://adminconsole.adobe.com/61C057945F0DB98A0A495FF5@AdobeOrg/overview" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/adobe.png">
+                <img src="https://cmd-q.net/Icons/adobe.png">
             </a>
             <div class="icon-title">Adobe Admin Console</div>
         </div>
         <div class="icon">
             <a href="https://pisignage.com/" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/pisignage.png">
+                <img src="https://cmd-q.net/Icons/pisignage.png">
             </a>
             <div class="icon-title">piSignage</div>
         </div>
         <div class="icon">
             <a href="https://172.18.8.9" target="_blank">
-                <img src="https://amcmoe.github.io/smsd/Icons/Synology.png">
+                <img src="https://cmd-q.net/Icons/Synology.png">
             </a>
             <div class="icon-title">Synology NAS</div>
+
         </div>
+        <!-- Add more icons here as needed -->
     </div>
- <script>
+
+    <script>
         // Function to save the order of icons in a cookie
         function saveIconOrder() {
             const iconContainer = document.getElementById('iconContainer');
