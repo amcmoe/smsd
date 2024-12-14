@@ -7,114 +7,118 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-image: url('https://cmd-q.net/background3.jpg');
-            background-size: cover;
-            background-position: center;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-            overflow: auto; /* Allow scrolling on mobile */
-        }
+/* Positioning for body and overall page layout */
 
-        /* Position the top-right icons */
-        .top-right-icons {
-            position: absolute;
-            top: 10px;
-            right: 30px;
-            display: flex;
-            gap: 20px;
-            flex-direction: row;
-	    z-index: 10;
-        }
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url('https://cmd-q.net/background3.jpg');
+    background-size: cover;
+    background-position: center;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items at the top */
+    height: 100vh;
+    flex-direction: column;
+    overflow: auto;
+    position: relative; /* Make sure the absolute positioning works for switch icons */
+}
 
-        .icon-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin: 20px;
-            gap: 25px; /* Increased horizontal space between icons */
-            max-width: 65%; /* Limit width to 65% of the viewport */
-            margin-left: auto; /* Center the container horizontally */
-            margin-right: auto; /* Center the container horizontally */
-        }
+/* Create a container for both top-right icons and the main icon container */
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 20px; /* Space for top-right icons */
+    align-items: center; /* Center icons horizontally */
+}
 
-        /* Default size for icons */
-        .icon {
-            display: inline-block;
-            width: 120px;
-            height: 120px;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: transform 0.2s ease-in-out;
-            text-align: center;
-            background-color: transparent;
-            margin-bottom: 25px; /* Increased vertical space between rows */
-        }
+/* Positioning for the top-right icons to stay fixed in the top-right */
+.top-right-icons {
+    position: absolute;  /* Keep them in the top-right corner */
+    top: 20px; /* Adjust distance from the top */
+    right: 20px; /* Adjust distance from the right */
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    z-index: 10;
+}
 
-        .icon:hover {
-            transform: scale(1.2);
-        }
+/* Main icons container below the top-right icons */
+.icon-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow main icons to wrap */
+    justify-content: center;
+    gap: 25px;
+    margin: 20px;
+    max-width: 90%;  /* Limit width to 90% of viewport */
+    margin-left: auto;
+    margin-right: auto;
+}
 
-        .icon img {
-            width: 100%;
-            height: 100%;
-            border-radius: 15px;
-        }
+/* Icon styling */
+.icon {
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    text-align: center;
+    background-color: transparent;
+    margin-bottom: 25px;
+}
 
-        .icon-title {
-            font-family: 'Roboto', sans-serif;
-            font-size: 12px;
-            margin-top: 5px;
-            color: white;
-            word-wrap: break-word;
-            text-align: center;
-        }
+.icon:hover {
+    transform: scale(1.2);
+}
 
-        .icon a {
-            display: block;
-            width: 100%;
-            height: 100%;
-            text-decoration: none;
-        }
+.icon img {
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+}
 
-        /* Adjustments for mobile devices */
-        @media (max-width: 768px) {
-            .icon {
-                width: 90px; /* Slightly larger icons on mobile */
-                height: 90px;
-                margin-bottom: 25px; /* Maintain larger spacing on mobile */
-            }
+.icon-title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    margin-top: 5px;
+    color: white;
+    word-wrap: break-word;
+    text-align: center;
+}
 
-            .icon-title {
-                font-size: 10px; /* Smaller text on mobile */
-            }
+/* Mobile responsiveness adjustments */
+@media (max-width: 768px) {
+    .icon {
+        width: 90px;
+        height: 90px;
+    }
 
-            .icon-container {
-                gap: 20px; /* Reduce the space between icons on mobile */
-            }
-        }
+    .icon-title {
+        font-size: 10px;
+    }
 
-        @media (max-width: 480px) {
-            .icon {
-                width: 70px; /* Even smaller icons on very small screens */
-                height: 70px;
-                margin-bottom: 25px; /* Maintain vertical spacing */
-            }
+    .top-right-icons {
+        gap: 10px; /* Reduce space between icons */
+    }
+}
 
-            .icon-title {
-                font-size: 8px; /* Even smaller text on very small screens */
-            }
+@media (max-width: 480px) {
+    .icon {
+        width: 70px;
+        height: 70px;
+    }
 
-            .icon-container {
-                gap: 15px; /* Further reduce space on very small screens */
-            }
-        }
+    .icon-title {
+        font-size: 8px;
+    }
+
+    .top-right-icons {
+        gap: 8px;
+    }
+}
     </style>
 </head>
 <body>
