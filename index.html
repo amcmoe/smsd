@@ -350,12 +350,8 @@
             <div class="icon-title">2024-25 Calendar</div>
         </div>
     </div>
-
+<input type="text" id="searchBar" placeholder="" />
  <script>
-    const searchBar = document.getElementById('searchBar');
-      if (searchBar) {
-        searchBar.focus();
-      }
     function saveIconOrder() {
       const iconContainer = document.getElementById('iconContainer');
       // Use data attributes for IDs
@@ -385,6 +381,12 @@
     });
 
     window.onload = loadIconOrder;
+     <script>
+    window.onload = function() {
+      const searchBar = document.getElementById('searchBar');
+      if (searchBar) {
+        searchBar.focus();
+      }
   </script>
 
 </body>
