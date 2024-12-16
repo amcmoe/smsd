@@ -352,6 +352,10 @@
     </div>
 
  <script>
+    const searchBar = document.getElementById('searchBar');
+      if (searchBar) {
+        searchBar.focus();
+      }
     function saveIconOrder() {
       const iconContainer = document.getElementById('iconContainer');
       // Use data attributes for IDs
