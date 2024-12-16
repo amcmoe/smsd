@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BSHS Switches and IP Addresses</title>
+    <title>Rice Switches and IP Addresses</title>
     <style>
-        /* Material Design Inspired Styling */
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #121212;
@@ -26,20 +25,20 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            max-width: 1600px; /* Max width */
-            flex-wrap: wrap; /* Allow wrapping */
-            gap: 20px; /* Space between columns */
+            max-width: 1600px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
         .column {
-            width: calc(33.333% - 20px); /* Adjust for 3 columns per row with a gap */
+            width: calc(33.333% - 20px);
             display: flex;
             flex-direction: column;
-            margin-bottom: 20px; /* Space between rows */
-            background-color: #1e1e1e; /* Solid background color */
-            border-radius: 12px; /* Rounded corners */
+            margin-bottom: 20px;
+            background-color: #1e1e1e;
+            border-radius: 12px;
             padding: 20px;
-            box-sizing: border-box; /* Include padding and border in the width */
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* Shadow effect for better depth */
+            box-sizing: border-box;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         }
         .switch-list {
             list-style: none;
@@ -81,18 +80,17 @@
         .switch-ip::before {
             content: 'IP: ';
             font-weight: bold;
-            color: #9c4dcc; /* Adjusted color for better contrast */
+            color: #9c4dcc;
         }
 
-        /* Media Query for screens smaller than 768px (tablets and mobile devices) */
         @media (max-width: 768px) {
             .switch-columns {
-                flex-direction: column; /* Stack the columns vertically */
-                align-items: stretch; /* Ensure each column takes the full width */
+                flex-direction: column;
+                align-items: stretch;
             }
             .column {
-                width: 100%; /* Each column takes full width on smaller screens */
-                margin-bottom: 20px; /* Space between stacked columns */
+                width: 100%;
+                margin-bottom: 20px;
             }
         }
     </style>
