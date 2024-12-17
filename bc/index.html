@@ -33,6 +33,16 @@
       backdrop-filter: blur(3px); /* Blur the background by 2px */
       z-index: -1; /* Ensure the blur is behind content */
     }
+      body::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.2); /* Dark overlay with transparency */
+      z-index: -1; /* Ensure the overlay is between the background and the content */
+    }
 
     .container {
       display: flex;
