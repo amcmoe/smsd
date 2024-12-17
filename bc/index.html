@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BC Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url('https://cmd-q.net/background4.jpg');
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 20vh;
+      flex-direction: column;
+      overflow: auto; 
+      position: relative;  
+      padding-top: 20px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding-top: 20px;
+      align-items: center;
+      gap: 20px;
+      margin-top: 80px;
+    }
+
+    .icon-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      margin: 5px;
+      max-width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+      z-index: 10;
+    }
+
+    .icon {
+      display: inline-block;
+      width: 120px;
+      height: 120px;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: transform 0.15s ease-in-out;
+      text-align: center;
+      background-color: transparent;
+      margin-bottom: 25px;
+    }
+
+    .icon:hover {
+      transform: scale(1.2);
+    }
+
+    .icon img {
+      width: 100%;
+      height: 100%;
+      border-radius: 15px;
+    }
+
+    .icon-title {
+      font-family: 'Roboto', sans-serif;
+      font-size: 12px;
+      margin-top: 5px;
+      color: white;
+      word-wrap: break-word;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .icon {
+        width: 90px;
+        height: 90px;
+      }
+
+      .icon-title {
+        font-size: 10px;
+      }
+
+      .top-right-icons {
+        gap: 10px; 
+      }
+    }
+
+    @media (max-width: 480px) {
+      .icon {
+        width: 70px;
+        height: 70px;
+      }
+
+      .icon-title {
+        font-size: 8px;
+      }
+
+      .top-right-icons {
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="icon-container" id="iconContainer">
+    </div>
+
+    <!-- Main icons container -->
+    <div class="icon-container" id="iconContainer">
+        <div class="icon">
+            <a href="https://camerabox.com/photo/">
+                <img src="https://cmd-q.net/bc/Icons/camerabox.png">
+            </a>
+            <div class="icon-title">CameraBox</div>
+        </div>
+    <div class="icon">
+            <a href="https://clever.com/in/south-middleton-sch-district478ef4c01000005d7/teacher">
+                <img src="https://cmd-q.net/bc/Icons/clever.jpg">
+            </a>
+            <div class="icon-title">Clever</div>
+        </div>
+        <div class="icon">
+            <a href="https://academy.cs.cmu.edu/course">
+                <img src="https://cmd-q.net/bc/Icons/cmucsacademy.png">
+            </a>
+            <div class="icon-title">CMU CS Academy</div>
+        </div>
+        <div class="icon">
+            <a href="https://www.codecademy.com/">
+                <img src="https://cmd-q.net/bc/Icons/codeacademy.png">
+            </a>
+            <div class="icon-title">Codecademy</div>
+         </div>
+        <div class="icon">
+            <a href="https://fis5.csiu-technology.org/SMID/Account/LogOn?ReturnUrl=%2fSMID%2f">
+                <img src="https://cmd-q.net/bc/Icons/csiu.png">
+            </a>
+            <div class="icon-title">CSIU</div>
+        </div>      
+        <div class="icon">
+            <a href="https://smsd.gofmx.com/login?referrer=%2Ftransportation-requests">
+                <img src="https://cmd-q.net/bc/Icons/fmx.jpg">
+            </a>
+            <div class="icon-title">FMX</div>
+        </div>
+        <div class="icon">
+            <a href="https://smsd.freshdesk.com/support/login">
+                <img src="https://cmd-q.net/bc/Icons/freshdesk.png">
+            </a>
+            <div class="icon-title">FreshDesk</div>
+        </div>
+        <div class="icon">
+            <a href="https://login.frontlineeducation.com/login?signin=2f0619d183929768d9bea387ab9d26cb&productId=PD&clientId=superSuit#/login">
+                <img src="https://cmd-q.net/bc/Icons/frontline.jpg">
+            </a>
+            <div class="icon-title">Frontline</div>
+        </div>
+        <div class="icon">
+            <a href="https://drive.google.com/drive/my-drive">
+                <img src="https://cmd-q.net/bc/Icons/googledrive.png">
+            </a>
+            <div class="icon-title">Google Drive</div>
+        </div>
+        <div class="icon">
+            <a href="https://teachers.io/home">
+                <img src="https://cmd-q.net/bc/Icons/hallpass.jpg">
+            </a>
+            <div class="icon-title">HallPass</div>
+        </div>
+        <div class="icon">
+            <a href="https://www.highmark.com/member/member-guide">
+                <img src="https://cmd-q.net/bc/Icons/healthcare.jpg">
+            </a>
+            <div class="icon-title">Healthcare</div>
+        </div>
+        <div class="icon">
+            <a href="https://planner.cloud.microsoft/webui/mytasks/assignedtome/view/grid?tid=283a1579-e615-4d1f-962a-e4e5097192a4">
+                <img src="https://cmd-q.net/bc/Icons/hubplanner.png">
+            </a>
+            <div class="icon-title">Hub Planner</div>
+        </div>      
+        <div class="icon">
+            <a href="https://yearbookavenue.jostens.com/">
+                <img src="https://cmd-q.net/bc/Icons/jostens.jpg">
+            </a>
+            <div class="icon-title">Jostens</div>
+        </div>
+        <div class="icon">
+            <a href="https://paetep.edulinksolutions.com/login">
+                <img src="https://cmd-q.net/bc/Icons/paetep.png">
+            </a>
+            <div class="icon-title">PA ETEP</div>
+        </div>
+        <div class="icon">
+            <a href="https://smsd-sapphire.k12system.com/">
+                <img src="https://cmd-q.net/bc/Icons/sapphire.png">
+            </a>
+            <div class="icon-title">Sapphire</div>
+        </div>  
+        <div class="icon">
+            <a href="https://www.smsd.us/">
+                <img src="https://cmd-q.net/bc/Icons/smsd.png">
+            </a>
+            <div class="icon-title">SMSD</div>
+        </div>        
+        <div class="icon">
+            <a href="https://www.smsd.us/welcome/staff_directory_for_district_office_and_schools">
+                <img src="https://cmd-q.net/bc/Icons/staffdirectory.png">
+            </a>
+            <div class="icon-title">Staff Directory</div>
+        </div>
+        <div class="icon">
+           <a href="https://docs.google.com/document/d/1KWjAmWOkoiS_IA7qj8hmZjo1YZS6YTWP8o1WFRRJWCs/edit?tab=t.0">
+                <img src="https://cmd-q.net/bc/Icons/whodoeswhat.png">
+            </a>
+            <div class="icon-title">Who Does What</div> 
+        </div>   
+        <div class="icon">
+            <a href="https://educator.xello.world/app/school/Boiling-Springs-HS-1001957/dashboard">
+                <img src="https://cmd-q.net/bc/Icons/xello.png">
+            </a>
+            <div class="icon-title">Xello</div>
+        </div>
+    </div>
+
+ <script>
+    function saveIconOrder() {
+      const iconContainer = document.getElementById('iconContainer');
+      // Use data attributes for IDs
+      const iconIds = Array.from(iconContainer.children).map(icon => icon.dataset.id); 
+      document.cookie = "iconOrder=" + JSON.stringify(iconIds) + "; path=/; max-age=" + 60 * 60 * 24 * 365; 
+    }
+
+    function loadIconOrder() {
+      const cookies = document.cookie.split(';');
+      const iconOrderCookie = cookies.find(cookie => cookie.trim().startsWith('iconOrder='));
+
+      if (iconOrderCookie) {
+        const iconOrder = JSON.parse(iconOrderCookie.split('=')[1]);
+        const iconContainer = document.getElementById('iconContainer');
+        
+        // Re-order the icons based on the saved order using data attributes
+        iconOrder.forEach(id => {
+          const icon = Array.from(iconContainer.children).find(icon => icon.dataset.id === id);
+          if (icon) iconContainer.appendChild(icon);
+        });
+      }
+    }
+
+    const iconContainer = document.getElementById('iconContainer');
+    new Sortable(iconContainer, {
+      onEnd: saveIconOrder 
+    });
+    window.onload = loadIconOrder;
+  </script>
+
+</body>
+</html>
