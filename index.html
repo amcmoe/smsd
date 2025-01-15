@@ -357,42 +357,16 @@
         </div>
         <div class="icon">
             <a href="https://cdnsm5-ss13.sharpschool.com/UserFiles/Servers/Server_297173/File/Welcome/District%20Calendar/2024%202025%20Instructional%20Calendar%20Board%20Approved%2012.18.23.pdf">
-                <img src="https://cmd-q.net/Icons/smsd.png">
+                <img src="https://cmd-q.net/Icons/calendar.png">
             </a>
             <div class="icon-title">2024-25 Calendar</div>
         </div>
+              <div class="icon">
+            <a href="https://smsd.us/">
+                <img src="https://cmd-q.net/Icons/smsd.png">
+            </a>
+            <div class="icon-title">SMSD Homepage</div>
+        </div>
     </div>
-
- <script>
-    function saveIconOrder() {
-      const iconContainer = document.getElementById('iconContainer');
-      // Use data attributes for IDs
-      const iconIds = Array.from(iconContainer.children).map(icon => icon.dataset.id); 
-      document.cookie = "iconOrder=" + JSON.stringify(iconIds) + "; path=/; max-age=" + 60 * 60 * 24 * 365; 
-    }
-
-    function loadIconOrder() {
-      const cookies = document.cookie.split(';');
-      const iconOrderCookie = cookies.find(cookie => cookie.trim().startsWith('iconOrder='));
-
-      if (iconOrderCookie) {
-        const iconOrder = JSON.parse(iconOrderCookie.split('=')[1]);
-        const iconContainer = document.getElementById('iconContainer');
-        
-        // Re-order the icons based on the saved order using data attributes
-        iconOrder.forEach(id => {
-          const icon = Array.from(iconContainer.children).find(icon => icon.dataset.id === id);
-          if (icon) iconContainer.appendChild(icon);
-        });
-      }
-    }
-
-    const iconContainer = document.getElementById('iconContainer');
-    new Sortable(iconContainer, {
-      onEnd: saveIconOrder 
-    });
-    window.onload = loadIconOrder;
-  </script>
-
 </body>
 </html>
