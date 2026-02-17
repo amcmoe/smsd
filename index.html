@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMSD Tech Team Dashboard</title>
+
+  <!-- Nord-Frost-ish, not overly bold -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+
+  <style>
+    :root{
+      /* ---- Layout widths ---- */
+      /* Slightly wider so Large can fit 7 categories on 4K without going full-bleed */
+      --max: min(2200px, 100vw);
+      --gutter: clamp(10px, 1.35vw, 18px);
+
+      /* ---- Base tokens ---- */
+      --text: rgba(236, 239, 244, .94);
+      --muted: rgba(236, 239, 244, .68);
+
+      /* slightly more transparent so stars show */
+      --card: rgba(59, 66, 82, .48);
+      --border: rgba(236,239,244,.12);
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+
+      /* Default accent */
+      --accent: #9687cf;
+
+      --radius: 18px;
+      --radius-sm: 14px;
+
+      --gap: 10px;
+
+      /* Columns: tuned for high-res to avoid wrapping/islands */
+      --col-min: 200px;
+      --col-max: 260px;
+
+      --tile-h: 60px;
+      --tile-pad-y: 10px;
+      --tile-pad-x: 12px;
+      --tile-icon: 40px;
+
+      /* Quick switches pills: smaller + centered */
+      --quick-min: 200px;
+      --quick-max: 300px;
+
+      /* Accent-driven hover styling */
+      --accentA: color-mix(in srgb, var(--accent) 55%, transparent);
+      --accentB: color-mix(in srgb, var(--accent) 22%, transparent);
+    }
+
+    /* ----------------------------
+       THEMES
+       ---------------------------- */
+    [data-theme="light"]{
+      --text: rgba(35, 40, 52, .92);
+      --muted: rgba(35, 40, 52, .62);
+
+      --card: rgba(255,255,255,.64);
+      --border: rgba(35,40,52,.12);
+      --shadow: 0 18px 50px rgba(0,0,0,.18);
+
+      background:
+        radial-gradient(900px 500px at 15% 15%, rgba(150, 135, 207, .14), transparent 55%),
+        radial-gradient(900px 500px at 85% 20%, rgba(163, 190, 140, .11), transparent 55%),
+        radial-gradient(900px 500px at 55% 90%, rgba(191, 97, 106, .09), transparent 55%),
+        linear-gradient(180deg, #e5e9f0, #eceff4);
+    }
+
+    [data-theme="dark"]{
+      --text: rgba(245,246,248,.92);
+      --muted: rgba(245,246,248,.66);
+
+      --card: rgba(22, 24, 28, .44);
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 20px 70px rgba(0,0,0,.55);
+
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(150, 135, 207, .16), transparent 60%),
+        radial-gradient(900px 600px at 80% 20%, rgba(255, 115, 190, .10), transparent 60%),
+        radial-gradient(900px 600px at 60% 85%, rgba(120, 255, 196, .09), transparent 60%),
+        linear-gradient(180deg, #0b0c0f, #0f1116);
+    }
+
+    [data-theme="midnight"]{
+      --text: rgba(242,245,255,.94);
+      --muted: rgba(242,245,255,.70);
+
+      --card: rgba(12, 18, 34, .50);
+      --border: rgba(210,220,255,.13);
+      --shadow: 0 18px 70px rgba(0,0,0,.60);
+
+      background:
+        radial-gradient(1100px 700px at 20% 10%, rgba(150, 135, 207, .18), transparent 60%),
+        radial-gradient(900px 600px at 70% 20%, rgba(167, 139, 250, .15), transparent 60%),
+        radial-gradient(900px 600px at 60% 85%, rgba(94, 227, 161, .12), transparent 60%),
+        radial-gradient(circle at 10% 20%, rgba(255,255,255,.22) 0 1px, transparent 2px) 0 0/180px 180px,
+        radial-gradient(circle at 70% 30%, rgba(255,255,255,.18) 0 1px, transparent 2px) 0 0/220px 220px,
+        radial-gradient(circle at 40% 80%, rgba(255,255,255,.16) 0 1px, transparent 2px) 0 0/260px 260px,
+        linear-gradient(180deg, #07101f, #050815);
+      background-attachment: fixed;
+    }
+
+    /* ----------------------------
+       Layout modes
+       ---------------------------- */
+    body[data-layout="compact"]{
+      --col-min: 180px;
+      --col-max: 240px;
+      --gap: 9px;
+
+      --tile-h: 62px;
+      --tile-pad-y: 10px;
+      --tile-pad-x: 10px;
+      --tile-icon: 44px;
+
+      --quick-min: 180px;
+      --quick-max: 260px;
+    }
+
+    body[data-layout="medium"]{
+      --col-min: 200px;
+      --col-max: 260px;
+      --gap: 10px;
+
+      --tile-h: 60px;
+      --tile-icon: 40px;
+
+      --quick-min: 200px;
+      --quick-max: 300px;
+    }
+
+    /* Large: make columns just a bit slimmer + tighter gaps so 7 fit */
+    body[data-layout="large"]{
+      --col-min: 190px;
+      --col-max: 255px;
+      --gap: 8px;
+
+      --tile-h: 76px;
+      --tile-icon: 44px;
+
+      --quick-min: 210px;
+      --quick-max: 320px;
+    }
+
+    /* Extra-wide screens: nudge Large a hair smaller to guarantee 7 columns */
+    @media (min-width: 1600px){
+      body[data-layout="large"]{
+        --col-min: 185px;
+        --col-max: 250px;
+      }
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      font-family: "Quicksand", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background-attachment: fixed;
+      font-weight: 500;
+      letter-spacing: .1px;
+    }
+
+    .app{ min-height: 100%; display: flex; flex-direction: column; }
+
+    /* Topbar */
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    body[data-theme="dark"] .topbar{
+      background: rgba(16, 18, 22, .50);
+      box-shadow: 0 10px 40px rgba(0,0,0,.40);
+    }
+    body[data-theme="midnight"] .topbar{
+      background: rgba(6, 10, 22, .48);
+      box-shadow: 0 10px 40px rgba(0,0,0,.50);
+    }
+    body[data-theme="light"] .topbar{
+      background: rgba(255,255,255,.70);
+      box-shadow: 0 10px 30px rgba(0,0,0,.10);
+    }
+
+    .topbar-inner{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 10px var(--gutter);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .brand{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-badge{
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 60%, transparent), rgba(191, 97, 106, .18));
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 25px rgba(0,0,0,.18);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      user-select: none;
+    }
+
+    .brand-title strong{
+      font-size: 14px;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: .15px;
+      font-weight: 600;
+    }
+
+    .actions{
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .search{
+      width: min(420px, 44vw);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 20px rgba(0,0,0,.14);
+    }
+    body[data-theme="dark"] .search{ background: rgba(255,255,255,.055); }
+    body[data-theme="midnight"] .search{ background: rgba(255,255,255,.055); }
+    body[data-theme="light"] .search{ background: rgba(0,0,0,.03); }
+
+    .search svg{ opacity: .85; }
+    .search input{
+      width: 100%;
+      background: transparent;
+      border: 0;
+      outline: 0;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 500;
+    }
+    .search input::placeholder{ color: color-mix(in srgb, var(--muted) 75%, transparent); }
+
+    /* Fancy control group */
+.controls{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 24px rgba(0,0,0,.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+body[data-theme="dark"] .controls{ background: rgba(255,255,255,.045); }
+body[data-theme="midnight"] .controls{ background: rgba(255,255,255,.045); }
+body[data-theme="light"] .controls{ background: rgba(0,0,0,.03); }
+
+/* Each field becomes a pill */
+.field{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+  background: color-mix(in srgb, var(--card) 40%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+  transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+}
+body[data-theme="light"] .field{
+  background: rgba(255,255,255,.55);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55);
+}
+
+.field:hover{
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  box-shadow:
+    0 10px 22px rgba(0,0,0,.10),
+    inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+/* Little icon chip on the left */
+.field .chip{
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
+  color: color-mix(in srgb, var(--accent) 85%, currentColor);
+}
+.field .chip svg{ opacity: .9; }
+
+/* Label text */
+.field label{
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  font-weight: 600;
+  letter-spacing: .1px;
+}
+
+/* Fancy select */
+.field select{
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: .15px;
+  padding: 0 20px 0 0;   /* room for caret */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+/* Custom caret */
+.field .caret{
+  width: 14px;
+  height: 14px;
+  opacity: .75;
+  margin-left: -14px; /* tuck over the right padding area */
+  pointer-events: none;
+}
+
+.field:focus-within{
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent),
+    inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+/* Options still readable */
+.controls option{ color: #111; }
+
+
+    /* Palette button reflects accent color */
+    .palette-btn{
+      width: 34px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: transform .12s ease, background .12s ease;
+      position: relative;
+      overflow: hidden;
+      color: var(--accent);
+    }
+    body[data-theme="dark"] .palette-btn{ background: rgba(255,255,255,.045); }
+    body[data-theme="midnight"] .palette-btn{ background: rgba(255,255,255,.045); }
+    body[data-theme="light"] .palette-btn{ background: rgba(0,0,0,.03); }
+
+    .palette-btn::after{
+      content:"";
+      position:absolute;
+      right: 6px;
+      bottom: 5px;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 2px rgba(0,0,0,.10);
+    }
+    body[data-theme="dark"] .palette-btn::after,
+    body[data-theme="midnight"] .palette-btn::after{
+      box-shadow: 0 0 0 2px rgba(255,255,255,.10);
+    }
+
+    .palette-btn:hover{ transform: translateY(-1px); }
+    .palette-btn:active{ transform: translateY(0px); }
+    .palette-btn svg{ opacity: .95; }
+
+    .accent-input{
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+      pointer-events: none;
+    }
+
+    button.reset{
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      cursor: pointer;
+      transition: transform .12s ease, background .12s ease;
+      font-family: inherit;
+      font-weight: 600;
+    }
+    body[data-theme="dark"] button.reset{ background: rgba(255,255,255,.045); color: var(--text); }
+    body[data-theme="midnight"] button.reset{ background: rgba(255,255,255,.045); color: var(--text); }
+    body[data-theme="light"] button.reset{ background: rgba(0,0,0,.03); color: var(--text); }
+    button.reset:hover{ transform: translateY(-1px); }
+    button.reset:active{ transform: translateY(0px); }
+
+    /* Content */
+    main{
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 12px var(--gutter) 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Quick switches row: centered + smaller pills */
+    .quick-row{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .quick-row .tile{
+      width: clamp(var(--quick-min), 16vw, var(--quick-max));
+      flex: 0 0 auto;
+      min-height: 52px;
+      padding: 8px 10px;
+      gap: 10px;
+    }
+    .quick-row .tile-icon{
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+    }
+    .quick-row .tile-title{
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .quick-row .tile-meta{ display:none !important; }
+
+    /* Category columns */
+    .columns{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(var(--col-min), var(--col-max)));
+      gap: var(--gap);
+      align-items: start;
+      grid-auto-flow: dense; /* keep, but main win is fitting 7 columns */
+      justify-content: center;
+    }
+
+    .category{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    body[data-theme="dark"] .category{
+      background: rgba(18, 20, 24, .44);
+      box-shadow:
+        0 18px 70px rgba(0,0,0,.50),
+        inset 0 1px 0 rgba(255,255,255,.07);
+    }
+    body[data-theme="midnight"] .category{
+      background: rgba(10, 16, 32, .48);
+      box-shadow:
+        0 18px 70px rgba(0,0,0,.55),
+        inset 0 1px 0 rgba(255,255,255,.06);
+    }
+
+    body[data-theme="dark"] .tile{
+      background: rgba(255,255,255,.055);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055);
+    }
+    body[data-theme="midnight"] .tile{
+      background: rgba(255,255,255,.055);
+    }
+
+    .cat-head{
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.10), transparent),
+        linear-gradient(90deg, color-mix(in srgb, var(--cat-color) 65%, transparent), transparent 70%);
+    }
+    body[data-theme="light"] .cat-head{
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.03), transparent),
+        linear-gradient(90deg, color-mix(in srgb, var(--cat-color) 52%, transparent), transparent 70%);
+    }
+
+    .cat-left{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .cat-icon{
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      color: color-mix(in srgb, var(--cat-color) 85%, white);
+      opacity: .95;
+      flex: 0 0 auto;
+    }
+    body[data-theme="light"] .cat-icon{
+      color: color-mix(in srgb, var(--cat-color) 75%, black);
+    }
+    .cat-title{
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: .12px;
+    }
+
+    .cat-body{
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Tiles */
+    .tile{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: var(--tile-pad-y) var(--tile-pad-x);
+      min-height: var(--tile-h);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,.12);
+      text-decoration: none;
+      color: var(--text);
+      transition: transform .12s ease, background .12s ease, border-color .12s ease, box-shadow .12s ease;
+      outline: none;
+      position: relative;
+      overflow: hidden;
+    }
+    body[data-theme="dark"] .tile{ border-color: rgba(255,255,255,.12); }
+    body[data-theme="midnight"] .tile{ border-color: rgba(255,255,255,.11); }
+    body[data-theme="light"] .tile{
+      background: rgba(0,0,0,.03);
+      border: 1px solid rgba(0,0,0,.10);
+    }
+
+    .tile::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(240px 120px at 18% 35%, var(--accentA), transparent 65%),
+        linear-gradient(90deg, var(--accentB), transparent 65%);
+      opacity: 0;
+      transition: opacity .12s ease;
+      pointer-events:none;
+    }
+    .tile:hover::before{ opacity: 1; }
+
+    .tile:hover{
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, var(--accent) 45%, rgba(255,255,255,.18));
+      box-shadow: 0 14px 40px rgba(0,0,0,.28);
+    }
+    body[data-theme="light"] .tile:hover{
+      border-color: color-mix(in srgb, var(--accent) 55%, rgba(0,0,0,.12));
+      box-shadow: 0 14px 36px rgba(0,0,0,.16);
+    }
+
+    .tile:focus-visible{
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 40%, transparent), var(--shadow);
+    }
+
+    .tile-icon{
+      width: var(--tile-icon);
+      height: var(--tile-icon);
+      border-radius: 12px;
+      background: rgba(0,0,0,.14);
+      border: 1px solid rgba(255,255,255,.12);
+      overflow: hidden;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      position: relative;
+      z-index: 1;
+      transition: box-shadow .12s ease, border-color .12s ease;
+    }
+    body[data-theme="light"] .tile-icon{
+      background: rgba(0,0,0,.05);
+      border: 1px solid rgba(0,0,0,.10);
+    }
+
+    .tile:hover .tile-icon{
+      border-color: color-mix(in srgb, var(--accent) 55%, rgba(255,255,255,.18));
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+
+    .tile-icon img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .tile-text{
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1 1 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tile-title{
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: .12px;
+    }
+
+    .tile-meta{
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.25;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      font-weight: 500;
+    }
+
+    /* Layout modes */
+    body[data-layout="medium"] .tile-meta{ display:none; }
+    body[data-layout="large"] .tile-meta{ display:-webkit-box; }
+
+/* Compact: show title under icon (hide meta) */
+body[data-layout="compact"] .cat-body{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+/* Each tile fills its grid cell */
+body[data-layout="compact"] .cat-body .tile{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  gap: 6px;
+
+  padding: 10px 8px;
+  min-height: 96px;
+}
+
+/* Icon size for compact grid */
+body[data-layout="compact"] .cat-body .tile-icon{
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+}
+
+/* Show title */
+body[data-layout="compact"] .cat-body .tile-text{
+  display: block;
+  width: 100%;
+}
+
+/* Title styling */
+body[data-layout="compact"] .cat-body .tile-title{
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.1;
+
+  white-space: normal;
+  overflow: hidden;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Hide descriptions in compact */
+body[data-layout="compact"] .cat-body .tile-meta{
+  display: none !important;
+}
+
+
+    /* Filtering hides empty categories */
+    .category[hidden]{ display:none !important; }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .topbar-inner{ grid-template-columns: 1fr; }
+      .actions{ justify-content: flex-start; }
+      .search{ width: 100%; }
+    }
+    @media (max-width: 720px){
+      :root{ --col-min: 100%; --col-max: 100%; }
+      .columns{ grid-template-columns: 1fr; justify-content: stretch; }
+      main{ padding: 12px var(--gutter) 34px; }
+      .topbar-inner{ padding: 10px var(--gutter); }
+
+      .quick-row .tile{
+        width: calc(50% - 6px);
+        min-height: 52px;
+      }
+    }
+    @media (max-width: 520px){
+      .quick-row .tile{ width: 100%; }
+    }
+  </style>
+</head>
+
+<body data-theme="light" data-layout="medium">
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-badge">S</div>
+          <div class="brand-title">
+            <strong>SMSD Tech Team Dashboard</strong>
+          </div>
+        </div>
+
+        <div class="actions">
+          <div class="search" role="search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M21 21l-4.3-4.3m1.8-5.2a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <input id="searchInput" type="search" placeholder="Search…" autocomplete="off" />
+          </div>
+
+          <div class="controls" title="Saved per browser">
+<div class="field" title="Saved per browser">
+  <span class="chip" aria-hidden="true">
+    <!-- sun/moon icon -->
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+      <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <label for="themeSelect">Theme</label>
+  <select id="themeSelect">
+    <option value="light">Light</option>
+    <option value="dark">Dark</option>
+    <option value="midnight">Midnight</option>
+  </select>
+  <svg class="caret" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</div>
+
+<div class="field" title="Saved per browser">
+  <span class="chip" aria-hidden="true">
+    <!-- layout icon -->
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+      <path d="M4 6h7v12H4V6Z" stroke="currentColor" stroke-width="2"/>
+      <path d="M13 6h7v5h-7V6Z" stroke="currentColor" stroke-width="2"/>
+      <path d="M13 13h7v5h-7v-5Z" stroke="currentColor" stroke-width="2"/>
+    </svg>
+  </span>
+  <label for="layoutSelect">Layout</label>
+  <select id="layoutSelect">
+    <option value="compact">Compact</option>
+    <option value="medium" selected>Medium</option>
+    <option value="large">Large</option>
+  </select>
+  <svg class="caret" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</div>
+
+
+            <button class="palette-btn" id="paletteBtn" type="button" aria-label="Pick accent color" title="Pick accent color">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 22c5.523 0 10-4.03 10-9s-4.477-9-10-9S2 6.03 2 13c0 3.314 2.239 6 5 6h2c.552 0 1 .448 1 1v1c0 .552.448 1 1 1z" stroke="currentColor" stroke-width="2"/>
+                <circle cx="7.5" cy="11" r="1" fill="currentColor"/>
+                <circle cx="10.5" cy="8" r="1" fill="currentColor"/>
+                <circle cx="14.5" cy="8.5" r="1" fill="currentColor"/>
+                <circle cx="17" cy="11.5" r="1" fill="currentColor"/>
+              </svg>
+            </button>
+            <input class="accent-input" id="accentPicker" type="color" value="#9687cf" aria-label="Accent color">
+          </div>
+
+          <button class="reset" id="resetPrefs" type="button" title="Reset theme/layout/accent and saved ordering on this browser">
+            Reset
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="quick-row" id="quickRow"></div>
+      <div class="columns" id="columnsRoot"></div>
+    </main>
+  </div>
+
+  <script>
+    // -----------------------
+    // DATA
+    // -----------------------
+    const QUICK_LINKS = [
+      { id:'bshs-switches', title:'BSHS Switches', meta:'', href:'https://cmd-q.net/BSHSSwitches.html', img:'https://cmd-q.net/Icons/Networkstack.png' },
+      { id:'ybms-switches', title:'YBMS Switches', meta:'', href:'https://cmd-q.net/YBMSSwitches.html', img:'https://cmd-q.net/Icons/Networkstack.png' },
+      { id:'ifes-switches', title:'IFES Switches', meta:'', href:'https://cmd-q.net/IFESSwitches.html', img:'https://cmd-q.net/Icons/Networkstack.png' },
+      { id:'rice-switches', title:'Rice Switches', meta:'', href:'https://cmd-q.net/Icons/Networkstack.png', img:'https://cmd-q.net/Icons/Networkstack.png' },
+    ].map(x => (x.id === 'rice-switches' ? { ...x, href:'https://cmd-q.net/RiceSwitches.html' } : x));
+
+    const CATEGORIES = [
+      {
+        name:"Ticketing & Team", icon:"users", color:"#ff9a3c",
+        items:[
+          { id:'helpdesk', title:'Helpdesk', meta:'Unresolved tickets', href:'https://support.smsd.us/a/tickets/filters/search?label=Unresolved%20tickets&orderBy=created_at&orderType=desc&q[]=status%3A%5B0%5D&ref=unresolved', img:'https://cmd-q.net/Icons/freshdesk.png' },
+          { id:'tech-team-site', title:'Tech Team Site', meta:'Teams channel', href:'https://teams.microsoft.com/_#/school/conversations/General?threadId=19:2f3862a9ffd54c86993615905f54019a@thread.skype&ctx=channel', img:'https://cmd-q.net/Icons/teams.png' },
+          { id:'planner', title:'Planner', meta:'Tasks & boards', href:'https://planner.cloud.microsoft', img:'https://cmd-q.net/Icons/Planner.png' },
+          { id:'myglue', title:'MyGlue', meta:'Docs & passwords', href:'https://app.myglue.com/', img:'https://cmd-q.net/Icons/Myglue.png' },
+          { id:'invoice', title:'Student Invoice Sheet', meta:'SharePoint spreadsheet', href:'https://southmiddleton.sharepoint.com/:x:/r/sites/BoilingSpringsSchoolDistrict/_layouts/15/doc2.aspx?sourcedoc=%7B1F342A92-8DEF-4F37-9403-528DEB08D945%7D&file=Student%20technology%20invoice%20sheet.xlsx&action=default&mobileredirect=true&DefaultItemOpen=1&cid=93745ffc-8857-48dd-9ac2-dc198f12cc7b', img:'https://cmd-q.net/Icons/laptop.png' },
+        ]
+      },
+      {
+        name:"Microsoft Admin", icon:"shield", color:"#6aa6ff",
+        items:[
+          { id:'ms-admin', title:'Microsoft Admin', meta:'Tenant admin', href:'https://admin.microsoft.com', img:'https://cmd-q.net/Icons/MSAdmin.svg' },
+          { id:'entra', title:'Entra Admin', meta:'Identity & access', href:'https://entra.microsoft.com/', img:'https://cmd-q.net/Icons/AAD.svg' },
+          { id:'azure', title:'Azure Portal', meta:'Cloud resources', href:'https://portal.azure.com/#home', img:'https://cmd-q.net/Icons/azure.png' },
+          { id:'intune', title:'Intune', meta:'Device management', href:'https://intune.microsoft.com/#home', img:'https://cmd-q.net/Icons/microsoft-intune.png' },
+          { id:'intune-ed', title:'Intune Education', meta:'Education policies', href:'https://intuneeducation.portal.azure.com', img:'https://cmd-q.net/Icons/intuneeducation.png' },
+          { id:'exchange', title:'Exchange Admin', meta:'Mail flow & policies', href:'https://admin.exchange.microsoft.com', img:'https://cmd-q.net/Icons/Exchange.svg' },
+        ]
+      },
+      {
+        name:"Security", icon:"lock", color:"#a78bfa",
+        items:[
+          { id:'defender', title:'Defender Portal', meta:'Security center', href:'https://security.microsoft.com/', img:'https://cmd-q.net/Icons/defender.png' },
+          { id:'mimecast', title:'Mimecast', meta:'Email security', href:'https://login.mimecast.com', img:'https://cmd-q.net/Icons/mimecast.png' },
+          { id:'sentinelone', title:'SentinelOne', meta:'EDR console', href:'https://usea1-paiu.sentinelone.net/login', img:'https://cmd-q.net/Icons/SentinelOne.png' },
+          { id:'contentkeeper', title:'ContentKeeper', meta:'Filtering console', href:'https://filter.smsd.local/ck/#/login', img:'https://cmd-q.net/Icons/contentkeeper.png' },
+        ]
+      },
+      {
+        name:"Network & Monitoring", icon:"activity", color:"#5ee3a1",
+        items:[
+          { id:'meraki', title:'Meraki Dashboard', meta:'Network & MDM', href:'https://n21.meraki.com/Systems-Manager/n/kM3LDav/manage/pcc/list', img:'https://cmd-q.net/Icons/Meraki.png' },
+          { id:'auvik', title:'Auvik', meta:'Network monitoring', href:'https://smsd.us1.my.auvik.com/#entity/root/dashboard', img:'https://cmd-q.net/Icons/auvikedited.png' },
+          { id:'lansweeper', title:'Lansweeper', meta:'Asset inventory', href:'http://lansweeper.smsd.us:81/default.aspx', img:'https://cmd-q.net/Icons/lansweeper.png' },
+          { id:'unifi', title:'Ubiquiti UniFi', meta:'Cloud console', href:'https://unifi.ui.com/', img:'https://cmd-q.net/Icons/unifi.png' },
+          { id:'uisp', title:'Ubiquiti UISP', meta:'Network management', href:'https://smsd.uisp.com/nms/devices/', img:'https://cmd-q.net/Icons/uisp.png' },
+          { id:'meraki-ap', title:'Meraki AP Info', meta:'Local AP page', href:'http://10.128.128.126/#connection', img:'https://cmd-q.net/Icons/Wifi.png' },
+        ]
+      },
+      {
+        name:"Infrastructure", icon:"server", color:"#ffd166",
+        items:[
+          { id:'vsphere', title:'vSphere', meta:'Virtual infrastructure', href:'https://vcsa.smsd.local/ui/', img:'https://cmd-q.net/Icons/vmware.png' },
+          { id:'synology', title:'Synology NAS', meta:'Storage console', href:'https://172.18.8.9', img:'https://cmd-q.net/Icons/Synology.png' },
+          { id:'connectwise', title:'ConnectWise', meta:'Remote access', href:'https://smsd.screenconnect.com/Host#Access', img:'https://cmd-q.net/Icons/Connectwise.png' },
+          { id:'barracuda', title:'Barracuda Backup', meta:'Backup status', href:'https://backup.barracudanetworks.com/all/status/', img:'https://cmd-q.net/Icons/barracuda.png' },
+          { id:'fortivoice', title:'FortiVoice', meta:'Telephony admin', href:'https://fortivoice.smsd.local/admin/AdminLogin.html', img:'https://cmd-q.net/Icons/fortivoice.png' },
+        ]
+      },
+      {
+        name:"School Ops", icon:"book", color:"#ff6b9a",
+        items:[
+          { id:'google-admin', title:'Google Admin', meta:'Directory, devices, apps', href:'https://admin.google.com/?pli=1', img:'https://cmd-q.net/Icons/GoogleAdmin.png' },
+          { id:'apple-school', title:'Apple School Manager', meta:'Devices & accounts', href:'https://school.apple.com/', img:'https://cmd-q.net/Icons/Apple.png' },
+          { id:'sapphire', title:'Sapphire Suite', meta:'Gradebook / SIS', href:'https://smsd-sapphire.k12system.com/Gradebook/main.cfm', img:'https://cmd-q.net/Icons/Sapphire.png' },
+          { id:'clever', title:'Clever Admin', meta:'SSO / rostering', href:'https://clever.com/oauth/district_admin/login?target=%3BbzRrcGh2aDJ5Z252eDgzdnhjNjQ%3D%3BaHR0cHM6Ly9zY2hvb2xzLmNsZXZlci5jb20vYXV0aC1jYWxsYmFjaw%3D%3D%3BNmNhMWZlZWNmZDQyNDA4NjRhMDE3YzU5NDUxZTUzMTgzMjg3OGE1NTIxOTZiZWU0M2UxZDZjOGU2ZTc0ZDZiZQ%3D%3D%3BY29kZQ%3D%3D%3BZGlzdHJpY3RfYWRtaW4%3D', img:'https://cmd-q.net/Icons/clever.png' },
+          { id:'papercut', title:'Papercut', meta:'Print management', href:'http://papercut.smsd.local:9191/admin', img:'https://cmd-q.net/Icons/papercutnewlogo.webp' },
+          { id:'genetec', title:'Genetec', meta:'Security Desk', href:'https://bshs-cameraserv/WebApp/', img:'https://cmd-q.net/Icons/genetec.png' },
+          { id:'revtrak', title:'RevTrak', meta:'Payments', href:'https://smsdpa.revtrak.net/Portal/', img:'https://cmd-q.net/Icons/revtrak.png' },
+          { id:'calendar', title:'2025–26 Calendar', meta:'Instructional calendar (PDF)', href:'https://cdnsm5-ss13.sharpschool.com/UserFiles/Servers/Server_297173/File/Calendars/2025%202026%20SMSD%20Instructional%20Calendar%201.13.25%202.pdf', img:'https://cmd-q.net/Icons/calendar.png' },
+          { id:'smsd', title:'SMSD Homepage', meta:'Public site', href:'https://smsd.us/', img:'https://cmd-q.net/Icons/smsd.png' },
+        ]
+      },
+      {
+        name:"Vendors & Licensing", icon:"tag", color:"#7cf0ff",
+        items:[
+          { id:'vls', title:'Volume Licensing', meta:'Keys, downloads', href:'https://www.microsoft.com/licensing/ServiceCenter/default.aspx', img:'https://cmd-q.net/Icons/VPP.png' },
+          { id:'adobe', title:'Adobe Admin', meta:'Licensing & users', href:'https://adminconsole.adobe.com/61C057945F0DB98A0A495FF5@AdobeOrg/overview', img:'https://cmd-q.net/Icons/adobe.png' },
+          { id:'pisignage', title:'piSignage', meta:'Digital signage', href:'https://pisignage.com/', img:'https://cmd-q.net/Icons/pisignage.png' },
+          { id:'caiu', title:'CAIU Helpdesk', meta:'Support portal', href:'https://caiu.myportallogin.com/', img:'https://cmd-q.net/Icons/CAIU.png' },
+          { id:'csiu', title:'Employee Portal', meta:'CSIU', href:'https://fis5.csiu-technology.org/SMID/Account/LogOn', img:'https://cmd-q.net/Icons/csiu.png' },
+          { id:'savvas', title:'Savvas', meta:'SSO', href:'https://sso.rumba.pk12ls.com/sso/login', img:'https://cmd-q.net/Icons/savvas.png' },
+          { id:'triton', title:'Triton Sensors', meta:'Monitoring', href:'https://app.tritonsensors.com/auth/login', img:'https://cmd-q.net/Icons/triton.png' },
+          { id:'kajeet', title:'Kajeet Portal', meta:'Filtering / devices', href:'https://sentinel.kajeet.com/auth/login', img:'https://cmd-q.net/Icons/kajeet.png' },
+        ]
+      },
+    ];
+
+    // -----------------------
+    // Category icons
+    // -----------------------
+    function catIcon(name){
+      const common = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+      const icons = {
+        users: `<svg width="20" height="20" viewBox="0 0 24 24" ${common}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`,
+        shield:`<svg width="20" height="20" viewBox="0 0 24 24" ${common}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+        lock:  `<svg width="20" height="20" viewBox="0 0 24 24" ${common}><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`,
+        activity:`<svg width="20" height="20" viewBox="0 0 24 24" ${common}><path d="M22 12h-4l-3 9-4-18-3 9H2"/></svg>`,
+        server:`<svg width="20" height="20" viewBox="0 0 24 24" ${common}><rect x="2" y="3" width="20" height="8" rx="2"></rect><rect x="2" y="13" width="20" height="8" rx="2"></rect><path d="M6 7h.01M6 17h.01"/></svg>`,
+        book:  `<svg width="20" height="20" viewBox="0 0 24 24" ${common}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`,
+        tag:   `<svg width="20" height="20" viewBox="0 0 24 24" ${common}><path d="M20.59 13.41 11 3H4v7l9.59 9.59a2 2 0 0 0 2.83 0l4.17-4.17a2 2 0 0 0 0-2.83z"></path><path d="M7 7h.01"></path></svg>`
+      };
+      return icons[name] || icons.tag;
+    }
+
+    // -----------------------
+    // STORAGE
+    // -----------------------
+    const K = {
+      theme: 'smsd-theme-v5',
+      accent: 'smsd-accent-v5',
+      layout: 'smsd-layout-v5',
+      order: 'smsd-order-v5',
+      quickOrder: 'smsd-quick-v5'
+    };
+
+    const quickRow = document.getElementById('quickRow');
+    const columnsRoot = document.getElementById('columnsRoot');
+    const searchInput = document.getElementById('searchInput');
+
+    const resetPrefs = document.getElementById('resetPrefs');
+    const themeSelect = document.getElementById('themeSelect');
+    const layoutSelect = document.getElementById('layoutSelect');
+
+    const paletteBtn = document.getElementById('paletteBtn');
+    const accentPicker = document.getElementById('accentPicker');
+
+    let orderByCat = {};
+    let quickOrder = [];
+
+    function safeParse(json, fallback){
+      try { return JSON.parse(json); } catch { return fallback; }
+    }
+
+    function setAccent(hex){
+      document.documentElement.style.setProperty('--accent', hex);
+      accentPicker.value = hex;
+    }
+
+    function tileHTML(item, scopeName){
+      const titleKey = (item.title + ' ' + (item.meta||'') + ' ' + scopeName).toLowerCase();
+      return `
+        <a class="tile" href="${item.href}" data-id="${item.id}" data-scope="${scopeName}" data-title="${titleKey}">
+          <div class="tile-icon"><img src="${item.img}" alt="${item.title}"></div>
+          <div class="tile-text">
+            <div class="tile-title">${item.title}</div>
+            <div class="tile-meta">${item.meta || ''}</div>
+          </div>
+        </a>
+      `;
+    }
+
+    function applySavedOrder(items, savedIds){
+      if (!Array.isArray(savedIds) || !savedIds.length) return items;
+      const map = new Map(items.map(it => [it.id, it]));
+      const out = [];
+      savedIds.forEach(id => { if (map.has(id)) out.push(map.get(id)); });
+      items.forEach(it => { if (!savedIds.includes(it.id)) out.push(it); });
+      return out;
+    }
+
+    function render(){
+      // Quick row
+      let qItems = applySavedOrder(QUICK_LINKS.slice(), quickOrder);
+      quickRow.innerHTML = qItems.map(it => tileHTML(it, 'quick')).join('');
+
+      // Categories
+      columnsRoot.innerHTML = '';
+      CATEGORIES.forEach(cat => {
+        const items = applySavedOrder(cat.items.slice(), orderByCat[cat.name]);
+
+        const el = document.createElement('section');
+        el.className = 'category';
+        el.style.setProperty('--cat-color', cat.color);
+        el.setAttribute('data-category', cat.name);
+
+        el.innerHTML = `
+          <div class="cat-head">
+            <div class="cat-left">
+              <div class="cat-icon" aria-hidden="true">${catIcon(cat.icon)}</div>
+              <div class="cat-title" title="${cat.name}">${cat.name}</div>
+            </div>
+          </div>
+          <div class="cat-body" data-cat-body="${cat.name}">
+            ${items.map(it => tileHTML(it, cat.name)).join('')}
+          </div>
+        `;
+        columnsRoot.appendChild(el);
+      });
+
+      enableReorder();
+      applyFilter();
+    }
+
+    // Always-on reorder
+    const sortables = [];
+    function destroySortables(){
+      sortables.forEach(s => s.destroy());
+      sortables.length = 0;
+    }
+    function enableReorder(){
+      destroySortables();
+
+      sortables.push(new Sortable(quickRow, {
+        animation: 140,
+        delay: 150,
+        delayOnTouchOnly: true,
+        touchStartThreshold: 5,
+        onEnd: () => {
+          quickOrder = [...quickRow.querySelectorAll('.tile')].map(t => t.getAttribute('data-id'));
+          localStorage.setItem(K.quickOrder, JSON.stringify(quickOrder));
+        }
+      }));
+
+      document.querySelectorAll('.cat-body').forEach(body => {
+        const catName = body.getAttribute('data-cat-body');
+        sortables.push(new Sortable(body, {
+          animation: 140,
+          delay: 150,
+          delayOnTouchOnly: true,
+          touchStartThreshold: 5,
+          onEnd: () => {
+            orderByCat[catName] = [...body.querySelectorAll('.tile')].map(t => t.getAttribute('data-id'));
+            localStorage.setItem(K.order, JSON.stringify(orderByCat));
+          }
+        }));
+      });
+    }
+
+    // Filter
+    function applyFilter(){
+      const q = (searchInput.value || '').trim().toLowerCase();
+
+      let quickAny = false;
+      [...quickRow.querySelectorAll('.tile')].forEach(tile => {
+        const hay = (tile.getAttribute('data-title') || '') + ' ' + (tile.textContent || '');
+        const ok = hay.toLowerCase().includes(q);
+        tile.style.display = ok ? '' : 'none';
+        if (ok) quickAny = true;
+      });
+      quickRow.style.display = (q && !quickAny) ? 'none' : 'flex';
+
+      document.querySelectorAll('.category').forEach(catEl => {
+        let any = false;
+        [...catEl.querySelectorAll('.tile')].forEach(tile => {
+          const hay = (tile.getAttribute('data-title') || '') + ' ' + (tile.textContent || '');
+          const ok = hay.toLowerCase().includes(q);
+          tile.style.display = ok ? '' : 'none';
+          if (ok) any = true;
+        });
+        catEl.hidden = !any;
+      });
+    }
+
+    function pickDefaultLayoutIfUnset(){
+      if (localStorage.getItem(K.layout)) return;
+      const isMobile = window.matchMedia('(max-width: 720px)').matches;
+      localStorage.setItem(K.layout, isMobile ? 'compact' : 'medium');
+    }
+
+    function loadPrefs(){
+      pickDefaultLayoutIfUnset();
+
+      const theme = localStorage.getItem(K.theme) || 'light';
+      document.body.setAttribute('data-theme', theme);
+      themeSelect.value = theme;
+
+      const layout = localStorage.getItem(K.layout) || 'medium';
+      document.body.setAttribute('data-layout', layout);
+      layoutSelect.value = layout;
+
+      const accent = localStorage.getItem(K.accent) || '#9687cf';
+      setAccent(accent);
+
+      orderByCat = safeParse(localStorage.getItem(K.order) || '{}', {});
+      quickOrder = safeParse(localStorage.getItem(K.quickOrder) || '[]', []);
+    }
+
+    function resetAll(){
+      localStorage.removeItem(K.theme);
+      localStorage.removeItem(K.layout);
+      localStorage.removeItem(K.accent);
+      localStorage.removeItem(K.order);
+      localStorage.removeItem(K.quickOrder);
+
+      loadPrefs();
+      render();
+    }
+
+    // Events
+    searchInput.addEventListener('input', applyFilter);
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        searchInput.value = '';
+        applyFilter();
+      }
+    });
+
+    themeSelect.addEventListener('change', () => {
+      document.body.setAttribute('data-theme', themeSelect.value);
+      localStorage.setItem(K.theme, themeSelect.value);
+    });
+
+    layoutSelect.addEventListener('change', () => {
+      document.body.setAttribute('data-layout', layoutSelect.value);
+      localStorage.setItem(K.layout, layoutSelect.value);
+      applyFilter();
+    });
+
+    paletteBtn.addEventListener('click', () => accentPicker.click());
+    accentPicker.addEventListener('input', () => {
+      setAccent(accentPicker.value);
+      localStorage.setItem(K.accent, accentPicker.value);
+    });
+
+    resetPrefs.addEventListener('click', resetAll);
+
+    // Init
+    loadPrefs();
+    render();
+  </script>
+</body>
+</html>
