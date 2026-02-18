@@ -921,10 +921,12 @@ body[data-layout="compact"] .cat-body .tile-meta{ display: none !important; }
   border: 1px solid rgba(255,255,255,.10);
   border-radius: 14px;
   padding: 10px 12px;
-  display: flex;
-  justify-content: space-between;
+
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  gap: 10px;
+  column-gap: 12px;
+
   transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
 }
 
@@ -1009,3 +1011,4 @@ body[data-theme="light"] .switch-list li{
 
   .switch-columns{ grid-template-columns: 1fr; }
 }
+
