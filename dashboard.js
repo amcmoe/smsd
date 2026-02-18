@@ -53,10 +53,9 @@ const ALLOWED = Object.freeze({
     const storedLayout = read(KEYS.layout);
     const storedAccent = read(KEYS.accent);
 
-    const theme =
-      (isValid("theme", storedTheme) && storedTheme) ||
-      (isValid("theme", body.getAttribute("data-theme")) && body.getAttribute("data-theme")) ||
-      DEFAULTS.theme;
+   const theme =
+     (isValid("theme", storedTheme) && storedTheme) ||
+     DEFAULTS.theme;
 
     const layout =
       (isValid("layout", storedLayout) && storedLayout) ||
@@ -134,4 +133,5 @@ const ALLOWED = Object.freeze({
 
   document.addEventListener("DOMContentLoaded", apply);
 })();
+
 
