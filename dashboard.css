@@ -32,7 +32,13 @@
   --aurora-alpha: .34;
   --aurora-blur: 34px;
 }
-
+.switch-heading{
+  text-align: center;
+  color: color-mix(in srgb, var(--accent) 80%, #bb86fc);
+  margin: 0 0 12px;
+  font-weight: 700;
+  font-size: 16px;
+}
 [data-theme="light"]{
   --text: rgba(35, 40, 52, .92);
   --muted: rgba(35, 40, 52, .62);
@@ -973,3 +979,4 @@ body[data-theme="light"] .switch-list li{
   content: "IP: ";
   color: color-mix(in srgb, var(--accent) 55%, white);
 }
+
