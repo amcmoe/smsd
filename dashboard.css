@@ -579,11 +579,12 @@ main{
 .quick-row .tile-meta{display:none !important;}
 
 .columns{
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(310px, 100%), 1fr));
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--col-min), var(--col-max)));
   gap: var(--gap);
-  align-items:start;
-  justify-content:center;
+  align-items: start;
+  grid-auto-flow: dense;
+  justify-content: center;
 }
 
 .category{
@@ -1003,4 +1004,5 @@ body[data-theme="frost"] .switch-list li{
   .quick-row{justify-content:flex-start;}
   .switch-columns{grid-template-columns:1fr;}
 }
+
 
