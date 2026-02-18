@@ -1303,3 +1303,22 @@ body[data-theme="frost"] .tile:hover .tile-icon{
   border-color:color-mix(in srgb,var(--cat-color) 60%, rgba(216,222,233,.18)) !important;
   box-shadow:0 0 0 5px color-mix(in srgb,var(--cat-color) 18%, transparent) !important;
 }
+body[data-theme="frost"] .cat-head{
+  background-image:none !important;
+  background:color-mix(in srgb,var(--cat-color) 28%, #3b4252) !important;
+  box-shadow:none !important;
+}
+
+body[data-theme="frost"] .cat-head::before{
+  content:none !important;
+}
+
+body[data-theme="frost"] .category{
+  box-shadow:0 16px 46px rgba(0,0,0,.40) !important;
+}
+
+body[data-theme="frost"] .category::before,
+body[data-theme="frost"] .category::after{
+  content:none !important;
+}
+
