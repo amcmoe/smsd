@@ -4,97 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BSHS Switches and IP Addresses</title>
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-image: url('https://cmd-q.net/background4.jpg');
-            color: #e0e0e0;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            font-size: 2.5rem;
-            color: #6200ea;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .switch-columns {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 1600px;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .column {
-            width: calc(33.333% - 20px);
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 20px;
-            background-color: #1e1e1e;
-            border-radius: 12px;
-            padding: 20px;
-            box-sizing: border-box;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        }
-        .switch-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .switch-list li {
-            background-color: #333333;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s, box-shadow 0.3s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .switch-list li:hover {
-            background-color: #444444;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .switch-name {
-            font-size: 1.25rem;
-            color: #bb86fc;
-            font-weight: bold;
-        }
-        .switch-name a {
-            text-decoration: none;
-            color: #bb86fc;
-            font-weight: bold;
-        }
-        .switch-name a:hover {
-            text-decoration: underline;
-        }
-        .switch-ip {
-            font-size: 1rem;
-            color: #b0bec5;
-        }
-        .switch-ip::before {
-            content: 'IP: ';
-            font-weight: bold;
-            color: #9c4dcc;
-        }
-        @media (max-width: 768px) {
-            .switch-columns {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .column {
-                width: 100%;
-                margin-bottom: 20px;
-            }
-        }
-    </style>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="dashboard.css">
 </head>
-<body>
+
+<body class="switch-page" data-theme="midnight">
+  <div class="midnight-noise" aria-hidden="true"></div>
 
     <h1>BSHS Switches and IP Addresses</h1>
 
@@ -235,3 +154,4 @@
 
 </body>
 </html>
+
