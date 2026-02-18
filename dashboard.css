@@ -922,10 +922,10 @@ body[data-layout="compact"] .cat-body .tile-meta{ display: none !important; }
   border-radius: 14px;
   padding: 10px 12px;
 
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 12px;
+display: grid; 
+grid-template-columns: 1fr auto; 
+align-items: center; 
+column-gap: 12px;
 
   transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
 }
@@ -1011,5 +1011,6 @@ body[data-theme="light"] .switch-list li{
 
   .switch-columns{ grid-template-columns: 1fr; }
 }
+
 
 
