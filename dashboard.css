@@ -1090,8 +1090,43 @@ body[data-theme="light"] .switch-list li:hover{
     flex-direction:column;
     align-items:center;
   }
+  
   .switch-columns .column{
     width:100%;
     max-width:min(560px,calc(100vw - (var(--gutter) * 2)));
   }
+}
+.switch-columns{
+  max-width:min(1120px,var(--max));
+  gap:12px;
+}
+
+.switch-columns .column{
+  width:clamp(280px,26vw,330px);
+  border-radius:20px;
+}
+
+.switch-heading{
+  font-size:16px;
+  padding:9px 12px;
+}
+
+.switch-list{
+  padding:6px 8px 10px;
+}
+
+.switch-list li{
+  grid-template-columns:minmax(0,1fr) max-content;
+  column-gap:8px;
+  padding:5px 8px;
+  border-radius:12px;
+}
+
+.switch-name{
+  font-size:12.5px;
+}
+
+.switch-ip{
+  padding:2px 7px;
+  font-size:11px;
 }
