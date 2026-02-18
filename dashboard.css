@@ -927,6 +927,7 @@ body[data-layout="compact"] .cat-body .tile-meta{display:none !important;}
   display:flex;
   flex-wrap:wrap;
   justify-content:center;
+  align-items:flex-start;
   gap:14px;
   margin:0;
 }
@@ -943,6 +944,8 @@ body[data-layout="compact"] .cat-body .tile-meta{display:none !important;}
   backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);
   padding:0;
+  align-self:flex-start;
+  height:fit-content;
 }
 
 body[data-theme="dark"] .switch-columns .column{
@@ -964,15 +967,15 @@ body[data-theme="frost"] .switch-columns .column{
   margin:0;
   padding:10px 12px;
   text-align:center;
-  font-size:12px;
+  font-size:13.5px;
   font-weight:800;
-  letter-spacing:.22px;
-  opacity:.86;
+  letter-spacing:.24px;
+  opacity:.92;
   border-bottom:1px solid color-mix(in srgb,var(--border) 92%,transparent);
   background:
     linear-gradient(180deg,color-mix(in srgb,var(--card) 70%,transparent),transparent),
     radial-gradient(900px 220px at 50% 0%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 70%);
-  color:color-mix(in srgb,var(--accent) 55%,var(--text));
+  color:color-mix(in srgb,var(--accent) 58%,var(--text));
 }
 
 .switch-list{
@@ -989,7 +992,7 @@ body[data-theme="frost"] .switch-columns .column{
   align-items:center;
   justify-content:space-between;
   gap:10px;
-  padding:8px 10px;
+  padding:6px 10px;
   border-radius:14px;
   background:transparent;
   border:1px solid transparent;
@@ -1046,7 +1049,7 @@ body[data-theme="light"] .switch-list li:hover{
   font-size:11.1px;
   font-weight:800;
   letter-spacing:.16px;
-  padding:4px 8px;
+  padding:3px 7px;
   border-radius:999px;
   border:1px solid color-mix(in srgb,var(--border) 92%,transparent);
   background:color-mix(in srgb,var(--card) 78%,transparent);
