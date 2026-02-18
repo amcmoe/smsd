@@ -1,76 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rice Switches and IP Addresses</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rice Switches and IP Addresses</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="dashboard.css" />
+<link rel="stylesheet" href="dashboard.css" />
 </head>
 
 <body class="switch-page" data-theme="midnight" data-layout="medium">
-  <div class="midnight-noise" aria-hidden="true"></div>
+<div class="midnight-noise"></div>
 
-  <a class="tile" href="index.html" style="max-width: 260px; margin: 6px 0 14px;">
-    <div class="tile-icon">
-      <img src="https://cmd-q.net/Icons/dumpster.png" alt="Dashboard">
-    </div>
-    <div class="tile-text">
-      <div class="tile-title">Back to Dashboard</div>
-      <div class="tile-meta">Home</div>
-    </div>
-  </a>
+<a class="tile" href="index.html">
+  <div class="tile-icon"><img src="https://cmd-q.net/Icons/dumpster.png" alt="Dashboard"></div>
+  <div class="tile-text">
+    <div class="tile-title">Back to Dashboard</div>
+    <div class="tile-meta">Home</div>
+  </div>
+</a>
 
-  <h1>Rice Switches and IP Addresses</h1>
+<h1>Rice Switches and IP Addresses</h1>
 
-  <div class="switch-columns">
-    <div class="column">
-      <h2>MDF</h2>
-      <ul class="switch-list">
-        <li>
-          <span class="switch-name"><a href="http://172.18.40.1" target="_blank" rel="noopener">RICE-MDF-01</a></span>
-          <span class="switch-ip">172.18.40.1</span>
-        </li>
-        <li>
-          <span class="switch-name"><a href="http://172.18.40.2" target="_blank" rel="noopener">RICE-MDF-02</a></span>
-          <span class="switch-ip">172.18.40.2</span>
-        </li>
-      </ul>
-    </div>
+<div class="switch-columns">
 
-    <div class="column">
-      <h2>Tech Room IDF</h2>
-      <ul class="switch-list">
-        <li>
-          <span class="switch-name"><a href="http://172.18.40.14" target="_blank" rel="noopener">RICE-TECHRM-01</a></span>
-          <span class="switch-ip">172.18.40.14</span>
-        </li>
-        <li>
-          <span class="switch-name"><a href="http://172.18.40.15" target="_blank" rel="noopener">RICE-TECHRM-02</a></span>
-          <span class="switch-ip">172.18.40.15</span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="column">
-      <h2>Meadow Room IDF</h2>
-      <ul class="switch-list">
-        <li>
-          <span class="switch-name"><a href="http://172.18.40.28" target="_blank" rel="noopener">RICE-MEADOW-01</a></span>
-          <span class="switch-ip">172.18.40.28</span>
-        </li>
-        <li>
-          <span class="switch-name"><a href="http://172.18.40.29" target="_blank" rel="noopener">RICE-MEADOW-02</a></span>
-          <span class="switch-ip">172.18.40.29</span>
-        </li>
-      </ul>
-    </div>
+  <div class="column">
+    <h2 class="switch-heading">MDF</h2>
+    <ul class="switch-list">
+      <li><span class="switch-name"><a href="http://172.18.40.1" target="_blank" rel="noopener noreferrer">RICE-MDF-01</a></span><span class="switch-ip">172.18.40.1</span></li>
+      <li><span class="switch-name"><a href="http://172.18.40.2" target="_blank" rel="noopener noreferrer">RICE-MDF-02</a></span><span class="switch-ip">172.18.40.2</span></li>
+    </ul>
   </div>
 
-  <script src="dashboard.js"></script>
+  <div class="column">
+    <h2 class="switch-heading">Tech Room IDF</h2>
+    <ul class="switch-list">
+      <li><span class="switch-name"><a href="http://172.18.40.14" target="_blank" rel="noopener noreferrer">RICE-TECHRM-01</a></span><span class="switch-ip">172.18.40.14</span></li>
+      <li><span class="switch-name"><a href="http://172.18.40.15" target="_blank" rel="noopener noreferrer">RICE-TECHRM-02</a></span><span class="switch-ip">172.18.40.15</span></li>
+    </ul>
+  </div>
+
+  <div class="column">
+    <h2 class="switch-heading">Meadow Room IDF</h2>
+    <ul class="switch-list">
+      <li><span class="switch-name"><a href="http://172.18.40.28" target="_blank" rel="noopener noreferrer">RICE-MEADOW-01</a></span><span class="switch-ip">172.18.40.28</span></li>
+      <li><span class="switch-name"><a href="http://172.18.40.29" target="_blank" rel="noopener noreferrer">RICE-MEADOW-02</a></span><span class="switch-ip">172.18.40.29</span></li>
+    </ul>
+  </div>
+
+</div>
+
+<script src="dashboard.js"></script>
+<script>window.SMSD_PREFS?.apply?.();</script>
 </body>
 </html>
