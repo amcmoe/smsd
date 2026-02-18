@@ -1102,7 +1102,7 @@ body[data-theme="light"] .switch-list li:hover{
 }
 
 .switch-columns .column{
-  width:clamp(280px,26vw,330px);
+  width:clamp(260px,24vw,305px);
   border-radius:20px;
 }
 
@@ -1130,3 +1130,4 @@ body[data-theme="light"] .switch-list li:hover{
   padding:2px 7px;
   font-size:11px;
 }
+
