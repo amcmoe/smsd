@@ -13,10 +13,10 @@
     accent: "#9687cf",
   });
 
-  const ALLOWED = Object.freeze({
-    theme: new Set(["light", "dark", "midnight"]),
-    layout: new Set(["compact", "medium", "large"]),
-  });
+const ALLOWED = Object.freeze({
+  theme: new Set(["light", "dark", "midnight", "frost"]),
+  layout: new Set(["compact", "medium", "large"]),
+});
 
   const qs = (id) => document.getElementById(id);
 
@@ -134,3 +134,4 @@
 
   document.addEventListener("DOMContentLoaded", apply);
 })();
+
