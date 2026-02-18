@@ -1,126 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IFES Switches and IP Addresses</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IFES Switches and IP Addresses</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="dashboard.css" />
+<link rel="stylesheet" href="dashboard.css" />
 </head>
 
 <body class="switch-page" data-theme="midnight" data-layout="medium">
-  <div class="midnight-noise" aria-hidden="true"></div>
+<div class="midnight-noise"></div>
 
-  <a class="tile" href="index.html" style="max-width: 260px; margin: 6px 0 14px;">
-    <div class="tile-icon">
-      <img src="https://cmd-q.net/Icons/dumpster.png" alt="Dashboard">
-    </div>
-    <div class="tile-text">
-      <div class="tile-title">Back to Dashboard</div>
-      <div class="tile-meta">Home</div>
-    </div>
-  </a>
+<a class="tile" href="index.html">
+  <div class="tile-icon"><img src="https://cmd-q.net/Icons/dumpster.png" alt="Dashboard"></div>
+  <div class="tile-text">
+    <div class="tile-title">Back to Dashboard</div>
+    <div class="tile-meta">Home</div>
+  </div>
+</a>
 
-  <h1>IFES Switches and IP Addresses</h1>
+<h1>IFES Switches and IP Addresses</h1>
 
-  <div class="switch-columns">
-    <div class="column">
-      <h2>MDF</h2>
-      <ul class="switch-list">
-        <li>
-          <span class="switch-name"><a href="http://172.18.9.116" target="_blank" rel="noopener">IFES-CORE</a></span>
-          <span class="switch-ip">172.18.9.116</span>
-        </li>
-        <li>
-          <span class="switch-name"><a href="http://172.18.9.124" target="_blank" rel="noopener">IFES-MDF-A117A-01-ARUBA</a></span>
-          <span class="switch-ip">172.18.9.124</span>
-        </li>
-        <li>
-          <span class="switch-name"><a href="http://172.18.9.173" target="_blank" rel="noopener">IFES-MDF-A117A-02-ARUBA</a></span>
-          <span class="switch-ip">172.18.9.173</span>
-        </li>
-      </ul>
-    </div>
+<div class="switch-columns">
 
-    <div class="column">
-      <h2>C107A IDF (Art hallway)</h2>
-      <ul class="switch-list">
-        <li>
-          <span class="switch-name"><a href="http://172.18.9.125" target="_blank" rel="noopener">IFES-IDF-C107A-01-ARUBA</a></span>
-          <span class="switch-ip">172.18.9.125</span>
-        </li>
-        <li>
-          <span class="switch-name"><a href="http://172.18.9.134" target="_blank" rel="noopener">IFES-IDF-C107A-02-ARUBA</a></span>
-          <span class="switch-ip">172.18.9.134</span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="column">
-      <h2>C209A IDF (elevator/storage)</h2>
-      <ul class="switch-list">
-        <li>
-          <span class="switch-name"><a href="http://172.18.9.127" target="_blank" rel="noopener">IFES-IDF-C209A-01-ARUBA</a></span>
-          <span class="switch-ip">172.18.9.127</span>
-        </li>
-        <li>
-          <span class="switch-name"><a href="http://172.18.9.133" target="_blank" rel="noopener">IFES-IDF-C209A-02-ARUBA</a></span>
-          <span class="switch-ip">172.18.9.133</span>
-        </li>
-      </ul>
-    </div>
+  <div class="column">
+    <h2 class="switch-heading">MDF</h2>
+    <ul class="switch-list">
+      <li><span class="switch-name"><a href="http://172.18.9.116" target="_blank" rel="noopener noreferrer">IFES-CORE</a></span><span class="switch-ip">172.18.9.116</span></li>
+      <li><span class="switch-name"><a href="http://172.18.9.124" target="_blank" rel="noopener noreferrer">IFES-MDF-A117A-01-ARUBA</a></span><span class="switch-ip">172.18.9.124</span></li>
+      <li><span class="switch-name"><a href="http://172.18.9.173" target="_blank" rel="noopener noreferrer">IFES-MDF-A117A-02-ARUBA</a></span><span class="switch-ip">172.18.9.173</span></li>
+    </ul>
   </div>
 
-  <div class="switch-columns">
-    <div class="column">
-      <h2>C218A IDF (Solar panel room)</h2>
-      <ul class="switch-list">
-        <li>
-          <span class="switch-name"><a href="http://172.18.9.129" target="_blank" rel="noopener">IFES-IDF-C218A-ARUBA</a></span>
-          <span class="switch-ip">172.18.9.129</span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="column">
-      <h2>D209A IDF (above art hallway IDF)</h2>
-      <ul class="switch-list">
-        <li>
-          <span class="switch-name"><a href="http://172.18.9.131" target="_blank" rel="noopener">IFES-IDF-D209A-ARUBA</a></span>
-          <span class="switch-ip">172.18.9.131</span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="column">
-      <h2>E105A IDF (Music hallway)</h2>
-      <ul class="switch-list">
-        <li>
-          <span class="switch-name"><a href="http://172.18.9.123" target="_blank" rel="noopener">IFES-IDF-E105A-ARUBA</a></span>
-          <span class="switch-ip">172.18.9.123</span>
-        </li>
-        <li>
-          <span class="switch-name"><a href="http://172.18.9.163" target="_blank" rel="noopener">PressBoxAruba</a></span>
-          <span class="switch-ip">172.18.9.163</span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="column">
-      <h2>E106B IDF (Gym)</h2>
-      <ul class="switch-list">
-        <li>
-          <span class="switch-name"><a href="http://172.18.9.126" target="_blank" rel="noopener">IFES-IDF-E106B-ARUBA</a></span>
-          <span class="switch-ip">172.18.9.126</span>
-        </li>
-      </ul>
-    </div>
+  <div class="column">
+    <h2 class="switch-heading">C107A IDF (Art hallway)</h2>
+    <ul class="switch-list">
+      <li><span class="switch-name"><a href="http://172.18.9.125" target="_blank" rel="noopener noreferrer">IFES-IDF-C107A-01-ARUBA</a></span><span class="switch-ip">172.18.9.125</span></li>
+      <li><span class="switch-name"><a href="http://172.18.9.134" target="_blank" rel="noopener noreferrer">IFES-IDF-C107A-02-ARUBA</a></span><span class="switch-ip">172.18.9.134</span></li>
+    </ul>
   </div>
 
-  <script src="dashboard.js"></script>
+  <div class="column">
+    <h2 class="switch-heading">C209A IDF (elevator/storage)</h2>
+    <ul class="switch-list">
+      <li><span class="switch-name"><a href="http://172.18.9.127" target="_blank" rel="noopener noreferrer">IFES-IDF-C209A-01-ARUBA</a></span><span class="switch-ip">172.18.9.127</span></li>
+      <li><span class="switch-name"><a href="http://172.18.9.133" target="_blank" rel="noopener noreferrer">IFES-IDF-C209A-02-ARUBA</a></span><span class="switch-ip">172.18.9.133</span></li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="switch-columns">
+
+  <div class="column">
+    <h2 class="switch-heading">C218A IDF (Solar panel room)</h2>
+    <ul class="switch-list">
+      <li><span class="switch-name"><a href="http://172.18.9.129" target="_blank" rel="noopener noreferrer">IFES-IDF-C218A-ARUBA</a></span><span class="switch-ip">172.18.9.129</span></li>
+    </ul>
+  </div>
+
+  <div class="column">
+    <h2 class="switch-heading">D209A IDF (above art hallway IDF)</h2>
+    <ul class="switch-list">
+      <li><span class="switch-name"><a href="http://172.18.9.131" target="_blank" rel="noopener noreferrer">IFES-IDF-D209A-ARUBA</a></span><span class="switch-ip">172.18.9.131</span></li>
+    </ul>
+  </div>
+
+  <div class="column">
+    <h2 class="switch-heading">E105A IDF (Music hallway)</h2>
+    <ul class="switch-list">
+      <li><span class="switch-name"><a href="http://172.18.9.123" target="_blank" rel="noopener noreferrer">IFES-IDF-E105A-ARUBA</a></span><span class="switch-ip">172.18.9.123</span></li>
+      <li><span class="switch-name"><a href="http://172.18.9.163" target="_blank" rel="noopener noreferrer">PressBoxAruba</a></span><span class="switch-ip">172.18.9.163</span></li>
+    </ul>
+  </div>
+
+  <div class="column">
+    <h2 class="switch-heading">E106B IDF (Gym)</h2>
+    <ul class="switch-list">
+      <li><span class="switch-name"><a href="http://172.18.9.126" target="_blank" rel="noopener noreferrer">IFES-IDF-E106B-ARUBA</a></span><span class="switch-ip">172.18.9.126</span></li>
+    </ul>
+  </div>
+
+</div>
+
+<script src="dashboard.js"></script>
+<script>window.SMSD_PREFS?.apply?.();</script>
 </body>
 </html>
