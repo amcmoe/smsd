@@ -116,7 +116,7 @@ body[data-layout="large"]{
   --col-max:255px;
   --gap:8px;
   --tile-h:76px;
-  --tile-icon:44px;
+  --tile-icon:48px; /* CHANGED: slightly bigger icons in Large */
 }
 
 @media (min-width:1600px){
@@ -578,6 +578,26 @@ main{
 .quick-row .tile-title{white-space:nowrap;}
 .quick-row .tile-meta{display:none !important;}
 
+/* ADDED: make MEDIUM quick chips a touch smaller (match Large look) */
+body[data-layout="medium"] .quick-row .tile{
+  min-height:38px;
+  padding:5px 11px;
+  gap:9px;
+}
+body[data-layout="medium"] .quick-row .tile-icon{
+  width:24px;
+  height:24px;
+  border-radius:8px;
+}
+body[data-layout="medium"] .quick-row .tile-title{
+  font-size:12.5px;
+}
+
+/* Keep Large chips as-is (your current “smaller” reference point) */
+body[data-layout="large"] .quick-row .tile-title{
+  font-size:12.5px;
+}
+
 .columns{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--col-min), var(--col-max)));
@@ -1004,5 +1024,3 @@ body[data-theme="frost"] .switch-list li{
   .quick-row{justify-content:flex-start;}
   .switch-columns{grid-template-columns:1fr;}
 }
-
-
