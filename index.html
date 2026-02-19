@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SMSD Tech Team Dashboard</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="https://cmd-q.net/Icons/apple_icon.png">
+  <link rel="icon" type="image/png" href="https://cmd-q.net/Icons/dumpster_lowres.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,22 +45,18 @@
           <div class="prefs-drawer" id="prefsDrawer">
             <button class="prefs-toggle" id="prefsToggle" type="button"
                     aria-expanded="false" aria-controls="prefsPanel"
-                    title="Show/hide theme/layout/accent/reset">
+                    title="Show/hide settings" aria-label="Show/hide settings">
               <span class="prefs-icon" aria-hidden="true">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                   <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z" stroke="currentColor" stroke-width="2"/>
                   <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
               </span>
-              <span class="prefs-label">Customize</span>
-              <svg class="chev" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
             </button>
 
-            <div class="prefs-panel" id="prefsPanel" role="dialog" aria-label="Customize panel">
-              <div class="controls" title="Saved per browser">
-                <div class="field" title="Saved per browser">
+            <div class="prefs-panel" id="prefsPanel" role="dialog" aria-label="Settings panel">
+              <div class="controls">
+                <div class="field">
                   <span class="chip" aria-hidden="true">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                       <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z" stroke="currentColor" stroke-width="2"/>
@@ -66,18 +64,26 @@
                     </svg>
                   </span>
                   <label for="themeSelect">Theme</label>
-                  <select id="themeSelect">
+                  <select id="themeSelect" class="native-hidden" aria-hidden="true" tabindex="-1">
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                     <option value="midnight">Midnight</option>
                     <option value="chroma">Chroma</option>
                   </select>
-                  <svg class="caret" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
+                  <div class="dropdown" data-dd="theme">
+                    <button class="dd-trigger" id="themeTrigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="themeMenu">
+                      <span class="dd-value">Light</span>
+                    </button>
+                    <div class="dd-menu" id="themeMenu" role="listbox" aria-label="Theme">
+                      <button class="dd-option" type="button" role="option" data-value="light">Light</button>
+                      <button class="dd-option" type="button" role="option" data-value="dark">Dark</button>
+                      <button class="dd-option" type="button" role="option" data-value="midnight">Midnight</button>
+                      <button class="dd-option" type="button" role="option" data-value="chroma">Chroma</button>
+                    </div>
+                  </div>
                 </div>
 
-                <div class="field" title="Saved per browser">
+                <div class="field">
                   <span class="chip" aria-hidden="true">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                       <path d="M4 6h7v12H4V6Z" stroke="currentColor" stroke-width="2"/>
@@ -86,14 +92,21 @@
                     </svg>
                   </span>
                   <label for="layoutSelect">Layout</label>
-                  <select id="layoutSelect">
+                  <select id="layoutSelect" class="native-hidden" aria-hidden="true" tabindex="-1">
                     <option value="compact">Compact</option>
                     <option value="medium" selected>Medium</option>
                     <option value="large">Large</option>
                   </select>
-                  <svg class="caret" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
+                  <div class="dropdown" data-dd="layout">
+                    <button class="dd-trigger" id="layoutTrigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="layoutMenu">
+                      <span class="dd-value">Medium</span>
+                    </button>
+                    <div class="dd-menu" id="layoutMenu" role="listbox" aria-label="Layout">
+                      <button class="dd-option" type="button" role="option" data-value="compact">Compact</button>
+                      <button class="dd-option" type="button" role="option" data-value="medium">Medium</button>
+                      <button class="dd-option" type="button" role="option" data-value="large">Large</button>
+                    </div>
+                  </div>
                 </div>
 
                 <button class="palette-btn" id="paletteBtn" type="button" aria-label="Pick accent color" title="Pick accent color">
@@ -127,10 +140,10 @@
 
   <script>
   const QUICK_LINKS = [
-    { id: 'bshs-switches', title: 'BSHS Switches', meta: '', href: 'https://cmd-q.net/BSHSSwitches.html', img: 'https://cmd-q.net/Icons/Networkstack.png' },
-    { id: 'ybms-switches', title: 'YBMS Switches', meta: '', href: 'https://cmd-q.net/YBMSSwitches.html', img: 'https://cmd-q.net/Icons/Networkstack.png' },
-    { id: 'ifes-switches', title: 'IFES Switches', meta: '', href: 'https://cmd-q.net/IFESSwitches.html', img: 'https://cmd-q.net/Icons/Networkstack.png' },
-    { id: 'rice-switches', title: 'Rice Switches', meta: '', href: 'https://cmd-q.net/RiceSwitches.html', img: 'https://cmd-q.net/Icons/Networkstack.png' }
+    { id: 'bshs-switches', title: 'BSHS Switches', meta: '', href: 'https://cmd-q.net/BSHSSwitches.html', icon: 'server' },
+    { id: 'ybms-switches', title: 'YBMS Switches', meta: '', href: 'https://cmd-q.net/YBMSSwitches.html', icon: 'server' },
+    { id: 'ifes-switches', title: 'IFES Switches', meta: '', href: 'https://cmd-q.net/IFESSwitches.html', icon: 'server' },
+    { id: 'rice-switches', title: 'Rice Switches', meta: '', href: 'https://cmd-q.net/RiceSwitches.html', icon: 'server' }
   ];
 
   const CATEGORIES = [
@@ -147,7 +160,7 @@
     {
       name: "Microsoft Admin", icon: "shield", color: "#6aa6ff",
       items: [
-        { id: 'ms-admin', title: 'Microsoft Admin', meta: 'Tenant admin', href: 'https://admin.microsoft.com', img: 'https://cmd-q.net/Icons/MSAdmin.svg' },
+        { id: 'ms-admin', title: 'Microsoft Admin Center', meta: 'Tenant admin', href: 'https://admin.microsoft.com', img: 'https://cmd-q.net/Icons/MSAdmin.svg' },
         { id: 'entra', title: 'Entra Admin', meta: 'Identity & access', href: 'https://entra.microsoft.com/', img: 'https://cmd-q.net/Icons/AAD.svg' },
         { id: 'azure', title: 'Azure Portal', meta: 'Cloud resources', href: 'https://portal.azure.com/#home', img: 'https://cmd-q.net/Icons/azure.png' },
         { id: 'intune', title: 'Intune', meta: 'Device management', href: 'https://intune.microsoft.com/#home', img: 'https://cmd-q.net/Icons/microsoft-intune.png' },
@@ -158,10 +171,10 @@
     {
       name: "Security", icon: "lock", color: "#a78bfa",
       items: [
-        { id: 'defender', title: 'Defender Portal', meta: 'Security center', href: 'https://security.microsoft.com/', img: 'https://cmd-q.net/Icons/defender.png' },
+        { id: 'contentkeeper', title: 'ContentKeeper', meta: 'Filtering console', href: 'https://filter.smsd.local/ck/#/login', img: 'https://cmd-q.net/Icons/contentkeeper.png' },
         { id: 'mimecast', title: 'Mimecast', meta: 'Email security', href: 'https://login.mimecast.com', img: 'https://cmd-q.net/Icons/mimecast.png' },
         { id: 'sentinelone', title: 'SentinelOne', meta: 'EDR console', href: 'https://usea1-paiu.sentinelone.net/login', img: 'https://cmd-q.net/Icons/SentinelOne.png' },
-        { id: 'contentkeeper', title: 'ContentKeeper', meta: 'Filtering console', href: 'https://filter.smsd.local/ck/#/login', img: 'https://cmd-q.net/Icons/contentkeeper.png' },
+        { id: 'defender', title: 'Defender Portal', meta: 'Security center', href: 'https://security.microsoft.com/', img: 'https://cmd-q.net/Icons/defender.png' },
         { id: 'genetec', title: 'Genetec', meta: 'Security Desk', href: 'https://bshs-cameraserv/WebApp/', img: 'https://cmd-q.net/Icons/genetec.png' }
       ]
     },
@@ -169,8 +182,8 @@
       name: "Network & Monitoring", icon: "activity", color: "#5ee3a1",
       items: [
         { id: 'meraki', title: 'Meraki Dashboard', meta: 'Network & MDM', href: 'https://n21.meraki.com/Systems-Manager/n/kM3LDav/manage/pcc/list', img: 'https://cmd-q.net/Icons/Meraki.png' },
-        { id: 'auvik', title: 'Auvik', meta: 'Network monitoring', href: 'https://smsd.us1.my.auvik.com/#entity/root/dashboard', img: 'https://cmd-q.net/Icons/auvikedited.png' },
         { id: 'lansweeper', title: 'Lansweeper', meta: 'Asset inventory', href: 'http://lansweeper.smsd.us:81/default.aspx', img: 'https://cmd-q.net/Icons/lansweeper.png' },
+        { id: 'auvik', title: 'Auvik', meta: 'Network monitoring', href: 'https://smsd.us1.my.auvik.com/#entity/root/dashboard', img: 'https://cmd-q.net/Icons/auvikedited.png' },
         { id: 'unifi', title: 'Ubiquiti UniFi', meta: 'Cloud console', href: 'https://unifi.ui.com/', img: 'https://cmd-q.net/Icons/unifi.png' },
         { id: 'uisp', title: 'Ubiquiti UISP', meta: 'Network management', href: 'https://smsd.uisp.com/nms/devices/', img: 'https://cmd-q.net/Icons/uisp.png' },
         { id: 'meraki-ap', title: 'Meraki AP Info', meta: 'Local AP page', href: 'http://10.128.128.126/#connection', img: 'https://cmd-q.net/Icons/Wifi.png' }
@@ -179,9 +192,9 @@
     {
       name: "Infrastructure", icon: "server", color: "#ffd166",
       items: [
+        { id: 'connectwise', title: 'ConnectWise', meta: 'Remote access', href: 'https://smsd.screenconnect.com/Host#Access', img: 'https://cmd-q.net/Icons/Connectwise.png' },
         { id: 'vsphere', title: 'vSphere', meta: 'Virtual infrastructure', href: 'https://vcsa.smsd.local/ui/', img: 'https://cmd-q.net/Icons/vmware.png' },
         { id: 'synology', title: 'Synology NAS', meta: 'Storage console', href: 'https://172.18.8.9', img: 'https://cmd-q.net/Icons/Synology.png' },
-        { id: 'connectwise', title: 'ConnectWise', meta: 'Remote access', href: 'https://smsd.screenconnect.com/Host#Access', img: 'https://cmd-q.net/Icons/Connectwise.png' },
         { id: 'barracuda', title: 'Barracuda Backup', meta: 'Backup status', href: 'https://backup.barracudanetworks.com/all/status/', img: 'https://cmd-q.net/Icons/barracuda.png' },
         { id: 'fortivoice', title: 'FortiVoice', meta: 'Telephony admin', href: 'https://fortivoice.smsd.local/admin/AdminLogin.html', img: 'https://cmd-q.net/Icons/fortivoice.png' }
       ]
@@ -190,8 +203,8 @@
       name: "School Ops", icon: "book", color: "#ff6b9a",
       items: [
         { id: 'google-admin', title: 'Google Admin', meta: 'Directory, devices, apps', href: 'https://admin.google.com/?pli=1', img: 'https://cmd-q.net/Icons/GoogleAdmin.png' },
-        { id: 'apple-school', title: 'Apple School Manager', meta: 'Devices & accounts', href: 'https://school.apple.com/', img: 'https://cmd-q.net/Icons/Apple.png' },
         { id: 'sapphire', title: 'Sapphire Suite', meta: 'Gradebook / SIS', href: 'https://smsd-sapphire.k12system.com/Gradebook/main.cfm', img: 'https://cmd-q.net/Icons/Sapphire.png' },
+        { id: 'apple-school', title: 'Apple School Manager', meta: 'Devices & accounts', href: 'https://school.apple.com/', img: 'https://cmd-q.net/Icons/Apple.png' },
         { id: 'clever', title: 'Clever Admin', meta: 'SSO / rostering', href: 'https://clever.com/oauth/district_admin/login?target=%3BbzRrcGh2aDJ5Z252eDgzdnhjNjQ%3D%3BaHR0cHM6Ly9zY2hvb2xzLmNsZXZlci5jb20vYXV0aC1jYWxsYmFjaw%3D%3D%3BNmNhMWZlZWNmZDQyNDA4NjRhMDE3YzU5NDUxZTUzMTgzMjg3OGE1NTIxOTZiZWU0M2UxZDZjOGU2ZTc0ZDZiZQ%3D%3D%3BY29kZQ%3D%3D%3BZGlzdHJpY3RfYWRtaW4%3D', img: 'https://cmd-q.net/Icons/clever.png' },
         { id: 'papercut', title: 'Papercut', meta: 'Print management', href: 'http://papercut.smsd.local:9191/admin', img: 'https://cmd-q.net/Icons/papercutnewlogo.webp' },
         { id: 'revtrak', title: 'RevTrak', meta: 'Payments', href: 'https://smsdpa.revtrak.net/Portal/', img: 'https://cmd-q.net/Icons/revtrak.png' },
@@ -202,13 +215,13 @@
     {
       name: "Vendors & Licensing", icon: "tag", color: "#7cf0ff",
       items: [
-        { id: 'vls', title: 'Volume Licensing', meta: 'Keys, downloads', href: 'https://www.microsoft.com/licensing/ServiceCenter/default.aspx', img: 'https://cmd-q.net/Icons/VPP.png' },
-        { id: 'adobe', title: 'Adobe Admin', meta: 'Licensing & users', href: 'https://adminconsole.adobe.com/61C057945F0DB98A0A495FF5@AdobeOrg/overview', img: 'https://cmd-q.net/Icons/adobe.png' },
-        { id: 'pisignage', title: 'piSignage', meta: 'Digital signage', href: 'https://pisignage.com/', img: 'https://cmd-q.net/Icons/pisignage.png' },
-        { id: 'caiu', title: 'CAIU Helpdesk', meta: 'Support portal', href: 'https://caiu.myportallogin.com/', img: 'https://cmd-q.net/Icons/CAIU.png' },
         { id: 'csiu', title: 'Employee Portal', meta: 'CSIU', href: 'https://fis5.csiu-technology.org/SMID/Account/LogOn', img: 'https://cmd-q.net/Icons/csiu.png' },
-        { id: 'savvas', title: 'Savvas', meta: 'SSO', href: 'https://sso.rumba.pk12ls.com/sso/login', img: 'https://cmd-q.net/Icons/savvas.png' },
+        { id: 'adobe', title: 'Adobe Admin', meta: 'Licensing & users', href: 'https://adminconsole.adobe.com/61C057945F0DB98A0A495FF5@AdobeOrg/overview', img: 'https://cmd-q.net/Icons/adobe.png' },
+        { id: 'caiu', title: 'CAIU Helpdesk', meta: 'Support portal', href: 'https://caiu.myportallogin.com/', img: 'https://cmd-q.net/Icons/CAIU.png' },
+        { id: 'pisignage', title: 'piSignage', meta: 'Digital signage', href: 'https://pisignage.com/', img: 'https://cmd-q.net/Icons/pisignage.png' },
         { id: 'triton', title: 'Triton Sensors', meta: 'Monitoring', href: 'https://app.tritonsensors.com/auth/login', img: 'https://cmd-q.net/Icons/triton.png' },
+        { id: 'vls', title: 'Volume Licensing', meta: 'Keys, downloads', href: 'https://www.microsoft.com/licensing/ServiceCenter/default.aspx', img: 'https://cmd-q.net/Icons/VPP.png' },
+        { id: 'savvas', title: 'Savvas', meta: 'SSO', href: 'https://sso.rumba.pk12ls.com/sso/login', img: 'https://cmd-q.net/Icons/savvas.png' },
         { id: 'kajeet', title: 'Kajeet Portal', meta: 'Filtering / devices', href: 'https://sentinel.kajeet.com/auth/login', img: 'https://cmd-q.net/Icons/kajeet.png' }
       ]
     }
@@ -247,13 +260,18 @@
     accentPicker: document.getElementById('accentPicker'),
     prefsToggleBtn: document.getElementById('prefsToggle'),
     prefsDrawerEl: document.getElementById('prefsDrawer'),
-    prefsPanelEl: document.getElementById('prefsPanel')
+    prefsPanelEl: document.getElementById('prefsPanel'),
+    themeTrigger: document.getElementById('themeTrigger'),
+    themeMenu: document.getElementById('themeMenu'),
+    layoutTrigger: document.getElementById('layoutTrigger'),
+    layoutMenu: document.getElementById('layoutMenu')
   };
 
   let orderByCat = {};
   let quickOrder = [];
   let sortables = [];
   let prefsAutoCloseTimer = null;
+  const dropdownState = { openMenu: null };
 
   const readJSON = (key, fallback) => {
     try {
@@ -267,6 +285,55 @@
   const setAttr = (node, name, value) => node?.setAttribute(name, value);
 
   const normalizeTheme = (value) => (value === 'frost' ? 'chroma' : value);
+
+  const closeDropdowns = () => {
+    document.querySelectorAll('.dropdown[data-open="true"]').forEach(dd => dd.setAttribute('data-open', 'false'));
+    if (el.themeTrigger) el.themeTrigger.setAttribute('aria-expanded', 'false');
+    if (el.layoutTrigger) el.layoutTrigger.setAttribute('aria-expanded', 'false');
+    dropdownState.openMenu = null;
+  };
+
+  const syncDropdown = (selectEl, triggerEl, menuEl) => {
+    if (!selectEl || !triggerEl || !menuEl) return;
+    const selected = selectEl.options[selectEl.selectedIndex];
+    const valueEl = triggerEl.querySelector('.dd-value');
+    if (valueEl) valueEl.textContent = selected ? selected.text : '';
+    menuEl.querySelectorAll('.dd-option').forEach(btn => {
+      const isSelected = btn.getAttribute('data-value') === selectEl.value;
+      btn.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+      btn.classList.toggle('is-selected', isSelected);
+    });
+  };
+
+  const setupDropdown = (selectEl, triggerEl, menuEl) => {
+    if (!selectEl || !triggerEl || !menuEl) return;
+    const root = triggerEl.closest('.dropdown');
+
+    triggerEl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = root?.getAttribute('data-open') === 'true';
+      closeDropdowns();
+      if (!isOpen) {
+        root?.setAttribute('data-open', 'true');
+        triggerEl.setAttribute('aria-expanded', 'true');
+        dropdownState.openMenu = menuEl.id;
+      }
+    });
+
+    menuEl.addEventListener('click', (e) => {
+      const opt = e.target.closest('.dd-option');
+      if (!opt) return;
+      e.stopPropagation();
+      const value = opt.getAttribute('data-value');
+      if (!value) return;
+      if (selectEl.value !== value) {
+        selectEl.value = value;
+        selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      syncDropdown(selectEl, triggerEl, menuEl);
+      closeDropdowns();
+    });
+  };
 
   const applyAccent = (hex) => {
     document.documentElement.style.setProperty('--accent', hex);
@@ -296,9 +363,12 @@
 
   const tileHTML = (item, scopeName) => {
     const titleKey = `${item.title} ${item.meta || ''} ${scopeName}`.toLowerCase();
+    const iconMarkup = item.icon
+      ? iconSVG(item.icon)
+      : `<img src="${item.img}" alt="${item.title}" loading="lazy" decoding="async">`;
     return `
-      <a class="tile" href="${item.href}" data-id="${item.id}" data-scope="${scopeName}" data-title="${titleKey}" data-reorder="true">
-        <div class="tile-icon"><img src="${item.img}" alt="${item.title}" loading="lazy" decoding="async"></div>
+      <a class="tile" href="${item.href}" data-id="${item.id}" data-scope="${scopeName}" data-title="${titleKey}">
+        <div class="tile-icon">${iconMarkup}</div>
         <div class="tile-text">
           <div class="tile-title">${item.title}</div>
           <div class="tile-meta">${item.meta || ''}</div>
@@ -316,37 +386,27 @@
     destroySortables();
     if (typeof Sortable === 'undefined') return;
 
-    const baseSortable = {
-      animation: 320,
-      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-      delay: 120,
+    sortables.push(new Sortable(el.quickRow, {
+      animation: 140,
+      delay: 150,
       delayOnTouchOnly: true,
       touchStartThreshold: 5,
-      swapThreshold: 0.62,
-      invertSwap: true,
-      ghostClass: 'sortable-ghost',
-      chosenClass: 'sortable-chosen',
-      dragClass: 'sortable-drag',
-      onStart: () => document.body.classList.add('reorder-active')
-    };
-
-    sortables.push(new Sortable(el.quickRow, {
-      ...baseSortable,
       onEnd: () => {
         quickOrder = [...el.quickRow.querySelectorAll('.tile')].map(t => t.getAttribute('data-id'));
         localStorage.setItem(STORAGE.quickOrder, JSON.stringify(quickOrder));
-        document.body.classList.remove('reorder-active');
       }
     }));
 
     document.querySelectorAll('.cat-body').forEach(body => {
       const catName = body.getAttribute('data-cat-body');
       sortables.push(new Sortable(body, {
-        ...baseSortable,
+        animation: 140,
+        delay: 150,
+        delayOnTouchOnly: true,
+        touchStartThreshold: 5,
         onEnd: () => {
           orderByCat[catName] = [...body.querySelectorAll('.tile')].map(t => t.getAttribute('data-id'));
           localStorage.setItem(STORAGE.order, JSON.stringify(orderByCat));
-          document.body.classList.remove('reorder-active');
         }
       }));
     });
@@ -419,6 +479,7 @@
       clearTimeout(prefsAutoCloseTimer);
       prefsAutoCloseTimer = null;
     }
+    if (!open) closeDropdowns();
     setAttr(document.body, 'data-prefs', open ? 'open' : 'closed');
     setAttr(el.prefsToggleBtn, 'aria-expanded', open ? 'true' : 'false');
     localStorage.setItem(STORAGE.prefsCollapsed, open ? '0' : '1');
@@ -446,10 +507,12 @@
     if (rawTheme !== theme) localStorage.setItem(STORAGE.theme, theme);
     setAttr(document.body, 'data-theme', theme);
     if (el.themeSelect) el.themeSelect.value = theme;
+    syncDropdown(el.themeSelect, el.themeTrigger, el.themeMenu);
 
     const layout = localStorage.getItem(STORAGE.layout) || 'medium';
     setAttr(document.body, 'data-layout', layout);
     if (el.layoutSelect) el.layoutSelect.value = layout;
+    syncDropdown(el.layoutSelect, el.layoutTrigger, el.layoutMenu);
 
     const accent = localStorage.getItem(STORAGE.accent) || '#9687cf';
     applyAccent(accent);
@@ -479,12 +542,14 @@
     el.themeSelect?.addEventListener('change', () => {
       setAttr(document.body, 'data-theme', el.themeSelect.value);
       localStorage.setItem(STORAGE.theme, el.themeSelect.value);
+      syncDropdown(el.themeSelect, el.themeTrigger, el.themeMenu);
       schedulePrefsAutoClose();
     });
 
     el.layoutSelect?.addEventListener('change', () => {
       setAttr(document.body, 'data-layout', el.layoutSelect.value);
       localStorage.setItem(STORAGE.layout, el.layoutSelect.value);
+      syncDropdown(el.layoutSelect, el.layoutTrigger, el.layoutMenu);
       applyFilter();
       schedulePrefsAutoClose();
     });
@@ -505,14 +570,22 @@
     });
 
     document.addEventListener('click', (e) => {
+      closeDropdowns();
       if (document.body.getAttribute('data-prefs') !== 'open') return;
       if (!el.prefsDrawerEl?.contains(e.target)) setPrefsOpen(false);
     });
 
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape') return;
+      if (dropdownState.openMenu) {
+        closeDropdowns();
+        return;
+      }
       if (document.body.getAttribute('data-prefs') === 'open') setPrefsOpen(false);
     });
+
+    setupDropdown(el.themeSelect, el.themeTrigger, el.themeMenu);
+    setupDropdown(el.layoutSelect, el.layoutTrigger, el.layoutMenu);
 
     el.prefsPanelEl?.addEventListener('click', (e) => e.stopPropagation());
     el.prefsPanelEl?.addEventListener('pointerdown', cancelPrefsAutoClose);
@@ -526,5 +599,7 @@
 </script>
 </body>
 </html>
+
+
 
 
