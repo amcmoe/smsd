@@ -64,7 +64,7 @@
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                     <option value="midnight">Midnight</option>
-                    <option value="frost">Frost</option>
+                    <option value="frost">Chroma</option>
                   </select>
                   <svg class="caret" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -288,8 +288,8 @@
   const tileHTML = (item, scopeName) => {
     const titleKey = `${item.title} ${item.meta || ''} ${scopeName}`.toLowerCase();
     return `
-      <a class="tile" href="${item.href}" data-id="${item.id}" data-scope="${scopeName}" data-title="${titleKey}">
-        <div class="tile-icon"><img src="${item.img}" alt="${item.title}"></div>
+      <a class="tile" href="${item.href}" data-id="${item.id}" data-scope="${scopeName}" data-title="${titleKey}" data-reorder="true">
+        <div class="tile-icon"><img src="${item.img}" alt="${item.title}" loading="lazy" decoding="async"></div>
         <div class="tile-text">
           <div class="tile-title">${item.title}</div>
           <div class="tile-meta">${item.meta || ''}</div>
@@ -307,27 +307,37 @@
     destroySortables();
     if (typeof Sortable === 'undefined') return;
 
-    sortables.push(new Sortable(el.quickRow, {
-      animation: 140,
-      delay: 150,
+    const baseSortable = {
+      animation: 320,
+      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      delay: 120,
       delayOnTouchOnly: true,
       touchStartThreshold: 5,
+      swapThreshold: 0.62,
+      invertSwap: true,
+      ghostClass: 'sortable-ghost',
+      chosenClass: 'sortable-chosen',
+      dragClass: 'sortable-drag',
+      onStart: () => document.body.classList.add('reorder-active')
+    };
+
+    sortables.push(new Sortable(el.quickRow, {
+      ...baseSortable,
       onEnd: () => {
         quickOrder = [...el.quickRow.querySelectorAll('.tile')].map(t => t.getAttribute('data-id'));
         localStorage.setItem(STORAGE.quickOrder, JSON.stringify(quickOrder));
+        document.body.classList.remove('reorder-active');
       }
     }));
 
     document.querySelectorAll('.cat-body').forEach(body => {
       const catName = body.getAttribute('data-cat-body');
       sortables.push(new Sortable(body, {
-        animation: 140,
-        delay: 150,
-        delayOnTouchOnly: true,
-        touchStartThreshold: 5,
+        ...baseSortable,
         onEnd: () => {
           orderByCat[catName] = [...body.querySelectorAll('.tile')].map(t => t.getAttribute('data-id'));
           localStorage.setItem(STORAGE.order, JSON.stringify(orderByCat));
+          document.body.classList.remove('reorder-active');
         }
       }));
     });
