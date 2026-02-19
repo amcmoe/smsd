@@ -1,175 +1,198 @@
 /* ==========================================================================
-   1. NORD PALETTE & CORE VARS
+   1. VARIABLES & NORD PALETTE
    ========================================================================== */
 :root {
-  --nord0: #2e3440; --nord1: #3b4252; --nord2: #434c5e; --nord3: #4c566a;
-  --nord4: #d8dee9; --nord5: #e5e9f0; --nord6: #eceff4;
-  --nord7: #8fbcbb; --nord8: #88c0d0; --nord9: #81a1c1; --nord10: #5e81ac;
+  /* Nord Specifics */
+  --nord-bg: #2E3440;
+  --nord-card: #3B4252;
+  --nord-border: #434C5E;
+  --nord-text: #ECEFF4;
+  --nord-muted: #D8DEE9;
+  --nord-frost: #88C0D0;
+  --nord-frost-dark: #5E81AC;
 
+  /* Global Defaults */
   --max-w: 1800px;
   --gutter: 20px;
-  --gap: 16px;
   --radius: 12px;
+  --shadow: 0 4px 6px rgba(0,0,0,0.1);
   
-  /* Defaults */
-  --bg: var(--nord0);
-  --text: var(--nord6);
-  --muted: var(--nord4);
-  --card: rgba(59, 66, 82, 0.5);
-  --border: rgba(216, 222, 233, 0.1);
-  --accent: var(--nord8);
-  
-  --col-min: 300px; /* Prevents sliver columns */
+  /* Dynamic Variables (Overridden by themes) */
+  --bg: var(--nord-bg);
+  --card-bg: var(--nord-card);
+  --text: var(--nord-text);
+  --border: var(--nord-border);
+  --accent: var(--nord-frost);
 }
 
 /* ==========================================================================
-   2. THEMES
+   2. THEME OVERRIDES
    ========================================================================== */
+[data-theme="frost"] {
+  --bg: #2E3440;
+  --card-bg: rgba(59, 66, 82, 0.8); /* Glassy Nord1 */
+  --text: #ECEFF4;
+  --border: #4C566A;
+  --accent: #88C0D0;
+  backdrop-filter: blur(10px);
+}
+
 [data-theme="light"] {
-  --bg: #f0f2f5; --text: #2e3440; --muted: #4c566a; 
-  --card: #ffffff; --border: rgba(0,0,0,0.08); --accent: #5e81ac;
+  --bg: #F0F2F5; --card-bg: #FFFFFF; --text: #1F2937; 
+  --border: #E5E7EB; --accent: #3B82F6;
 }
 
 [data-theme="dark"] {
-  --bg: #1a1c23; --text: #eceff4; --muted: #9ca3af;
-  --card: #242933; --border: rgba(255,255,255,0.05); --accent: #81a1c1;
-}
-
-[data-theme="frost"] {
-  --bg: var(--nord0); --text: var(--nord6); --card: var(--nord1);
-  --border: var(--nord2); --accent: var(--nord8);
-}
-
-[data-theme="midnight"] {
-  --bg: #05070a; --text: #f0f2f5; --card: #0d1117; --accent: #c9d1d9;
+  --bg: #111827; --card-bg: #1F2937; --text: #F9FAFB;
+  --border: #374151; --accent: #60A5FA;
 }
 
 /* ==========================================================================
-   3. LAYOUT ENGINE (The Core Logic)
+   3. GLOBAL RESET & STRUCTURE
    ========================================================================== */
-/* COMPACT: 2-column pills, Square-ish, Title only */
-body[data-layout="compact"] {
-  --col-min: 260px;
-  --tile-h: 80px;
-}
-body[data-layout="compact"] .cat-body { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-body[data-layout="compact"] .tile { flex-direction: column; text-align: center; justify-content: center; padding: 10px; }
-body[data-layout="compact"] .tile-meta { display: none; }
-body[data-layout="compact"] .tile-icon { margin-bottom: 5px; width: 32px; height: 32px; }
-
-/* MEDIUM: 1-column, Title only */
-body[data-layout="medium"] {
-  --col-min: 280px;
-  --tile-h: 54px;
-}
-body[data-layout="medium"] .cat-body { display: flex; flex-direction: column; gap: 6px; }
-body[data-layout="medium"] .tile-meta { display: none; }
-body[data-layout="medium"] .tile-icon { width: 28px; height: 28px; }
-
-/* LARGE: 1-column, Title + Meta, Large Icons */
-body[data-layout="large"] {
-  --col-min: 340px;
-  --tile-h: 76px;
-}
-body[data-layout="large"] .cat-body { display: flex; flex-direction: column; gap: 10px; }
-body[data-layout="large"] .tile-icon { width: 48px; height: 48px; }
-
-/* ==========================================================================
-   4. BASE STYLES
-   ========================================================================== */
-* { box-sizing: border-box; transition: background 0.2s, border 0.2s; }
-body { 
-  margin: 0; background: var(--bg); color: var(--text); 
-  font-family: 'Quicksand', sans-serif; min-height: 100vh;
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: 'Quicksand', sans-serif;
+  background-color: var(--bg); color: var(--text);
+  -webkit-font-smoothing: antialiased;
 }
 
+.app { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* TOP BAR */
 .topbar {
-  background: color-mix(in srgb, var(--bg) 80%, black);
-  backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 100;
+  position: sticky; top: 0; z-index: 50;
+  background: color-mix(in srgb, var(--bg) 90%, black);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(8px);
 }
 .topbar-inner {
-  max-width: var(--max-w); margin: 0 auto; padding: 10px var(--gutter);
+  max-width: var(--max-w); margin: 0 auto; padding: 12px var(--gutter);
   display: flex; align-items: center; justify-content: space-between;
 }
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.1rem; }
+.brand img { height: 32px; width: 32px; }
 
-.brand { display: flex; align-items: center; gap: 12px; }
-.brand-badge img { width: 32px; height: 32px; object-fit: contain; }
-
-.search {
-  flex: 1; max-width: 450px; margin: 0 20px; position: relative;
-}
+/* SEARCH BAR */
+.search { position: relative; width: 100%; max-width: 400px; margin: 0 20px; }
 .search input {
-  width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border);
-  padding: 8px 15px 8px 35px; border-radius: 20px; color: var(--text); outline: none;
+  width: 100%; padding: 8px 16px 8px 36px;
+  background: rgba(0,0,0,0.2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); outline: none;
 }
-.search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5; }
+.search svg {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; opacity: 0.5;
+}
 
-/* Main Grid System */
-main { max-width: var(--max-w); margin: 0 auto; padding: 24px var(--gutter); }
+/* ==========================================================================
+   4. MAIN GRID LAYOUT
+   ========================================================================== */
+main {
+  max-width: var(--max-w); margin: 0 auto; padding: 24px var(--gutter);
+  width: 100%;
+}
 
+/* Quick Links Row */
 .quick-row {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: var(--gap); margin-bottom: 40px;
-}
-
-.columns {
   display: grid; 
-  grid-template-columns: repeat(auto-fill, minmax(var(--col-min), 1fr)); 
-  gap: var(--gap);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px; margin-bottom: 32px;
 }
 
+/* The Main Category Columns */
+/* FIX: Rigid min-width prevents "sliver" columns */
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+  gap: 20px; align-items: start;
+}
+
+/* Category Card */
 .category {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--radius); overflow: hidden; height: fit-content;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  box-shadow: var(--shadow);
 }
-
 .cat-head {
-  padding: 12px 16px; background: rgba(0,0,0,0.1);
-  display: flex; align-items: center; gap: 10px; font-weight: 700;
-  color: var(--accent); border-bottom: 1px solid var(--border);
+  padding: 12px 16px; font-weight: 700;
+  border-bottom: 1px solid var(--border);
+  color: var(--accent); background: rgba(0,0,0,0.1);
+  display: flex; align-items: center; gap: 8px;
 }
-
 .cat-body { padding: 12px; }
 
-/* TILES */
+/* ==========================================================================
+   5. TILE LOGIC (THE CRITICAL PART)
+   ========================================================================== */
 .tile {
-  display: flex; align-items: center; gap: 12px;
-  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03); border: 1px solid transparent;
   border-radius: 8px; text-decoration: none; color: inherit;
-  min-height: var(--tile-h);
+  transition: all 0.2s ease; cursor: pointer; position: relative;
 }
 .tile:hover {
   background: rgba(255,255,255,0.08); border-color: var(--accent);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
-
-.tile-icon { flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .tile-icon img { width: 100%; height: 100%; object-fit: contain; }
+.tile-title { font-weight: 600; font-size: 14px; line-height: 1.2; }
+.tile-meta { font-size: 12px; color: var(--nord-muted); opacity: 0.7; margin-top: 2px; }
 
-.tile-text { min-width: 0; flex: 1; }
-.tile-title { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tile-meta { font-size: 12px; opacity: 0.6; margin-top: 2px; }
+/* --- COMPACT LAYOUT (Double Row, Square Pills, Title Only) --- */
+body[data-layout="compact"] .cat-body {
+  display: grid; 
+  grid-template-columns: 1fr 1fr; /* Forces 2 columns inside the category */
+  gap: 8px;
+}
+body[data-layout="compact"] .tile {
+  display: flex; flex-direction: column; 
+  align-items: center; justify-content: center; text-align: center;
+  padding: 12px 8px; aspect-ratio: 1 / 0.8; /* Makes them square-ish */
+}
+body[data-layout="compact"] .tile-icon { width: 36px; height: 36px; margin-bottom: 8px; }
+body[data-layout="compact"] .tile-meta { display: none !important; }
 
-/* PREFS DRAWER */
+/* --- MEDIUM LAYOUT (Single Row, Short, Title Only) --- */
+body[data-layout="medium"] .cat-body { display: flex; flex-direction: column; gap: 8px; }
+body[data-layout="medium"] .tile {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px; min-height: 50px;
+}
+body[data-layout="medium"] .tile-icon { width: 28px; height: 28px; flex-shrink: 0; }
+body[data-layout="medium"] .tile-meta { display: none !important; }
+
+/* --- LARGE LAYOUT (Single Row, Tall, Title + Desc) --- */
+body[data-layout="large"] .cat-body { display: flex; flex-direction: column; gap: 12px; }
+body[data-layout="large"] .tile {
+  display: flex; align-items: center; gap: 16px; padding: 16px; min-height: 80px;
+}
+body[data-layout="large"] .tile-icon { width: 48px; height: 48px; flex-shrink: 0; }
+body[data-layout="large"] .tile-meta { display: block; }
+
+/* ==========================================================================
+   6. CUSTOMIZE MENU FIX
+   ========================================================================== */
 .prefs-panel {
-  position: absolute; right: var(--gutter); top: 60px;
-  background: var(--nord1); border: 1px solid var(--border);
-  padding: 16px; border-radius: 12px; width: 220px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 200;
+  position: absolute; top: 60px; right: 20px;
+  background: var(--card-bg); border: 1px solid var(--border);
+  padding: 16px; border-radius: 12px; width: 240px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000;
   display: none; flex-direction: column; gap: 12px;
 }
 body[data-prefs="open"] .prefs-panel { display: flex; }
 
-.field select { 
-  background: var(--nord0); color: white; border: 1px solid var(--border); 
-  padding: 4px; border-radius: 4px; font-size: 12px;
+.prefs-panel label { font-size: 13px; font-weight: 600; margin-bottom: 4px; display: block; }
+.prefs-panel select {
+  width: 100%; background: rgba(0,0,0,0.2); color: inherit;
+  border: 1px solid var(--border); padding: 8px; border-radius: 6px;
 }
+/* Fix for the giant arrows in your screenshot */
+.prefs-panel svg { width: 16px; height: 16px; } 
 
-/* RESPONSIVE */
+/* ==========================================================================
+   7. RESPONSIVE
+   ========================================================================== */
 @media (max-width: 768px) {
   .columns { grid-template-columns: 1fr; }
-  .topbar-inner { flex-direction: column; gap: 10px; }
-  .search { width: 100%; margin: 0; }
+  .topbar-inner { flex-wrap: wrap; gap: 10px; }
+  .search { order: 3; max-width: 100%; margin: 0; }
 }
