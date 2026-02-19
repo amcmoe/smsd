@@ -14,7 +14,7 @@
   });
 
 const ALLOWED = Object.freeze({
-  theme: new Set(["light", "dark", "midnight", "frost"]),
+  theme: new Set(["light", "dark", "midnight", "chroma"]),
   layout: new Set(["compact", "medium", "large"]),
 });
 
@@ -29,6 +29,11 @@ const ALLOWED = Object.freeze({
   };
 
   const isValid = (kind, value) => ALLOWED[kind]?.has(value);
+
+  const normalizeTheme = (value) => {
+    if (value === "frost") return "chroma";
+    return value;
+  };
 
   const normalizeAccent = (hex) => {
     if (typeof hex !== "string") return null;
@@ -49,13 +54,15 @@ const ALLOWED = Object.freeze({
   const getInitialPrefs = () => {
     const body = document.body;
 
-    const storedTheme = read(KEYS.theme);
+    const storedTheme = normalizeTheme(read(KEYS.theme));
     const storedLayout = read(KEYS.layout);
     const storedAccent = read(KEYS.accent);
 
    const theme =
      (isValid("theme", storedTheme) && storedTheme) ||
      DEFAULTS.theme;
+
+    if (storedTheme === "chroma") write(KEYS.theme, "chroma");
 
     const layout =
       (isValid("layout", storedLayout) && storedLayout) ||

@@ -70,7 +70,7 @@
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                     <option value="midnight">Midnight</option>
-                    <option value="frost">Chroma</option>
+                    <option value="chroma">Chroma</option>
                   </select>
                   <svg class="caret" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -253,6 +253,7 @@
   let orderByCat = {};
   let quickOrder = [];
   let sortables = [];
+  let prefsAutoCloseTimer = null;
 
   const readJSON = (key, fallback) => {
     try {
@@ -264,6 +265,8 @@
   };
 
   const setAttr = (node, name, value) => node?.setAttribute(name, value);
+
+  const normalizeTheme = (value) => (value === 'frost' ? 'chroma' : value);
 
   const applyAccent = (hex) => {
     document.documentElement.style.setProperty('--accent', hex);
@@ -412,15 +415,35 @@
   };
 
   const setPrefsOpen = (open) => {
+    if (prefsAutoCloseTimer) {
+      clearTimeout(prefsAutoCloseTimer);
+      prefsAutoCloseTimer = null;
+    }
     setAttr(document.body, 'data-prefs', open ? 'open' : 'closed');
     setAttr(el.prefsToggleBtn, 'aria-expanded', open ? 'true' : 'false');
     localStorage.setItem(STORAGE.prefsCollapsed, open ? '0' : '1');
   };
 
+  const schedulePrefsAutoClose = () => {
+    if (document.body.getAttribute('data-prefs') !== 'open') return;
+    if (prefsAutoCloseTimer) clearTimeout(prefsAutoCloseTimer);
+    prefsAutoCloseTimer = setTimeout(() => {
+      setPrefsOpen(false);
+    }, 2000);
+  };
+
+  const cancelPrefsAutoClose = () => {
+    if (!prefsAutoCloseTimer) return;
+    clearTimeout(prefsAutoCloseTimer);
+    prefsAutoCloseTimer = null;
+  };
+
   const loadPrefs = () => {
     pickDefaultLayoutIfUnset();
 
-    const theme = localStorage.getItem(STORAGE.theme) || 'light';
+    const rawTheme = localStorage.getItem(STORAGE.theme) || 'light';
+    const theme = normalizeTheme(rawTheme);
+    if (rawTheme !== theme) localStorage.setItem(STORAGE.theme, theme);
     setAttr(document.body, 'data-theme', theme);
     if (el.themeSelect) el.themeSelect.value = theme;
 
@@ -456,18 +479,21 @@
     el.themeSelect?.addEventListener('change', () => {
       setAttr(document.body, 'data-theme', el.themeSelect.value);
       localStorage.setItem(STORAGE.theme, el.themeSelect.value);
+      schedulePrefsAutoClose();
     });
 
     el.layoutSelect?.addEventListener('change', () => {
       setAttr(document.body, 'data-layout', el.layoutSelect.value);
       localStorage.setItem(STORAGE.layout, el.layoutSelect.value);
       applyFilter();
+      schedulePrefsAutoClose();
     });
 
     el.paletteBtn?.addEventListener('click', () => el.accentPicker?.click());
     el.accentPicker?.addEventListener('input', () => {
       applyAccent(el.accentPicker.value);
       localStorage.setItem(STORAGE.accent, el.accentPicker.value);
+      schedulePrefsAutoClose();
     });
 
     el.resetPrefs?.addEventListener('click', resetAll);
@@ -489,6 +515,9 @@
     });
 
     el.prefsPanelEl?.addEventListener('click', (e) => e.stopPropagation());
+    el.prefsPanelEl?.addEventListener('pointerdown', cancelPrefsAutoClose);
+    el.prefsPanelEl?.addEventListener('focusin', cancelPrefsAutoClose);
+    el.prefsPanelEl?.addEventListener('input', cancelPrefsAutoClose);
   };
 
   loadPrefs();
