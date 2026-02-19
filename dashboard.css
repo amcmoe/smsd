@@ -105,7 +105,7 @@ body[data-layout="medium"]{
   --col-max:245px;
   --gap:8px;
   --tile-h:60px;
-  --tile-icon:40px;
+  --tile-icon:44px;
 }
 
 body[data-layout="large"]{
