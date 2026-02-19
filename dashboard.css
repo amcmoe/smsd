@@ -1668,6 +1668,38 @@ body[data-theme="light"] .switch-list li:hover{
   transition:transform .12s ease,background .12s ease;
   white-space:nowrap;
 }
+  .prefs-panel{
+    top:calc(100% + 8px);
+    right:0;
+    transform-origin:top right;
+    transform:translateY(-8px) scale(.98);
+    flex-direction:column;
+    align-items:stretch;
+    width:min(360px,calc(100vw - (var(--gutter) * 2)));
+    max-width:calc(100vw - (var(--gutter) * 2));
+    border-radius:16px;
+    padding:8px;
+    gap:8px;
+  }
+  body[data-prefs="open"] .prefs-panel{
+    transform:translateY(0) scale(1);
+  }
+  .controls{
+    flex-wrap:wrap;
+    gap:8px;
+    border-radius:14px;
+    padding:8px;
+  }
+  .controls .field{
+    flex:1 1 calc(50% - 4px);
+    min-width:140px;
+  }
+  .controls .palette-btn{
+    margin-left:auto;
+  }
+  button.reset{
+    width:100%;
+  }
 
 @media (max-width:720px){
   :root{--col-min:100%;--col-max:100%;}
