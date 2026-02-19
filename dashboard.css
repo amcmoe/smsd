@@ -1390,6 +1390,7 @@ body[data-theme="dark"] .tile:hover .tile-icon{
   line-height:1.25;
   overflow:hidden;
   display:-webkit-box;
+  line-clamp:2;
   -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
   font-weight:400;
@@ -1402,6 +1403,7 @@ body[data-layout="medium"] .cat-body .tile-title{
   overflow:hidden;
   text-overflow:ellipsis;
   display:-webkit-box;
+  line-clamp:2;
   -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
   line-height:1.12;
@@ -1440,6 +1442,7 @@ body[data-layout="compact"] .cat-body .tile-title{
   white-space:normal;
   overflow:hidden;
   display:-webkit-box;
+  line-clamp:2;
   -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
 }
@@ -1687,6 +1690,7 @@ body[data-theme="light"] .switch-list li:hover{
   }
   body[data-layout="compact"] .cat-body .tile-title{
     font-size:11px;
+    line-clamp:2;
     -webkit-line-clamp:2;
   }
   .switch-columns{
@@ -1698,6 +1702,7 @@ body[data-theme="light"] .switch-list li:hover{
     width:100%;
     max-width:min(560px,calc(100vw - (var(--gutter) * 2)));
   }
+}
 }
 .switch-columns{
   max-width:min(1120px,var(--max));
@@ -1748,6 +1753,10 @@ body[data-theme="light"] .switch-list li:hover{
     transform:none !important;
   }
 }
+
+
+
+
 
 
 
