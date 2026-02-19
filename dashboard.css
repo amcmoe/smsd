@@ -1430,13 +1430,15 @@ body[data-theme="light"] .switch-list li:hover{
   .topbar-meta{min-height:0;}
   .search{width:100%;}
   .prefs-panel{
-    right:0;
+    left:0;
+    right:auto;
     top:calc(100% + 10px);
     border-radius:18px;
     padding:10px;
     flex-wrap:wrap;
-    max-width:min(92vw,560px);
-    transform-origin:top right;
+    width:max-content;
+    max-width:calc(100vw - (var(--gutter) * 2));
+    transform-origin:top left;
     transform:translateY(-6px) scale(.98);
   }
   body[data-prefs="open"] .prefs-panel{transform:translateY(0) scale(1);}
