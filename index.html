@@ -257,6 +257,7 @@
   const STORAGE = {
     theme: 'smsd-theme-v5',
     accent: 'smsd-accent-v5',
+    accentByTheme: 'smsd-accent-by-theme-v1',
     layout: 'smsd-layout-v5',
     order: 'smsd-order-v5',
     quickOrder: 'smsd-quick-v5',
@@ -264,7 +265,7 @@
     recentVisible: 'smsd-recent-visible-v1',
     prefsCollapsed: 'smsd-prefs-collapsed-v1'
   };
-  const REPO_VERSION = '259';
+  const REPO_VERSION = '260';
   const REPO_DATE = '2.21.26';
 
   const el = {
@@ -293,6 +294,7 @@
 
   let orderByCat = {};
   let quickOrder = [];
+  let accentByTheme = {};
   let recentIds = [];
   let showRecent = false;
   let sortables = [];
@@ -372,6 +374,12 @@
   const applyAccent = (hex) => {
     document.documentElement.style.setProperty('--accent', hex);
     if (el.accentPicker) el.accentPicker.value = hex;
+  };
+  const defaultAccentForTheme = (theme) => {
+    if (theme === 'dark') return '#5E81AC';
+    if (theme === 'chroma') return '#88c0d0';
+    if (theme === 'sunset') return '#f80278';
+    return '#9687cf';
   };
 
   const iconSVG = (name) => ICON_SVGS[name] || ICON_SVGS.tag;
@@ -653,7 +661,9 @@
     if (el.layoutSelect) el.layoutSelect.value = layout;
     syncDropdown(el.layoutSelect, el.layoutTrigger, el.layoutMenu);
 
-    const accent = localStorage.getItem(STORAGE.accent) || '#9687cf';
+    accentByTheme = readJSON(STORAGE.accentByTheme, {});
+    const savedAccent = localStorage.getItem(STORAGE.accent);
+    const accent = accentByTheme?.[theme] || (theme !== 'dark' ? savedAccent : null) || defaultAccentForTheme(theme);
     applyAccent(accent);
 
     orderByCat = readJSON(STORAGE.order, {});
@@ -681,8 +691,10 @@
     });
 
     el.themeSelect?.addEventListener('change', () => {
-      setAttr(document.body, 'data-theme', el.themeSelect.value);
-      localStorage.setItem(STORAGE.theme, el.themeSelect.value);
+      const nextTheme = el.themeSelect.value;
+      setAttr(document.body, 'data-theme', nextTheme);
+      localStorage.setItem(STORAGE.theme, nextTheme);
+      applyAccent(accentByTheme?.[nextTheme] || defaultAccentForTheme(nextTheme));
       syncDropdown(el.themeSelect, el.themeTrigger, el.themeMenu);
       syncPrefsAnchor();
       schedulePrefsAutoClose();
@@ -699,8 +711,12 @@
 
     el.paletteBtn?.addEventListener('click', () => el.accentPicker?.click());
     el.accentPicker?.addEventListener('input', () => {
-      applyAccent(el.accentPicker.value);
-      localStorage.setItem(STORAGE.accent, el.accentPicker.value);
+      const value = el.accentPicker.value;
+      const theme = document.body.getAttribute('data-theme') || 'light';
+      applyAccent(value);
+      accentByTheme[theme] = value;
+      localStorage.setItem(STORAGE.accentByTheme, JSON.stringify(accentByTheme));
+      localStorage.setItem(STORAGE.accent, value);
       schedulePrefsAutoClose();
     });
 
