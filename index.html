@@ -70,6 +70,7 @@
                     <option value="dark">Dark</option>
                     <option value="midnight">Midnight</option>
                     <option value="chroma">Chroma</option>
+                    <option value="sunset">Sunset</option>
                   </select>
                   <div class="dropdown" data-dd="theme">
                     <button class="dd-trigger" id="themeTrigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="themeMenu">
@@ -80,6 +81,7 @@
                       <button class="dd-option" type="button" role="option" data-value="dark">Dark</button>
                       <button class="dd-option" type="button" role="option" data-value="midnight">Midnight</button>
                       <button class="dd-option" type="button" role="option" data-value="chroma">Chroma</button>
+                      <button class="dd-option" type="button" role="option" data-value="sunset">Sunset</button>
                     </div>
                   </div>
                 </div>
@@ -120,6 +122,14 @@
                   </svg>
                 </button>
                 <input class="accent-input" id="accentPicker" type="color" value="#9687cf" aria-label="Accent color">
+                <button class="recent-toggle" id="recentToggle" type="button" aria-pressed="false" aria-label="Enable Recently Used row" title="Enable Recently Used row">
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                    <rect x="3" y="3" width="7" height="7" rx="1.4"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1.4"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1.4"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1.4"></rect>
+                  </svg>
+                </button>
               </div>
 
               <button class="reset" id="resetPrefs" type="button"
@@ -137,6 +147,7 @@
       <div class="quick-row" id="quickRow"></div>
       <div class="columns" id="columnsRoot"></div>
     </main>
+    <div class="build-version" id="buildVersion" aria-hidden="true"></div>
   </div>
 
   <script>
@@ -235,6 +246,7 @@
       shield: `<svg width="20" height="20" viewBox="0 0 24 24" ${common}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
       lock: `<svg width="20" height="20" viewBox="0 0 24 24" ${common}><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`,
       activity: `<svg width="20" height="20" viewBox="0 0 24 24" ${common}><path d="M22 12h-4l-3 9-4-18-3 9H2"/></svg>`,
+      recents: `<svg width="20" height="20" viewBox="0 0 24 24" ${common}><rect x="3" y="10" width="11" height="11" rx="2"></rect><rect x="9" y="6" width="8" height="8" rx="2" opacity=".72"></rect><rect x="14" y="3" width="5" height="5" rx="1.5" opacity=".45"></rect></svg>`,
       server: `<svg width="20" height="20" viewBox="0 0 24 24" ${common}><rect x="2" y="3" width="20" height="8" rx="2"></rect><rect x="2" y="13" width="20" height="8" rx="2"></rect><path d="M6 7h.01M6 17h.01"/></svg>`,
       book: `<svg width="20" height="20" viewBox="0 0 24 24" ${common}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`,
       tag: `<svg width="20" height="20" viewBox="0 0 24 24" ${common}><path d="M20.59 13.41 11 3H4v7l9.59 9.59a2 2 0 0 0 2.83 0l4.17-4.17a2 2 0 0 0 0-2.83z"></path><path d="M7 7h.01"></path></svg>`
@@ -247,8 +259,11 @@
     layout: 'smsd-layout-v5',
     order: 'smsd-order-v5',
     quickOrder: 'smsd-quick-v5',
+    recent: 'smsd-recent-v1',
+    recentVisible: 'smsd-recent-visible-v1',
     prefsCollapsed: 'smsd-prefs-collapsed-v1'
   };
+  const REPO_VERSION = '254';
 
   const el = {
     quickRow: document.getElementById('quickRow'),
@@ -265,14 +280,27 @@
     themeTrigger: document.getElementById('themeTrigger'),
     themeMenu: document.getElementById('themeMenu'),
     layoutTrigger: document.getElementById('layoutTrigger'),
-    layoutMenu: document.getElementById('layoutMenu')
+    layoutMenu: document.getElementById('layoutMenu'),
+    recentToggleBtn: document.getElementById('recentToggle'),
+    buildVersion: document.getElementById('buildVersion')
   };
+  if (el.buildVersion) el.buildVersion.textContent = `v${REPO_VERSION}`;
 
   let orderByCat = {};
   let quickOrder = [];
+  let recentIds = [];
+  let showRecent = false;
   let sortables = [];
   let prefsAutoCloseTimer = null;
   const dropdownState = { openMenu: null };
+  const RECENT_LIMIT = 8;
+  const ITEM_BY_ID = (() => {
+    const map = new Map();
+    for (const cat of CATEGORIES) {
+      for (const item of cat.items) map.set(item.id, { ...item, _category: cat.name });
+    }
+    return map;
+  })();
 
   const readJSON = (key, fallback) => {
     try {
@@ -362,6 +390,36 @@
     return out;
   };
 
+  const normalizeRecent = (value) => {
+    if (!Array.isArray(value)) return [];
+    const out = [];
+    const seen = new Set();
+    for (const id of value) {
+      if (!ITEM_BY_ID.has(id) || seen.has(id)) continue;
+      seen.add(id);
+      out.push(id);
+      if (out.length >= RECENT_LIMIT) break;
+    }
+    return out;
+  };
+
+  const trackRecent = (id) => {
+    if (!id || !ITEM_BY_ID.has(id)) return;
+    recentIds = [id, ...recentIds.filter(x => x !== id)].slice(0, RECENT_LIMIT);
+    localStorage.setItem(STORAGE.recent, JSON.stringify(recentIds));
+  };
+
+  const setRecentVisible = (visible) => {
+    showRecent = !!visible;
+    localStorage.setItem(STORAGE.recentVisible, showRecent ? '1' : '0');
+    if (el.recentToggleBtn) {
+      el.recentToggleBtn.setAttribute('data-on', showRecent ? 'true' : 'false');
+      el.recentToggleBtn.setAttribute('aria-pressed', showRecent ? 'true' : 'false');
+      el.recentToggleBtn.setAttribute('aria-label', showRecent ? 'Disable Recently Used row' : 'Enable Recently Used row');
+      el.recentToggleBtn.setAttribute('title', showRecent ? 'Disable Recently Used row' : 'Enable Recently Used row');
+    }
+  };
+
   const tileHTML = (item, scopeName) => {
     const titleKey = `${item.title} ${item.meta || ''} ${scopeName}`.toLowerCase();
     const iconMarkup = item.icon
@@ -399,6 +457,7 @@
     }));
 
     document.querySelectorAll('.cat-body').forEach(body => {
+      if (body.getAttribute('data-static') === 'true') return;
       const catName = body.getAttribute('data-cat-body');
       sortables.push(new Sortable(body, {
         animation: 140,
@@ -411,6 +470,21 @@
         }
       }));
     });
+  };
+
+  const recentTileHTML = (item) => {
+    const titleKey = `${item.title} ${item.meta || ''} ${item._category || 'recent'}`.toLowerCase();
+    const iconMarkup = item.icon
+      ? iconSVG(item.icon)
+      : `<img src="${item.img}" alt="${item.title}" loading="lazy" decoding="async">`;
+    return `
+      <a class="tile recent-tile" href="${item.href}" data-id="${item.id}" data-scope="recent" data-title="${titleKey}" title="${item.title}">
+        <div class="tile-icon">${iconMarkup}</div>
+        <div class="tile-text">
+          <div class="tile-title">${item.title}</div>
+        </div>
+      </a>
+    `;
   };
 
   const applyFilter = () => {
@@ -427,6 +501,7 @@
     el.quickRow.style.display = (q && !quickAny) ? 'none' : 'flex';
 
     document.querySelectorAll('.category').forEach(catEl => {
+      const isStatic = catEl.getAttribute('data-static') === 'true';
       let any = false;
       catEl.querySelectorAll('.tile').forEach(tile => {
         const hay = `${tile.getAttribute('data-title') || ''} ${tile.textContent || ''}`.toLowerCase();
@@ -434,7 +509,7 @@
         tile.style.display = ok ? '' : 'none';
         if (ok) any = true;
       });
-      catEl.hidden = !any;
+      catEl.hidden = isStatic ? false : !any;
     });
   };
 
@@ -443,6 +518,31 @@
     el.quickRow.innerHTML = qItems.map(it => tileHTML(it, 'quick')).join('');
 
     el.columnsRoot.innerHTML = '';
+    const recentItems = recentIds.map(id => ITEM_BY_ID.get(id)).filter(Boolean);
+    if (showRecent) {
+      const recentCols = Math.min(RECENT_LIMIT, Math.max(4, recentItems.length || 0));
+      const recentSection = document.createElement('section');
+      recentSection.className = 'category category-recent';
+      recentSection.style.setProperty('--cat-color', '#53f5ff');
+      recentSection.style.setProperty('--recent-cols', String(recentCols));
+      recentSection.setAttribute('data-category', 'Recently Used');
+      recentSection.setAttribute('data-static', 'true');
+      recentSection.innerHTML = `
+        <div class="cat-head">
+          <div class="cat-left">
+            <div class="cat-icon" aria-hidden="true">${iconSVG('recents')}</div>
+            <div class="cat-title" title="Recents">Recents</div>
+          </div>
+        </div>
+        <div class="cat-body" data-cat-body="__recent__" data-static="true">
+          ${recentItems.length
+            ? recentItems.map(it => recentTileHTML(it)).join('')
+            : '<div class="recent-empty">Open links and they will show up here.</div>'}
+        </div>
+      `;
+      el.columnsRoot.appendChild(recentSection);
+    }
+
     for (const cat of CATEGORIES) {
       const items = applySavedOrder([...cat.items], orderByCat[cat.name]);
       const section = document.createElement('section');
@@ -491,7 +591,7 @@
     if (prefsAutoCloseTimer) clearTimeout(prefsAutoCloseTimer);
     prefsAutoCloseTimer = setTimeout(() => {
       setPrefsOpen(false);
-    }, 2000);
+    }, 3000);
   };
 
   const cancelPrefsAutoClose = () => {
@@ -520,6 +620,8 @@
 
     orderByCat = readJSON(STORAGE.order, {});
     quickOrder = readJSON(STORAGE.quickOrder, []);
+    recentIds = normalizeRecent(readJSON(STORAGE.recent, []));
+    setRecentVisible(localStorage.getItem(STORAGE.recentVisible) === '1');
 
     const isCollapsed = localStorage.getItem(STORAGE.prefsCollapsed) !== '0';
     setPrefsOpen(!isCollapsed);
@@ -563,6 +665,17 @@
     });
 
     el.resetPrefs?.addEventListener('click', resetAll);
+    el.recentToggleBtn?.addEventListener('click', () => {
+      setRecentVisible(!showRecent);
+      render();
+      schedulePrefsAutoClose();
+    });
+
+    document.addEventListener('click', (e) => {
+      const tile = e.target.closest('.columns .tile[data-id]');
+      if (!tile) return;
+      trackRecent(tile.getAttribute('data-id'));
+    });
 
     el.prefsToggleBtn?.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -600,7 +713,3 @@
 </script>
 </body>
 </html>
-
-
-
-
