@@ -145,6 +145,7 @@
 
     <main>
       <div class="quick-row" id="quickRow"></div>
+      <div id="recentHost"></div>
       <div class="columns" id="columnsRoot"></div>
     </main>
     <div class="build-version" id="buildVersion" aria-hidden="true"></div>
@@ -263,9 +264,11 @@
     recentVisible: 'smsd-recent-visible-v1',
     prefsCollapsed: 'smsd-prefs-collapsed-v1'
   };
-  const REPO_VERSION = '255';
+  const REPO_VERSION = '256';
 
   const el = {
+    topbarInner: document.querySelector('.topbar-inner'),
+    topbarRight: document.querySelector('.topbar-right'),
     quickRow: document.getElementById('quickRow'),
     columnsRoot: document.getElementById('columnsRoot'),
     searchInput: document.getElementById('searchInput'),
@@ -282,6 +285,7 @@
     layoutTrigger: document.getElementById('layoutTrigger'),
     layoutMenu: document.getElementById('layoutMenu'),
     recentToggleBtn: document.getElementById('recentToggle'),
+    recentHost: document.getElementById('recentHost'),
     buildVersion: document.getElementById('buildVersion')
   };
   if (el.buildVersion) el.buildVersion.textContent = `v${REPO_VERSION}`;
@@ -513,10 +517,37 @@
     });
   };
 
+  const syncPrefsAnchor = () => {
+    if (window.matchMedia('(max-width: 980px)').matches) {
+      document.documentElement.style.setProperty('--prefs-nudge', '0px');
+      return;
+    }
+    const topbarRight = el.topbarRight;
+    const topbarInner = el.topbarInner;
+    const root = el.columnsRoot;
+    if (!topbarRight || !topbarInner || !root) return;
+
+    const cats = [...root.querySelectorAll('.category:not(.category-recent):not([hidden])')];
+    if (!cats.length) {
+      document.documentElement.style.setProperty('--prefs-nudge', '0px');
+      return;
+    }
+
+    let maxRight = 0;
+    for (const c of cats) {
+      const r = c.getBoundingClientRect().right;
+      if (r > maxRight) maxRight = r;
+    }
+    const innerRight = topbarInner.getBoundingClientRect().right;
+    const nudge = Math.max(0, Math.round(innerRight - maxRight));
+    document.documentElement.style.setProperty('--prefs-nudge', `${nudge}px`);
+  };
+
   const render = () => {
     const qItems = applySavedOrder([...QUICK_LINKS], quickOrder);
     el.quickRow.innerHTML = qItems.map(it => tileHTML(it, 'quick')).join('');
 
+    if (el.recentHost) el.recentHost.innerHTML = '';
     el.columnsRoot.innerHTML = '';
     const recentItems = recentIds.map(id => ITEM_BY_ID.get(id)).filter(Boolean);
     if (showRecent) {
@@ -540,7 +571,11 @@
             : '<div class="recent-empty">Open links and they will show up here.</div>'}
         </div>
       `;
-      el.columnsRoot.appendChild(recentSection);
+      if (el.recentHost) {
+        el.recentHost.appendChild(recentSection);
+      } else {
+        el.columnsRoot.appendChild(recentSection);
+      }
     }
 
     for (const cat of CATEGORIES) {
@@ -567,6 +602,7 @@
 
     enableReorder();
     applyFilter();
+    requestAnimationFrame(syncPrefsAnchor);
   };
 
   const pickDefaultLayoutIfUnset = () => {
@@ -646,6 +682,7 @@
       setAttr(document.body, 'data-theme', el.themeSelect.value);
       localStorage.setItem(STORAGE.theme, el.themeSelect.value);
       syncDropdown(el.themeSelect, el.themeTrigger, el.themeMenu);
+      syncPrefsAnchor();
       schedulePrefsAutoClose();
     });
 
@@ -654,6 +691,7 @@
       localStorage.setItem(STORAGE.layout, el.layoutSelect.value);
       syncDropdown(el.layoutSelect, el.layoutTrigger, el.layoutMenu);
       applyFilter();
+      syncPrefsAnchor();
       schedulePrefsAutoClose();
     });
 
@@ -705,6 +743,7 @@
     el.prefsPanelEl?.addEventListener('pointerdown', cancelPrefsAutoClose);
     el.prefsPanelEl?.addEventListener('focusin', cancelPrefsAutoClose);
     el.prefsPanelEl?.addEventListener('input', cancelPrefsAutoClose);
+    window.addEventListener('resize', syncPrefsAnchor);
   };
 
   loadPrefs();
