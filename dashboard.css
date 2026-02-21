@@ -886,6 +886,7 @@ main{
   align-items:center;
   justify-content:center;
   gap:12px;
+  position:relative;
 }
 
 .quick-row .tile{
@@ -1231,6 +1232,7 @@ body[data-theme="light"] .cat-icon{
   display:flex;
   flex-direction:column;
   gap:10px;
+  position:relative;
 }
 
 .tile{
@@ -1247,7 +1249,41 @@ body[data-theme="light"] .cat-icon{
   outline:none;
   position:relative;
   overflow:hidden;
+  touch-action:pan-y;
+  -webkit-user-drag:none;
+  user-drag:none;
 }
+
+.quick-row .tile{
+  touch-action:pan-x;
+}
+
+.tile.is-dragging{
+  opacity:1 !important;
+  box-shadow:0 14px 36px rgba(0,0,0,.34);
+  cursor:grabbing;
+  overflow:visible !important;
+}
+
+.tile.is-dragging .tile-text,
+.tile.is-dragging .tile-title,
+.tile.is-dragging .tile-meta{
+  opacity:1 !important;
+  visibility:visible !important;
+}
+
+.tile-placeholder{
+  border-color:transparent !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  opacity:0 !important;
+}
+
+body.reorder-dragging{
+  user-select:none;
+  -webkit-user-select:none;
+}
+
 
 .cat-body .tile::after{
   content:"";
@@ -1487,6 +1523,9 @@ body[data-layout="medium"] .cat-body .tile-title{
   -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
   line-height:1.12;
+  overflow-wrap:normal;
+  word-break:keep-all;
+  hyphens:none;
 }
 body[data-layout="large"] .tile-meta{display:-webkit-box;}
 
@@ -2170,8 +2209,8 @@ body[data-theme="dark"] .quick-row .tile-title{
   font-weight:300 !important;
   font-size:15px !important;
   line-height:1.24;
-  overflow-wrap:break-word;
-  word-break:normal;
+  overflow-wrap:normal;
+  word-break:keep-all;
   hyphens:none;
 }
 body[data-theme="dark"] .cat-body .tile-title{
@@ -2186,4 +2225,44 @@ body[data-theme="dark"] .cat-body .tile-title{
 /* Final dark header size override (comes after global non-sunset header sizing) */
 body[data-theme="dark"] .cat-title{
   font-size:17px !important;
+}
+
+/* Desktop normalization: keep switch pills identical across all themes/layouts */
+@media (min-width:721px){
+  .quick-row .tile{
+    min-height:38px !important;
+    padding:5px 11px !important;
+    gap:9px !important;
+    border-radius:999px !important;
+  }
+  .quick-row .tile-icon{
+    width:28px !important;
+    height:28px !important;
+    border-radius:8px !important;
+  }
+  .quick-row .tile-title{
+    font-size:12.5px !important;
+    line-height:1.1 !important;
+    white-space:nowrap !important;
+  }
+}
+
+/* Mobile normalization: keep switch pills identical across all themes/layouts */
+@media (max-width:720px){
+  .quick-row .tile{
+    min-height:36px !important;
+    padding:5px 10px !important;
+    gap:8px !important;
+    border-radius:999px !important;
+  }
+  .quick-row .tile-icon{
+    width:26px !important;
+    height:26px !important;
+    border-radius:8px !important;
+  }
+  .quick-row .tile-title{
+    font-size:12px !important;
+    line-height:1.1 !important;
+    white-space:nowrap !important;
+  }
 }

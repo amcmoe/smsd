@@ -265,7 +265,7 @@
     recentVisible: 'smsd-recent-visible-v1',
     prefsCollapsed: 'smsd-prefs-collapsed-v1'
   };
-  const REPO_VERSION = '260';
+  const REPO_VERSION = '261';
   const REPO_DATE = '2.21.26';
 
   const el = {
@@ -297,7 +297,8 @@
   let accentByTheme = {};
   let recentIds = [];
   let showRecent = false;
-  let sortables = [];
+  let reorderCleanups = [];
+  let suppressTileClickUntil = 0;
   let prefsAutoCloseTimer = null;
   const dropdownState = { openMenu: null };
   const RECENT_LIMIT = 8;
@@ -440,7 +441,7 @@
       ? iconSVG(item.icon)
       : `<img src="${item.img}" alt="${item.title}" loading="lazy" decoding="async">`;
     return `
-      <a class="tile" href="${item.href}" data-id="${item.id}" data-scope="${scopeName}" data-title="${titleKey}">
+      <a class="tile" href="${item.href}" data-id="${item.id}" data-scope="${scopeName}" data-title="${titleKey}" draggable="false">
         <div class="tile-icon">${iconMarkup}</div>
         <div class="tile-text">
           <div class="tile-title${singleLong ? ' single-long' : ''}">${item.title}</div>
@@ -450,38 +451,266 @@
     `;
   };
 
-  const destroySortables = () => {
-    for (const s of sortables) s.destroy();
-    sortables = [];
+  const destroyReorder = () => {
+    for (const off of reorderCleanups) off();
+    reorderCleanups = [];
+    document.body.classList.remove('reorder-dragging');
+  };
+
+  const animateReflow = (container, mutate) => {
+    const moving = [...container.querySelectorAll('.tile:not(.is-dragging):not(.tile-placeholder)')];
+    const first = new Map(moving.map(node => [node, node.getBoundingClientRect()]));
+    mutate();
+    for (const node of moving) {
+      const prev = first.get(node);
+      if (!prev) continue;
+      const next = node.getBoundingClientRect();
+      const dx = prev.left - next.left;
+      const dy = prev.top - next.top;
+      if (Math.abs(dx) < 1 && Math.abs(dy) < 1) continue;
+      node.style.transition = 'none';
+      node.style.transform = `translate(${dx}px, ${dy}px)`;
+      requestAnimationFrame(() => {
+        node.style.transition = 'transform 280ms cubic-bezier(0.22, 1, 0.36, 1)';
+        node.style.transform = '';
+      });
+    }
+  };
+
+  const bindContainerReorder = (container, onCommit) => {
+    if (!container) return () => {};
+    let pointerId = null;
+    let startX = 0;
+    let startY = 0;
+    let sourceTile = null;
+    let pressTimer = null;
+    let drag = null;
+
+    const clearPressTimer = () => {
+      if (!pressTimer) return;
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    };
+
+    const cleanupInlineDragStyles = () => {
+      if (!sourceTile) return;
+      sourceTile.classList.remove('is-dragging');
+      sourceTile.style.position = '';
+      sourceTile.style.left = '';
+      sourceTile.style.top = '';
+      sourceTile.style.width = '';
+      sourceTile.style.height = '';
+      sourceTile.style.margin = '';
+      sourceTile.style.zIndex = '';
+      sourceTile.style.pointerEvents = '';
+      sourceTile.style.opacity = '';
+      sourceTile.style.transform = '';
+      sourceTile.style.transition = '';
+      sourceTile.style.clipPath = '';
+      sourceTile.style.webkitClipPath = '';
+    };
+
+    const resolveTargetTile = (clientX, clientY) => {
+      const probe = document.elementFromPoint(clientX, clientY);
+      const direct = probe?.closest('.tile');
+      if (direct && direct.parentElement === container && direct !== sourceTile && direct !== drag?.placeholder) {
+        return direct;
+      }
+      const candidates = [...container.querySelectorAll('.tile:not(.is-dragging):not(.tile-placeholder)')];
+      if (!candidates.length) return null;
+      const useHorizontal = container.classList.contains('quick-row');
+      let best = candidates[0];
+      let bestDist = Number.POSITIVE_INFINITY;
+      for (const node of candidates) {
+        const r = node.getBoundingClientRect();
+        const cx = r.left + (r.width / 2);
+        const cy = r.top + (r.height / 2);
+        const d = useHorizontal ? Math.abs(clientX - cx) : Math.abs(clientY - cy);
+        if (d < bestDist) {
+          bestDist = d;
+          best = node;
+        }
+      }
+      return best;
+    };
+
+    const placeDraggedTile = (clientX, clientY) => {
+      if (!drag || !sourceTile) return;
+      const hostRect = container.getBoundingClientRect();
+      const left = clientX - hostRect.left - drag.offsetX;
+      const top = clientY - hostRect.top - drag.offsetY;
+      sourceTile.style.left = `${left}px`;
+      sourceTile.style.top = `${top}px`;
+    };
+
+    const movePlaceholder = (clientX, clientY) => {
+      if (!drag || !sourceTile) return;
+      const placeholder = drag.placeholder;
+      const target = resolveTargetTile(clientX, clientY);
+      if (!target) return;
+
+      const rect = target.getBoundingClientRect();
+      const useHorizontal = container.classList.contains('quick-row');
+      const before = useHorizontal
+        ? clientX < (rect.left + rect.width / 2)
+        : clientY < (rect.top + rect.height / 2);
+
+      if (before && placeholder.nextSibling === target) return;
+      if (!before && target.nextSibling === placeholder) return;
+
+      animateReflow(container, () => {
+        container.insertBefore(placeholder, before ? target : target.nextSibling);
+      });
+      drag.moved = true;
+    };
+
+    const finishDrag = (commit) => {
+      clearPressTimer();
+      window.removeEventListener('pointermove', onPointerMove, { capture: true });
+      window.removeEventListener('pointerup', onPointerUp, { capture: true });
+      window.removeEventListener('pointercancel', onPointerCancel, { capture: true });
+
+      if (drag && sourceTile) {
+        if (drag.placeholder.parentElement === container) {
+          drag.placeholder.replaceWith(sourceTile);
+        } else {
+          container.appendChild(sourceTile);
+        }
+        if (drag.parentRestore && sourceTile.parentElement !== drag.parentRestore) {
+          drag.parentRestore.appendChild(sourceTile);
+        }
+        cleanupInlineDragStyles();
+        drag = null;
+        if (commit) onCommit();
+      } else if (drag?.placeholder) {
+        drag.placeholder.remove();
+        drag = null;
+      }
+
+      pointerId = null;
+      sourceTile = null;
+      document.body.classList.remove('reorder-dragging');
+    };
+
+    const startDrag = (event) => {
+      if (!sourceTile || drag) return;
+      const rect = sourceTile.getBoundingClientRect();
+      const placeholder = document.createElement('div');
+      placeholder.className = 'tile tile-placeholder';
+      placeholder.style.width = `${rect.width}px`;
+      placeholder.style.height = `${rect.height}px`;
+      placeholder.style.minHeight = `${rect.height}px`;
+
+      sourceTile.after(placeholder);
+      const hostRect = container.getBoundingClientRect();
+      sourceTile.classList.add('is-dragging');
+      container.appendChild(sourceTile);
+      sourceTile.style.position = 'absolute';
+      sourceTile.style.left = `${rect.left - hostRect.left}px`;
+      sourceTile.style.top = `${rect.top - hostRect.top}px`;
+      sourceTile.style.width = `${rect.width}px`;
+      sourceTile.style.height = `${rect.height}px`;
+      sourceTile.style.margin = '0';
+      sourceTile.style.zIndex = '4000';
+      sourceTile.style.pointerEvents = 'none';
+      sourceTile.style.opacity = '1';
+      sourceTile.style.transition = 'none';
+      sourceTile.style.transform = 'none';
+
+      drag = {
+        placeholder,
+        parentRestore: container,
+        offsetX: event.clientX - rect.left,
+        offsetY: event.clientY - rect.top,
+        moved: false
+      };
+      document.body.classList.add('reorder-dragging');
+      placeDraggedTile(event.clientX, event.clientY);
+    };
+
+    const onPointerMove = (event) => {
+      if (event.pointerId !== pointerId || !sourceTile) return;
+      const moved = Math.hypot(event.clientX - startX, event.clientY - startY);
+
+      if (!drag) {
+        if (event.pointerType === 'touch') {
+          if (moved > 10) {
+            clearPressTimer();
+            finishDrag(false);
+            return;
+          }
+          return;
+        }
+        if (moved > 4) startDrag(event);
+        return;
+      }
+
+      event.preventDefault();
+      placeDraggedTile(event.clientX, event.clientY);
+      movePlaceholder(event.clientX, event.clientY);
+    };
+
+    const onPointerUp = (event) => {
+      if (event.pointerId !== pointerId) return;
+      if (drag) {
+        event.preventDefault();
+        suppressTileClickUntil = Date.now() + 450;
+        finishDrag(true);
+        return;
+      }
+      finishDrag(false);
+    };
+
+    const onPointerCancel = (event) => {
+      if (event.pointerId !== pointerId) return;
+      finishDrag(false);
+    };
+
+    const onPointerDown = (event) => {
+      const tile = event.target.closest('.tile');
+      if (!tile || tile.parentElement !== container) return;
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+      pointerId = event.pointerId;
+      sourceTile = tile;
+      startX = event.clientX;
+      startY = event.clientY;
+
+      clearPressTimer();
+      const holdMs = event.pointerType === 'touch' ? 100 : null;
+      if (holdMs !== null) {
+        pressTimer = setTimeout(() => startDrag(event), holdMs);
+      }
+
+      window.addEventListener('pointermove', onPointerMove, { capture: true });
+      window.addEventListener('pointerup', onPointerUp, { capture: true });
+      window.addEventListener('pointercancel', onPointerCancel, { capture: true });
+    };
+
+    container.addEventListener('pointerdown', onPointerDown, { passive: true });
+    return () => {
+      clearPressTimer();
+      container.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener('pointermove', onPointerMove, { capture: true });
+      window.removeEventListener('pointerup', onPointerUp, { capture: true });
+      window.removeEventListener('pointercancel', onPointerCancel, { capture: true });
+    };
   };
 
   const enableReorder = () => {
-    destroySortables();
-    if (typeof Sortable === 'undefined') return;
+    destroyReorder();
 
-    sortables.push(new Sortable(el.quickRow, {
-      animation: 140,
-      delay: 150,
-      delayOnTouchOnly: true,
-      touchStartThreshold: 5,
-      onEnd: () => {
-        quickOrder = [...el.quickRow.querySelectorAll('.tile')].map(t => t.getAttribute('data-id'));
-        localStorage.setItem(STORAGE.quickOrder, JSON.stringify(quickOrder));
-      }
+    reorderCleanups.push(bindContainerReorder(el.quickRow, () => {
+      quickOrder = [...el.quickRow.querySelectorAll('.tile')].map(t => t.getAttribute('data-id'));
+      localStorage.setItem(STORAGE.quickOrder, JSON.stringify(quickOrder));
     }));
 
     document.querySelectorAll('.cat-body').forEach(body => {
       if (body.getAttribute('data-static') === 'true') return;
       const catName = body.getAttribute('data-cat-body');
-      sortables.push(new Sortable(body, {
-        animation: 140,
-        delay: 150,
-        delayOnTouchOnly: true,
-        touchStartThreshold: 5,
-        onEnd: () => {
-          orderByCat[catName] = [...body.querySelectorAll('.tile')].map(t => t.getAttribute('data-id'));
-          localStorage.setItem(STORAGE.order, JSON.stringify(orderByCat));
-        }
+      reorderCleanups.push(bindContainerReorder(body, () => {
+        orderByCat[catName] = [...body.querySelectorAll('.tile')].map(t => t.getAttribute('data-id'));
+        localStorage.setItem(STORAGE.order, JSON.stringify(orderByCat));
       }));
     });
   };
@@ -492,7 +721,7 @@
       ? iconSVG(item.icon)
       : `<img src="${item.img}" alt="${item.title}" loading="lazy" decoding="async">`;
     return `
-      <a class="tile recent-tile" href="${item.href}" data-id="${item.id}" data-scope="recent" data-title="${titleKey}" title="${item.title}">
+      <a class="tile recent-tile" href="${item.href}" data-id="${item.id}" data-scope="recent" data-title="${titleKey}" title="${item.title}" draggable="false">
         <div class="tile-icon">${iconMarkup}</div>
         <div class="tile-text">
           <div class="tile-title">${item.title}</div>
@@ -560,8 +789,12 @@
     if (el.recentHost) el.recentHost.innerHTML = '';
     el.columnsRoot.innerHTML = '';
     const recentItems = recentIds.map(id => ITEM_BY_ID.get(id)).filter(Boolean);
+    const mobileRecent = window.matchMedia('(max-width: 720px)').matches;
+    const visibleRecentItems = mobileRecent ? recentItems.slice(0, 4) : recentItems;
     if (showRecent) {
-      const recentCols = Math.min(RECENT_LIMIT, Math.max(4, recentItems.length || 0));
+      const recentCols = mobileRecent
+        ? 4
+        : Math.min(RECENT_LIMIT, Math.max(4, visibleRecentItems.length || 0));
       const recentSection = document.createElement('section');
       recentSection.className = 'category category-recent';
       recentSection.style.setProperty('--cat-color', '#53f5ff');
@@ -576,8 +809,8 @@
           </div>
         </div>
         <div class="cat-body" data-cat-body="__recent__" data-static="true">
-          ${recentItems.length
-            ? recentItems.map(it => recentTileHTML(it)).join('')
+          ${visibleRecentItems.length
+            ? visibleRecentItems.map(it => recentTileHTML(it)).join('')
             : '<div class="recent-empty">Open links and they will show up here.</div>'}
         </div>
       `;
@@ -725,6 +958,18 @@
       setRecentVisible(!showRecent);
       render();
       schedulePrefsAutoClose();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (Date.now() >= suppressTileClickUntil) return;
+      if (!e.target.closest('.tile')) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }, true);
+
+    document.addEventListener('dragstart', (e) => {
+      if (!e.target.closest('.tile')) return;
+      e.preventDefault();
     });
 
     document.addEventListener('click', (e) => {
