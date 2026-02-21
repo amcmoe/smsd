@@ -264,7 +264,8 @@
     recentVisible: 'smsd-recent-visible-v1',
     prefsCollapsed: 'smsd-prefs-collapsed-v1'
   };
-  const REPO_VERSION = '256';
+  const REPO_VERSION = '257';
+  const REPO_DATE = '2.21.26';
 
   const el = {
     topbarInner: document.querySelector('.topbar-inner'),
@@ -288,7 +289,7 @@
     recentHost: document.getElementById('recentHost'),
     buildVersion: document.getElementById('buildVersion')
   };
-  if (el.buildVersion) el.buildVersion.textContent = `v${REPO_VERSION}`;
+  if (el.buildVersion) el.buildVersion.textContent = `v${REPO_VERSION} ${REPO_DATE}`;
 
   let orderByCat = {};
   let quickOrder = [];
