@@ -395,7 +395,9 @@ body[data-theme="chroma"] .search{
 .search svg{opacity:.85;}
 
 .search input{
-  width:100%;
+  width:auto;
+  min-width:0;
+  flex:1 1 auto;
   background:transparent;
   border:0;
   outline:0;
@@ -403,10 +405,45 @@ body[data-theme="chroma"] .search{
   font-size:13px;
   font-family:inherit;
   font-weight:400;
+  appearance:none;
+  -webkit-appearance:none;
 }
 
 .search input::placeholder{
   color:color-mix(in srgb,var(--muted) 75%,transparent);
+}
+
+.search input::-webkit-search-cancel-button{
+  -webkit-appearance:none;
+  display:none;
+}
+
+.search-clear{
+  width:18px;
+  height:18px;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:color-mix(in srgb,var(--muted) 88%,transparent);
+  display:grid;
+  place-items:center;
+  line-height:1;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .12s ease,background .12s ease,color .12s ease,transform .12s ease;
+  flex:0 0 auto;
+  z-index:1;
+}
+.search-clear[data-visible]{
+  opacity:.92;
+  pointer-events:auto;
+}
+.search-clear:hover{
+  background:transparent;
+  color:color-mix(in srgb,var(--text) 86%,transparent);
 }
 
 .prefs-drawer{
@@ -1762,6 +1799,11 @@ body[data-theme="light"] .switch-list li:hover{
     position:relative;
     padding-right:52px;
   }
+  .topbar-center .search{
+    width:100% !important;
+    max-width:100% !important;
+    flex:1 1 100% !important;
+  }
   .topbar-right{
     position:absolute;
     top:8px;
@@ -2249,6 +2291,18 @@ body[data-theme="dark"] .cat-title{
 
 /* Mobile normalization: keep switch pills identical across all themes/layouts */
 @media (max-width:720px){
+  .topbar-center{
+    padding-right:0 !important;
+  }
+  .topbar-center .brand{
+    max-width:calc(100% - 52px);
+  }
+  .topbar-center .search{
+    width:100% !important;
+    max-width:none !important;
+    flex:1 1 100% !important;
+    margin-right:0 !important;
+  }
   .quick-row .tile{
     min-height:36px !important;
     padding:5px 10px !important;

@@ -39,6 +39,7 @@
               <path d="M21 21l-4.3-4.3m1.8-5.2a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
             <input id="searchInput" type="search" placeholder="Search…" autocomplete="off" />
+            <button class="search-clear" id="searchClear" type="button" aria-label="Clear search" title="Clear search">x</button>
           </div>
         </div>
 
@@ -265,7 +266,7 @@
     recentVisible: 'smsd-recent-visible-v1',
     prefsCollapsed: 'smsd-prefs-collapsed-v1'
   };
-  const REPO_VERSION = '261';
+  const REPO_VERSION = '262';
   const REPO_DATE = '2.21.26';
 
   const el = {
@@ -274,6 +275,7 @@
     quickRow: document.getElementById('quickRow'),
     columnsRoot: document.getElementById('columnsRoot'),
     searchInput: document.getElementById('searchInput'),
+    searchClear: document.getElementById('searchClear'),
     resetPrefs: document.getElementById('resetPrefs'),
     themeSelect: document.getElementById('themeSelect'),
     layoutSelect: document.getElementById('layoutSelect'),
@@ -915,12 +917,30 @@
   };
 
   const bindEvents = () => {
-    el.searchInput?.addEventListener('input', applyFilter);
+    const syncSearchClear = () => {
+      if (!el.searchClear || !el.searchInput) return;
+      const hasText = (el.searchInput.value || '').length > 0;
+      el.searchClear.toggleAttribute('data-visible', hasText);
+      el.searchClear.setAttribute('aria-hidden', hasText ? 'false' : 'true');
+    };
+
+    el.searchInput?.addEventListener('input', () => {
+      applyFilter();
+      syncSearchClear();
+    });
     el.searchInput?.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         el.searchInput.value = '';
         applyFilter();
+        syncSearchClear();
       }
+    });
+    el.searchClear?.addEventListener('click', () => {
+      if (!el.searchInput) return;
+      el.searchInput.value = '';
+      applyFilter();
+      syncSearchClear();
+      el.searchInput.focus();
     });
 
     el.themeSelect?.addEventListener('change', () => {
@@ -1001,6 +1021,7 @@
 
     setupDropdown(el.themeSelect, el.themeTrigger, el.themeMenu);
     setupDropdown(el.layoutSelect, el.layoutTrigger, el.layoutMenu);
+    syncSearchClear();
 
     el.prefsPanelEl?.addEventListener('click', (e) => e.stopPropagation());
     el.prefsPanelEl?.addEventListener('pointerdown', cancelPrefsAutoClose);
