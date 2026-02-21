@@ -264,7 +264,7 @@
     recentVisible: 'smsd-recent-visible-v1',
     prefsCollapsed: 'smsd-prefs-collapsed-v1'
   };
-  const REPO_VERSION = '258';
+  const REPO_VERSION = '259';
   const REPO_DATE = '2.21.26';
 
   const el = {
@@ -427,6 +427,7 @@
 
   const tileHTML = (item, scopeName) => {
     const titleKey = `${item.title} ${item.meta || ''} ${scopeName}`.toLowerCase();
+    const singleLong = !item.title.includes(' ') && item.title.length > 12;
     const iconMarkup = item.icon
       ? iconSVG(item.icon)
       : `<img src="${item.img}" alt="${item.title}" loading="lazy" decoding="async">`;
@@ -434,7 +435,7 @@
       <a class="tile" href="${item.href}" data-id="${item.id}" data-scope="${scopeName}" data-title="${titleKey}">
         <div class="tile-icon">${iconMarkup}</div>
         <div class="tile-text">
-          <div class="tile-title">${item.title}</div>
+          <div class="tile-title${singleLong ? ' single-long' : ''}">${item.title}</div>
           <div class="tile-meta">${item.meta || ''}</div>
         </div>
       </a>

@@ -987,25 +987,52 @@ body[data-layout="large"] .tile-meta{
 body[data-theme="dark"] .category{
   --cat-head-strip: rgba(236,239,244,.12);
   --cat-edge-glow: color-mix(in srgb,var(--cat-color) 42%,rgba(216,222,233,.42));
-  background:rgba(20,27,38,.82);
+  background:rgba(18,24,34,.92);
   border-color:rgba(216,222,233,.18);
-  box-shadow:0 12px 30px rgba(0,0,0,.34),inset 0 1px 0 rgba(216,222,233,.06);
+  box-shadow:0 10px 24px rgba(0,0,0,.30),inset 0 1px 0 rgba(216,222,233,.04);
+  border-radius:7px;
+}
+body[data-theme="dark"]{
+  font-family:"Noto Sans","Segoe UI",system-ui,-apple-system,sans-serif;
 }
 
 body[data-theme="dark"] .cat-head{
-  border-bottom:1px solid rgba(216,222,233,.14);
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.01)),
-    linear-gradient(90deg,color-mix(in srgb,var(--cat-color) 24%,#2e3440),transparent 72%);
+  border-bottom:1px solid rgba(46,52,64,.72);
+  background:#8FBCBB;
+  border-radius:0;
 }
+body[data-theme="dark"] .cat-head::after{
+  display:none;
+}
+body[data-theme="dark"] .columns > .category:nth-child(7n+1) .cat-head{background:#8FBCBB;}
+body[data-theme="dark"] .columns > .category:nth-child(7n+2) .cat-head{background:#88C0D0;}
+body[data-theme="dark"] .columns > .category:nth-child(7n+3) .cat-head{background:#81A1C1;}
+body[data-theme="dark"] .columns > .category:nth-child(7n+4) .cat-head{background:#5E81AC;}
+body[data-theme="dark"] .columns > .category:nth-child(7n+5) .cat-head{background:#8FBCBB;}
+body[data-theme="dark"] .columns > .category:nth-child(7n+6) .cat-head{background:#81A1C1;}
+body[data-theme="dark"] .columns > .category:nth-child(7n) .cat-head{background:#8FBCBB;}
 
 body[data-theme="dark"] .cat-icon{
-  color:color-mix(in srgb,var(--cat-color) 54%,#eceff4);
+  color:#1C273C;
+  width:32px;
+  height:32px;
 }
 
 body[data-theme="dark"] .cat-title{
-  font-weight:600;
-  letter-spacing:.1px;
+  font-weight:400;
+  letter-spacing:.04px;
+  color:#1C273C;
+  font-size:18px;
+}
+body[data-theme="dark"] .tile-title{
+  font-weight:400;
+  letter-spacing:.02px;
+}
+body[data-theme="dark"] .tile{
+  border-radius:6px;
+}
+body[data-theme="dark"] .tile-icon{
+  border-radius:6px;
 }
 
 /* Midnight: unified, non-rainbow category style */
@@ -1071,6 +1098,14 @@ body[data-theme="chroma"] .tile-title{
   font-family:"Ubuntu Mono","Cascadia Mono","Consolas",monospace;
   letter-spacing:.08px;
   font-weight:500;
+}
+body[data-theme="chroma"] .cat-body .tile-title,
+body[data-theme="chroma"] .quick-row .tile-title{
+  font-family:"Noto Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:15px;
+  font-weight:500;
+  letter-spacing:.02px;
+  line-height:1.2;
 }
 
 .cat-head{
@@ -1389,6 +1424,15 @@ body[data-theme="dark"] .tile:hover .tile-icon{
   overflow:hidden;
   text-overflow:ellipsis;
   letter-spacing:.12px;
+}
+.tile-title.single-long{
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  display:block !important;
+  line-clamp:unset !important;
+  -webkit-line-clamp:unset !important;
+  -webkit-box-orient:unset !important;
 }
 
 .tile-meta{
@@ -2078,4 +2122,29 @@ body[data-theme="sunset"] .build-version{
   color:rgba(223,210,242,.88);
   background:rgba(12,12,44,.72);
   box-shadow:0 0 12px rgba(83,245,255,.18);
+}
+
+/* Final dark typography override (must come last to beat global non-sunset weights) */
+body[data-theme="dark"]{
+  font-family:"Noto Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+body[data-theme="dark"] .cat-title,
+body[data-theme="dark"] .tile-title,
+body[data-theme="dark"] .quick-row .tile-title{
+  letter-spacing:.01px;
+}
+body[data-theme="dark"] .cat-title{
+  font-weight:400 !important;
+}
+body[data-theme="dark"] .tile-title,
+body[data-theme="dark"] .quick-row .tile-title{
+  font-weight:300 !important;
+  font-size:15px !important;
+  line-height:1.24;
+  overflow-wrap:break-word;
+  word-break:normal;
+  hyphens:none;
+}
+body[data-theme="dark"] .cat-body .tile-title{
+  padding-bottom:2px;
 }
