@@ -266,12 +266,13 @@
     recentVisible: 'smsd-recent-visible-v1',
     prefsCollapsed: 'smsd-prefs-collapsed-v1'
   };
-  const REPO_VERSION = '262';
+  const REPO_VERSION = '263';
   const REPO_DATE = '2.21.26';
 
   const el = {
     topbarInner: document.querySelector('.topbar-inner'),
     topbarRight: document.querySelector('.topbar-right'),
+    searchBox: document.querySelector('.search'),
     quickRow: document.getElementById('quickRow'),
     columnsRoot: document.getElementById('columnsRoot'),
     searchInput: document.getElementById('searchInput'),
@@ -940,6 +941,11 @@
       el.searchInput.value = '';
       applyFilter();
       syncSearchClear();
+      el.searchInput.focus();
+    });
+    el.searchBox?.addEventListener('click', (e) => {
+      if (!el.searchInput) return;
+      if (e.target.closest('.search-clear')) return;
       el.searchInput.focus();
     });
 

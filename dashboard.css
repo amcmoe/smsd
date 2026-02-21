@@ -248,6 +248,13 @@ body[data-theme="chroma"] .topbar{
   align-items:center;
   transform:translateX(calc(var(--prefs-nudge, 0px) * -1));
   transition:transform .18s ease;
+  pointer-events:none;
+}
+
+.topbar-right .prefs-drawer,
+.topbar-right .prefs-toggle,
+.topbar-right .prefs-panel{
+  pointer-events:auto;
 }
 
 .brand{
@@ -373,6 +380,7 @@ body[data-theme="chroma"] .brand-badge img{
   border-radius:999px;
   border:1px solid var(--border);
   box-shadow:0 10px 20px rgba(0,0,0,.14);
+  cursor:text;
 }
 
 body[data-theme="dark"] .search{background:rgba(255,255,255,.055);}
@@ -393,11 +401,12 @@ body[data-theme="chroma"] .search{
 }
 
 .search svg{opacity:.85;}
+.search svg{pointer-events:none;}
 
 .search input{
   width:auto;
   min-width:0;
-  flex:1 1 auto;
+  flex:1 1 0%;
   background:transparent;
   border:0;
   outline:0;
@@ -1810,6 +1819,12 @@ body[data-theme="light"] .switch-list li:hover{
     right:var(--gutter);
     width:auto;
     z-index:65;
+    pointer-events:none;
+  }
+  .topbar-right .prefs-drawer,
+  .topbar-right .prefs-toggle,
+  .topbar-right .prefs-panel{
+    pointer-events:auto;
   }
   .prefs-toggle{
   width:36px;
