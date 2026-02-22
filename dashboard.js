@@ -4,6 +4,7 @@
   const KEYS = Object.freeze({
     theme: "smsd-theme-v5",
     accent: "smsd-accent-v5",
+    accentByTheme: "smsd-accent-by-theme-v1",
     layout: "smsd-layout-v5",
   });
 
@@ -14,7 +15,7 @@
   });
 
 const ALLOWED = Object.freeze({
-  theme: new Set(["light", "dark", "midnight", "chroma"]),
+  theme: new Set(["light", "dark", "midnight", "chroma", "sunset"]),
   layout: new Set(["compact", "medium", "large"]),
 });
 
@@ -41,6 +42,22 @@ const ALLOWED = Object.freeze({
     return /^#[0-9a-fA-F]{6}$/.test(v) ? v : null;
   };
 
+  const readJSON = (key, fallback) => {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch {
+      return fallback;
+    }
+  };
+
+  const defaultAccentForTheme = (theme) => {
+    if (theme === "dark") return "#5E81AC";
+    if (theme === "chroma") return "#88c0d0";
+    if (theme === "sunset") return "#f80278";
+    return "#9687cf";
+  };
+
   const setCSSAccent = (hex) => {
     document.documentElement.style.setProperty("--accent", hex);
   };
@@ -57,6 +74,7 @@ const ALLOWED = Object.freeze({
     const storedTheme = normalizeTheme(read(KEYS.theme));
     const storedLayout = read(KEYS.layout);
     const storedAccent = read(KEYS.accent);
+    const accentByTheme = readJSON(KEYS.accentByTheme, {});
 
    const theme =
      (isValid("theme", storedTheme) && storedTheme) ||
@@ -69,7 +87,8 @@ const ALLOWED = Object.freeze({
       (isValid("layout", body.getAttribute("data-layout")) && body.getAttribute("data-layout")) ||
       DEFAULTS.layout;
 
-    const accent = normalizeAccent(storedAccent) || DEFAULTS.accent;
+    const themeAccent = normalizeAccent(accentByTheme?.[theme]);
+    const accent = themeAccent || normalizeAccent(storedAccent) || defaultAccentForTheme(theme);
 
     return { theme, layout, accent };
   };
@@ -116,6 +135,10 @@ const ALLOWED = Object.freeze({
       if (hex) {
         setCSSAccent(hex);
         write(KEYS.accent, hex);
+        const currentTheme = body.getAttribute("data-theme") || DEFAULTS.theme;
+        const accentByTheme = readJSON(KEYS.accentByTheme, {});
+        accentByTheme[currentTheme] = hex;
+        write(KEYS.accentByTheme, JSON.stringify(accentByTheme));
       }
     }
 
