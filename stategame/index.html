@@ -1,0 +1,3506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn the 50 States!</title>
+  <meta name="theme-color" content="#667eea">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="State Game">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(to bottom, #667eea 0%, #764ba2 100%);
+      background-attachment: fixed;
+      background-size: cover;
+      background-repeat: no-repeat;
+      color: #333;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: transparent;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: none;
+      position: relative;
+      z-index: 10;
+      max-height: 220px;
+      overflow: hidden;
+      transition: transform 0.45s ease, opacity 0.35s ease, max-height 0.45s ease, padding 0.45s ease;
+    }
+
+    body.menu-collapsed .header {
+      transform: translateY(-120%);
+      opacity: 0;
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      pointer-events: none;
+      box-shadow: none;
+    }
+
+    h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      color: #ff6b6b;
+      margin-bottom: 0.4rem;
+      text-shadow: 2px 2px 0px #ffd93d;
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.93);
+      padding: 0.45rem 1rem;
+      border-radius: 18px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.14);
+    }
+
+    .mode-toggle {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900;
+      font-size: 1.2rem;
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
+
+    .btn-explore {
+      background: #6BCB77;
+      color: white;
+    }
+
+    .btn-quiz {
+      background: #FF6B9D;
+      color: white;
+    }
+
+    .btn-scoreboard {
+      background: #FF9F43;
+      color: white;
+    }
+
+    .btn.active {
+      transform: scale(1.1);
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5);
+    }
+
+    .back-home {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 220;
+      display: none;
+      align-items: center;
+      gap: 0.35rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff6bb8 0%, #ff4fa0 55%, #ff2f8a 100%);
+      color: white;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.1rem;
+      padding: 0.55rem 1rem;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(255, 47, 138, 0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .back-home:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 10px 22px rgba(255, 47, 138, 0.55);
+    }
+
+    body.menu-collapsed .back-home {
+      display: inline-flex;
+    }
+
+    .map-zoom-btn {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 30;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      border: 3px solid #ff66b7;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #ff4fa0;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.75rem;
+      line-height: 1;
+      padding: 0;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(255, 79, 160, 0.28);
+      transition: transform 0.24s ease, box-shadow 0.24s ease, filter 0.24s ease, background-color 0.24s ease, color 0.24s ease;
+    }
+
+    .map-zoom-btn:hover {
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 12px 28px rgba(255, 79, 160, 0.38);
+    }
+
+    .map-zoom-btn.active {
+      background: #ff4fa0;
+      color: #ffffff;
+      filter: saturate(1.1);
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.72), 0 12px 30px rgba(255, 79, 160, 0.45);
+    }
+
+    .map-zoom-btn.hidden {
+      display: none;
+    }
+
+    .compass-rose {
+      position: absolute;
+      right: clamp(0.55rem, 1.9vw, 1.5rem);
+      top: 56%;
+      transform: translateY(-50%);
+      width: clamp(96px, 8.2vw, 128px);
+      aspect-ratio: 1 / 1;
+      pointer-events: none;
+      z-index: 22;
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.22));
+    }
+
+    .compass-rose.hidden {
+      display: none;
+    }
+
+    .compass-ring {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 4px solid #ff89c2;
+      background:
+        radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.86) 36%, rgba(255, 239, 210, 0.88) 100%);
+      box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.8);
+    }
+
+    .compass-needle {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 8px;
+      height: 60%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(to bottom, #ff5a91 0 49%, #4ab5de 51% 100%);
+      clip-path: polygon(50% 0, 100% 22%, 100% 78%, 50% 100%, 0 78%, 0 22%);
+      border-radius: 8px;
+      opacity: 0.95;
+    }
+
+    .compass-needle::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid #7f7fd5;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.65);
+    }
+
+    .compass-dir {
+      position: absolute;
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(0.65rem, 0.9vw, 0.82rem);
+      letter-spacing: 0.02em;
+      color: #6a43a2;
+      text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.9);
+      white-space: nowrap;
+    }
+
+    .compass-dir.north { left: 50%; top: 5px; transform: translateX(-50%); }
+    .compass-dir.east { right: 6px; top: 50%; transform: translateY(-50%); }
+    .compass-dir.south { left: 50%; bottom: 5px; transform: translateX(-50%); }
+    .compass-dir.west { left: 6px; top: 50%; transform: translateY(-50%); }
+
+    .main-content {
+      width: 98%;
+      max-width: 1800px;
+      margin: 1rem auto;
+      padding: 0;
+      position: relative;
+    }
+
+    .map-container {
+      background: #f3f4f6;
+      border-radius: 20px;
+      padding: clamp(0.45rem, 0.9vw, 0.9rem);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      margin-bottom: 0;
+      width: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .map-container.hidden {
+      display: none;
+    }
+
+    .map-container svg {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      display: block;
+    }
+
+    .map-container svg path {
+      stroke: white;
+      stroke-width: 1.5;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .map-container svg path:not(.eliminated):hover {
+      filter: brightness(1.15);
+      stroke-width: 3;
+    }
+
+    .map-container svg path.eliminated {
+      fill: #cccccc !important;
+      opacity: 0.4;
+      pointer-events: none;
+      transition: all 0.4s ease;
+    }
+
+    .info-panel {
+      position: fixed;
+      top: 50%;
+      right: 1rem;
+      transform: translateY(-50%) translateX(400px);
+      background: white;
+      padding: 1.5rem;
+      border-radius: 20px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+      min-width: 280px;
+      max-width: 350px;
+      transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 100;
+    }
+
+    .info-panel.visible {
+      transform: translateY(-50%) translateX(0);
+    }
+
+    @media (max-width: 768px) {
+      .info-panel {
+        position: fixed;
+        top: auto;
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        transform: translateY(400px);
+        max-width: none;
+      }
+
+      .info-panel.visible {
+        transform: translateY(0);
+      }
+    }
+
+    .info-panel h2 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 2rem;
+      color: #ff6b6b;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-panel .abbreviation {
+      display: inline-block;
+      background: #ffd93d;
+      color: #333;
+      padding: 0.3rem 0.8rem;
+      border-radius: 8px;
+      font-weight: 900;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-panel .capital {
+      font-size: 1.3rem;
+      color: #667eea;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .info-panel .fun-fact {
+      font-size: 1.1rem;
+      color: #6BCB77;
+      font-weight: 600;
+      background: #f0f9f4;
+      padding: 0.8rem;
+      border-radius: 10px;
+      margin-top: 1rem;
+      line-height: 1.4;
+    }
+
+    .quiz-bar {
+      position: fixed;
+      top: 0.8rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(96vw, 1200px);
+      background: white;
+      padding: 1rem;
+      border-radius: 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      z-index: 205;
+    }
+
+    .quiz-bar.active {
+      display: flex;
+    }
+
+    .quiz-setup {
+      position: fixed;
+      top: 0.8rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(94vw, 780px);
+      background: white;
+      border-radius: 24px;
+      padding: 1rem;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+      border: 4px solid #ffd8f0;
+      z-index: 206;
+      display: none;
+      text-align: center;
+    }
+
+    .quiz-setup.active {
+      display: block;
+      animation: popInTop 0.3s ease-out;
+    }
+
+    .quiz-setup h3 {
+      font-family: 'Fredoka One', cursive;
+      color: #ff4fa0;
+      font-size: clamp(1.15rem, 3vw, 1.7rem);
+      margin-bottom: 0.75rem;
+    }
+
+    .quiz-size-options {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-quiz-size {
+      min-width: 170px;
+      font-size: 1.05rem;
+      padding: 0.7rem 1rem;
+      color: white;
+    }
+
+    .btn-quiz-10 { background: #45B7D1; }
+    .btn-quiz-25 { background: #6BCB77; }
+    .btn-quiz-50 { background: #FF6B9D; }
+
+    .quiz-prompt {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+      color: #ff6b6b;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .quiz-lives {
+      font-size: 2rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .quiz-score {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #667eea;
+    }
+
+    .btn-repeat {
+      background: #4ecdc4;
+      color: white;
+      font-size: 1rem;
+      padding: 0.6rem 1.2rem;
+    }
+
+    .quiz-end {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 3rem;
+      border-radius: 30px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+      text-align: center;
+      z-index: 200;
+      min-width: 400px;
+    }
+
+    .quiz-end.visible {
+      display: block;
+      animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .quiz-end h2 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 3rem;
+      color: #ff6b6b;
+      margin-bottom: 1rem;
+    }
+
+    .quiz-end p {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 2rem;
+    }
+
+    .btn-play-again {
+      background: #6BCB77;
+      color: white;
+      font-size: 1.3rem;
+      padding: 1rem 2.5rem;
+    }
+
+    .quiz-end-actions {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-view-scoreboard {
+      background: #ff9f43;
+      color: white;
+      font-size: 1.3rem;
+      padding: 1rem 2.2rem;
+    }
+
+    .scoreboard-panel {
+      display: none;
+      width: 100%;
+      border-radius: 28px;
+      padding: clamp(1rem, 2.4vw, 2rem);
+      background:
+        radial-gradient(circle at 12% 15%, rgba(255, 255, 255, 0.45) 0 18%, transparent 19%),
+        radial-gradient(circle at 86% 20%, rgba(255, 255, 255, 0.35) 0 14%, transparent 15%),
+        linear-gradient(145deg, #fff2fb 0%, #fff8d9 45%, #e7fff4 100%);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.25);
+      border: 6px solid #ffffff;
+      position: relative;
+      overflow: auto;
+    }
+
+    .scoreboard-panel.active {
+      display: block;
+      animation: popIn 0.35s ease-out;
+    }
+
+    .scoreboard-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(1.8rem, 4.2vw, 2.7rem);
+      color: #ff4fa0;
+      text-shadow: 2px 2px 0 #ffd93d;
+      margin-bottom: 0.35rem;
+    }
+
+    .scoreboard-subtitle {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .scoreboard-columns {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+      align-items: start;
+    }
+
+    .score-column {
+      background: rgba(255,255,255,0.78);
+      border-radius: 18px;
+      border: 3px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 5px 12px rgba(0,0,0,0.12);
+      padding: 0.75rem;
+    }
+
+    .score-column h3 {
+      font-family: 'Fredoka One', cursive;
+      color: #764ba2;
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .scoreboard-list {
+      list-style: none;
+      display: grid;
+      gap: 0.8rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    .scoreboard-entry {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: 16px;
+      border: 3px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      font-weight: 800;
+    }
+
+    .scoreboard-entry:nth-child(4n + 1) { background: #ffe9f6; }
+    .scoreboard-entry:nth-child(4n + 2) { background: #fff4d1; }
+    .scoreboard-entry:nth-child(4n + 3) { background: #dff8ff; }
+    .scoreboard-entry:nth-child(4n + 4) { background: #e8ffe8; }
+
+    .score-rank {
+      font-family: 'Fredoka One', cursive;
+      color: #764ba2;
+      font-size: 1.05rem;
+      min-width: 2.2rem;
+      text-align: center;
+    }
+
+    .score-name {
+      color: #333;
+      word-break: break-word;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .score-name-label {
+      word-break: break-word;
+    }
+
+    .score-award {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.34rem;
+      padding: 0.26rem 0.62rem;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,0.95);
+      background: linear-gradient(135deg, #fff3b0 0%, #ffe6ff 50%, #dff8ff 100%);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      font-family: 'Fredoka One', cursive;
+      color: #764ba2;
+      font-size: 0.92rem;
+      line-height: 1;
+      white-space: nowrap;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .score-award-icon {
+      font-size: 1.22rem;
+    }
+
+    .score-award.clickable {
+      cursor: pointer;
+    }
+
+    .score-award.clickable:hover {
+      transform: translateY(-1px) scale(1.04);
+      box-shadow: 0 5px 12px rgba(0,0,0,0.16);
+    }
+
+    .score-value {
+      color: #1e7a56;
+      font-size: 1.1rem;
+      font-family: 'Fredoka One', cursive;
+    }
+
+    .score-empty {
+      padding: 1rem;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.8);
+      border: 2px dashed #ff6b9d;
+      color: #666;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .score-actions {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-score-reset {
+      background: #ff6b6b;
+      color: white;
+      font-size: 1rem;
+      padding: 0.7rem 1.4rem;
+    }
+
+    .name-entry-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(55, 36, 99, 0.45);
+      z-index: 260;
+      padding: 1rem;
+    }
+
+    .name-entry-overlay.active {
+      display: flex;
+    }
+
+    .reset-confirm-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(36, 25, 78, 0.5);
+      z-index: 270;
+      padding: 1rem;
+    }
+
+    .reset-confirm-overlay.active {
+      display: flex;
+    }
+
+    .reset-confirm-card {
+      width: min(94vw, 440px);
+      border-radius: 26px;
+      padding: 1.1rem 1rem 0.95rem;
+      text-align: center;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(255,255,255,0.58) 0 13%, transparent 14%),
+        radial-gradient(circle at 85% 16%, rgba(255,255,255,0.5) 0 12%, transparent 13%),
+        linear-gradient(145deg, #ffe9f6 0%, #fff6c5 47%, #e1fff4 100%);
+      border: 5px solid #ffffff;
+      box-shadow: 0 16px 38px rgba(0,0,0,0.3);
+      animation: prizePopIn 0.24s ease-out;
+    }
+
+    .reset-confirm-title {
+      font-family: 'Fredoka One', cursive;
+      color: #ff4fa0;
+      text-shadow: 2px 2px 0 #ffd93d;
+      font-size: clamp(1.2rem, 3.8vw, 1.8rem);
+      margin-bottom: 0.3rem;
+    }
+
+    .reset-confirm-prompt {
+      color: #4b3f68;
+      font-weight: 800;
+      margin-bottom: 0.55rem;
+      font-size: 1rem;
+    }
+
+    .reset-confirm-display {
+      margin: 0 auto 0.5rem;
+      width: min(210px, 80%);
+      min-height: 48px;
+      border: 3px solid #ff9cd0;
+      border-radius: 14px;
+      background: #fffdf7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.9rem;
+      color: #5a45a3;
+      letter-spacing: 0.06em;
+      user-select: none;
+    }
+
+    .reset-confirm-feedback {
+      min-height: 1.3rem;
+      font-weight: 800;
+      color: #4b3f68;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .reset-confirm-feedback.error {
+      color: #e04141;
+    }
+
+    .reset-confirm-feedback.success {
+      color: #1e7a56;
+    }
+
+    .reset-keypad {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.45rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .reset-key-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 0.58rem 0.2rem;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.05rem;
+      color: #4f3d86;
+      background: linear-gradient(145deg, #ffffff 0%, #f8f1ff 100%);
+      border: 2px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.14);
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .reset-key-btn:hover {
+      transform: translateY(-1px) scale(1.03);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    }
+
+    .reset-key-btn.action {
+      background: linear-gradient(145deg, #ffe4f4 0%, #ffeec2 100%);
+      color: #c04b8e;
+      font-size: 0.92rem;
+    }
+
+    .reset-confirm-actions {
+      display: flex;
+      justify-content: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-reset-cancel {
+      background: #a0aec0;
+      color: white;
+      font-size: 0.95rem;
+      padding: 0.62rem 1.2rem;
+    }
+
+    .btn-reset-confirm {
+      background: #ff6b6b;
+      color: white;
+      font-size: 0.95rem;
+      padding: 0.62rem 1.2rem;
+    }
+
+    .btn-reset-confirm:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .prize-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(44, 28, 84, 0.5);
+      z-index: 250;
+      padding: 1rem;
+    }
+
+    .prize-overlay.active {
+      display: flex;
+    }
+
+    .prize-card {
+      width: min(94vw, 560px);
+      border-radius: 30px;
+      padding: 1.5rem 1.2rem 1.15rem;
+      text-align: center;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255,255,255,0.6) 0 12%, transparent 13%),
+        radial-gradient(circle at 85% 18%, rgba(255,255,255,0.5) 0 10%, transparent 11%),
+        linear-gradient(145deg, #ffe6f7 0%, #fff7bf 48%, #dffff1 100%);
+      border: 6px solid #ffffff;
+      box-shadow: 0 18px 42px rgba(0,0,0,0.32);
+      animation: prizePopIn 0.34s ease-out;
+    }
+
+    .prize-title {
+      font-family: 'Fredoka One', cursive;
+      color: #ff4fa0;
+      text-shadow: 2px 2px 0 #ffd93d;
+      font-size: clamp(1.35rem, 3.8vw, 2.2rem);
+      margin-bottom: 0.4rem;
+      line-height: 1.08;
+    }
+
+    .prize-title-main {
+      display: block;
+      font-size: 1em;
+    }
+
+    .prize-title-sub {
+      display: block;
+      margin-top: 0.14em;
+      font-size: 0.78em;
+    }
+
+    .prize-icon {
+      font-size: clamp(3.2rem, 10vw, 5rem);
+      margin: 0.45rem 0 0.35rem;
+      line-height: 1;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.18));
+    }
+
+    .prize-name {
+      font-family: 'Fredoka One', cursive;
+      color: #5a45a3;
+      font-size: clamp(1.2rem, 3.6vw, 1.8rem);
+      margin-bottom: 0.45rem;
+    }
+
+    .prize-message {
+      color: #4b3f68;
+      font-weight: 800;
+      margin-bottom: 0.95rem;
+      font-size: 1rem;
+    }
+
+    .btn-claim-prize {
+      background: #ff6b9d;
+      color: white;
+      font-size: 1.05rem;
+      padding: 0.75rem 1.5rem;
+    }
+
+    .name-entry-card {
+      width: min(94vw, 560px);
+      border-radius: 26px;
+      padding: 1.2rem 1.1rem 1rem;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(255,255,255,0.55) 0 14%, transparent 15%),
+        radial-gradient(circle at 85% 16%, rgba(255,255,255,0.48) 0 11%, transparent 12%),
+        linear-gradient(145deg, #ffe9f6 0%, #fff7cb 46%, #ddfff1 100%);
+      border: 5px solid #ffffff;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.28);
+      text-align: center;
+      animation: popIn 0.25s ease-out;
+    }
+
+    .name-entry-card h3 {
+      font-family: 'Fredoka One', cursive;
+      color: #ff4fa0;
+      text-shadow: 2px 2px 0 #ffd93d;
+      font-size: clamp(1.35rem, 3.6vw, 2rem);
+      margin-bottom: 0.45rem;
+    }
+
+    .name-entry-message {
+      color: #4b3f68;
+      font-weight: 800;
+      margin-bottom: 0.85rem;
+    }
+
+    .name-entry-input {
+      width: min(100%, 360px);
+      border: 3px solid #ff9cd0;
+      border-radius: 14px;
+      padding: 0.65rem 0.8rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      outline: none;
+      margin: 0 auto;
+      display: block;
+      background: #fffdf5;
+    }
+
+    .name-entry-input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+    }
+
+    .name-entry-actions {
+      margin-top: 0.85rem;
+      display: flex;
+      gap: 0.7rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-name-save {
+      background: #6BCB77;
+      color: white;
+      font-size: 1rem;
+      padding: 0.7rem 1.4rem;
+    }
+
+    .btn-name-anon {
+      background: #FF6B9D;
+      color: white;
+      font-size: 1rem;
+      padding: 0.7rem 1.4rem;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @keyframes exploreWiggle {
+      0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+      25% { transform: translate(-3px, -5px) rotate(-2deg) scale(1.04); }
+      55% { transform: translate(4px, 2px) rotate(2deg) scale(1.08); }
+      100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+    }
+
+    @keyframes exploreHopTilt {
+      0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+      40% { transform: translate(0, -10px) rotate(3deg) scale(1.1); }
+      70% { transform: translate(3px, -3px) rotate(-2deg) scale(1.05); }
+      100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+    }
+
+    @keyframes exploreFloatSpin {
+      0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+      30% { transform: translate(2px, -7px) rotate(4deg) scale(1.06); }
+      65% { transform: translate(-3px, -4px) rotate(-4deg) scale(1.08); }
+      100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+    }
+
+    @keyframes exploreBounceSide {
+      0% { transform: translate(0, 0) scale(1); }
+      35% { transform: translate(7px, -4px) scale(1.08); }
+      65% { transform: translate(-5px, -2px) scale(1.05); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    @keyframes exploreJelly {
+      0% { transform: scale(1, 1); }
+      30% { transform: scale(1.13, 0.9); }
+      55% { transform: scale(0.96, 1.08); }
+      75% { transform: scale(1.06, 0.96); }
+      100% { transform: scale(1, 1); }
+    }
+
+    @keyframes popIn {
+      0% { transform: translate(-50%, -50%) scale(0); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    @keyframes popInTop {
+      0% { transform: translateX(-50%) translateY(-14px); opacity: 0; }
+      100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+
+    @keyframes prizePopIn {
+      0% { transform: scale(0.84); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .correct-flash {
+      animation: bounce 0.6s ease;
+    }
+
+    .wrong-flash {
+      animation: shake 0.4s ease;
+    }
+
+    .map-container svg path.explore-reading {
+      stroke: #ffffff;
+      stroke-width: 2.6;
+    }
+
+    /* Confetti canvas */
+    #confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+      display: none;
+    }
+
+    #confetti.active {
+      display: block;
+    }
+
+    /* Small state labels */
+    .state-label {
+      position: absolute;
+      background: white;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      padding: 0.4rem 0.8rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      z-index: 10;
+    }
+
+    .state-label:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      background: #f8f9ff;
+    }
+
+    .state-labels-container {
+      position: relative;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 { font-size: 1.8rem; }
+      .mode-toggle { flex-wrap: wrap; }
+      .back-home { top: 0.6rem; left: 0.6rem; font-size: 1rem; }
+      .map-zoom-btn {
+        width: 54px;
+        height: 54px;
+        font-size: 1.55rem;
+      }
+      .quiz-setup {
+        top: 0.6rem;
+        width: calc(100vw - 1rem);
+        padding: 0.75rem;
+      }
+      .btn-quiz-size { min-width: 145px; font-size: 0.95rem; }
+      .quiz-bar {
+        top: 0.6rem;
+        width: calc(100vw - 1rem);
+        padding: 0.75rem;
+      }
+      .info-panel {
+        right: 1rem;
+        left: 1rem;
+        min-width: auto;
+      }
+      .quiz-prompt { font-size: 1.4rem; }
+      .quiz-end { min-width: 90%; padding: 2rem; }
+      .compass-rose {
+        width: 88px;
+        right: 0.35rem;
+        top: 60%;
+      }
+      .scoreboard-entry {
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+          "rank name"
+          ". score";
+      }
+      .score-rank { grid-area: rank; }
+      .score-name { grid-area: name; }
+      .score-value { grid-area: score; justify-self: end; }
+      .scoreboard-columns { grid-template-columns: 1fr; }
+      .name-entry-card { padding: 1rem 0.8rem 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <button class="back-home" id="back-home-btn" onclick="setMode('home')" aria-label="Back to main menu">&larr; Back</button>
+
+  <div class="header">
+    <h1>🗺️ Learn the 50 States!</h1>
+    <div class="mode-toggle">
+      <button class="btn btn-explore" onclick="setMode('explore')">Explore</button>
+      <button class="btn btn-quiz" onclick="setMode('quiz')">Quiz</button>
+      <button class="btn btn-scoreboard" onclick="setMode('scoreboard')">Scoreboard</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="map-container">
+      <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="959" height="593">
+  <title>Blank map of the United States, territories not included</title>
+<defs>
+<style type="text/css">
+.state {fill:#D0D0D0}                        /* default color for all states not specified below */
+.borders {stroke:#FFFFFF; stroke-width:1}    /* color and width of borders between states */
+.dccircle {display:yes}                      /* set display to yes to show the circle for the District of Columbia, or none to hide it */
+.separator1 {stroke:#B0B0B0; stroke-width:2} /* color and width of lines around Alaska and Hawaii */
+
+/* Individual states can be colored as follows:
+.ks,.mt,.pa {fill:#0000FF}
+.ca,.de {fill:#FF0000}
+In this example, Kansas, Montana and Pennsylvania are colored blue, and California and Delaware are colored red.
+Place this code in the empty space below. */
+
+
+
+</style>
+</defs>
+
+<g class="state">
+
+<path class="al" d="m 643,467.4 .4,-7.3 -.9,-1.2 -1.7,-.7 -2.5,-2.8 .5,-2.9 48.8,-5.1 -.7,-2.2 -1.5,-1.5 -.5,-1.4 .6,-6.3 -2.4,-5.7 .5,-2.6 .3,-3.7 2.2,-3.8 -.2,-1.1 -1.7,-1 v -3.2 l -1.8,-1.9 -2.9,-6.1 -12.9,-45.8 -45.7,4 1.3,2 -1.3,67 4.4,33.2 .9,-.5 1.3,.1 .6,.4 .8,-.1 2,-3.8 v -2.3 l 1.1,-1.1 1.4,.5 3.4,6.4 v .9 l -3.3,2.2 3.5,-.4 4.9,-1.6 z">
+<title>Alabama</title></path>
+
+<!-- The scale of Alaska is 42% that of the contiguous United States, so its area is reduced to about 17.6%. The Islands of Four Mountains, Andreanof Islands, Rat Islands and Near Islands are not shown. -->
+<path class="ak" d="m 15.8,572 h 2.4 l .7,.7 -1,1.2 -1.9,.2 -2.5,1.3 -3.7,-.1 2.2,-.9 .3,-1.1 2.5,-.3 z m 8.3,-1.7 1.3,.5 h .9 l .5,1.2 .3,-.6 .9,.2 1.1,1.5 0,.5 -4.2,1.9 -2.4,-.1 -1,-.5 -1.1,.7 -2,0 -1.1,-1.4 4.7,-.5 z m 5.4,-.1 1,.1 .7,.7 v 1 l -1.3,.1 -.9,-1.1 z m 2.5,.3 1.3,-.1 -.1,1 -1.1,.6 z m .3,2.2 3.4,-.1 .2,1.1 -1.3,.1 -.3,-.5 -.8,.6 -.4,-.6 -.9,-.2 z m 166.3,7.6 2.1,.1 -1,1.9 -1.1,-.1 -.4,-.8 .5,-1.3 m -1.1,-2.9 .6,-1.3 -.2,-2.3 2.4,-.5 4.5,4.4 1.3,3.4 1.9,1.6 .3,5.1 -1.4,0 -1.3,-2.3 -3.1,-2.4 h -.6 l 1.1,2.8 1.7,.2 .2,2.1 -.9,.1 -4.1,-4.4 -.1,-.9 1.9,-1 0,-1 -.5,-.8 -1.6,-.6 -1.7,-1.3 1.4,.1 .5,-.4 -.6,-.9 -.6,.5 z m -3.6,-9.1 1.3,.1 2.4,2.5 -.2,.8 -.8,-.1 -.1,1.8 .5,.5 0,1.5 -.8,.3 -.4,1.2 -.8,-.4 -.4,-2.2 1.1,-1.4 -2.1,-2.2 .1,-1.2 z m 1.5,-1.5 1.9,.2 2.5,.1 3.4,3.2 -.2,.5 -1.1,.6 -1.1,-.2 -.1,-.7 -1.2,-1.6 -.3,.7 1,1.3 -.2,1.2 -.8,-.1 -1.3,.2 -.1,-1.7 -2.6,-2.8 z m -12.7,-8.9 .9,-.4 h 1.6 l .7,-.5 4.1,2.2 .1,1.5 -.5,.5 h -.8 l -1.4,-.7 1.1,1.3 1.8,0 .5,2 -.9,0 -2.2,-1.5 -1.1,-.2 .6,1.3 .1,.9 .8,-.6 1.7,1.2 1.3,-.1 -.2,.8 1.9,4.3 0,3.4 .4,2.1 -.8,.3 -1.2,-2 -.5,-1.5 -1.6,-1.6 -.2,-2.7 -.6,-1.7 h -.7 l .3,1.1 0,.5 -1.4,1 .1,-3.3 -1.6,-1.6 -1.3,-2.3 -1.2,-1.2 z m 7.2,-2.3 1.1,1.8 2.4,-.1 1,2.1 -.6,.6 2,3.2 v 1.3 l -1.2,.8 v .7 l -2,1.9 -.5,-1.4 -.1,-1.3 .6,-.7 v -1.1 l -1.5,-1.9 -.5,-3.7 -.9,-1.5 z m -56.7,-18.3 -4,4.1 v 1.6 l 2.1,-.8 .8,-1.9 2.2,-2.4 z m -31.6,16.6 0,.6 1.8,1.2 .2,-1.4 .6,.9 3.5,.1 .7,-.6 .2,-1.8 -.5,-.7 -1.4,0 0,-.8 .4,-.6 v -.4 l -1.5,-.3 -3.3,3.6 z m -8.1,6.2 1.5,5.8 h 2.1 l 2.4,-2.5 .3,1.2 6.3,-4 .7,-1 -1,-1.1 v -.7 l .5,-1.3 -.9,-.1 -2,1 0,-1.2 -2.7,-.6 -2.4,.3 -.2,3.4 -.8,-2 -1.5,-.1 -1,.6 z m -2.2,8.2 .1,-.7 2.1,-1.3 .6,.3 1.3,.2 1.3,1.2 -2.2,-.2 -.4,-.6 -1,.6 z m -5.2,3.3 -1.1,.8 1.5,1.4 .8,-.7 -.1,-1.3 z m -6.3,-7.9 1.4,.1 .4,.6 -1.8,.1 z m -13.9,11.9 v .5 l .7,.1 -.1,-.6 z m -.4,-3.2 -1,1 v .5 l .7,1.1 1,-1 -.7,-.1 z m -2,-.8 -.3,1 -1.3,.1 -.4,.2 0,1.3 -.5,.9 .6,0 .7,-.9 .8,-.1 .9,-1 .2,-1.3 z m -4.4,-2 -.2,1.8 1.4,.8 1.2,-.6 0,-1 1.7,-.3 -.1,-.6 -.9,-.2 -.7,.6 -.9,-.5 z m -4.9,-.1 1,.7 -.3,1.2 -1.4,-1.1 z m -4.2,1.3 1.4,.1 -.7,.8 z m -3.5,3 1.8,1.1 -1.7,.1 z m -25.4,-31.2 1.2,.6 -.8,.6 z m -.7,-6.3 .4,1.2 .8,-1.2 z m 24.3,-19.3 1.5,-.1 .9,.4 1.1,-.5 1.3,-.1 1.6,.8 .8,1.9 -.1,.9 -1.2,2 -2.4,-.2 -2.1,-1.8 -1,-.4 -1.1,-2 z m -21.1,-14.4 .1,1.9 2,2 v .5 l -.8,-.2 -1.7,-.8 -.3,-1.1 -.3,-1.6 z m 18.3,-23.3 v 1.2 l 1.9,1.8 h 2.3 l .6,1.1 v 1.6 l 2.1,1.9 1.8,1.2 -.1,.7 -.7,1.1 -1.4,-1.2 -2.1,.1 -.8,-.8 -.9,-2.1 -1.5,-2.2 -2.6,-.1 -1,-.7 1,-2.1 z m 16.8,-4.5 1,0 .1,1.1 h -1 z m 16.2,19.7 .9,.1 0,1.2 -1.7,-.5 z m 127.8,77.7 -1.2,.4 -.1,1.1 h 1.2 z m -157.6,-4.5 -1.3,-.4 -4.1,.6 -2.8,1.4 -.1,1.9 1.9,.7 1.5,-.9 1.7,-.1 4.7,1.4 .1,-1.3 -1.6,-1.1 z m 2.1,2.3 -.4,-1.4 1.2,.2 .1,1.4 1.8,0 .4,-2.5 .3,2.4 2.5,-.1 3.2,-3.3 .8,.1 -.7,1.3 1.4,.9 4.2,-.2 2.6,-1.2 1.4,-.1 .3,1.5 .6,-.5 .4,-1.4 5.9,.2 1.9,-1.6 -1.3,-1.1 .6,-1.2 2.6,.2 -.2,-1.2 2.5,.2 .7,-1.1 1.1,.2 4.6,-1.9 .2,-1.7 5.6,-2.4 2,-1.9 1.2,-.6 1.3,.8 2.3,-.9 1.1,-1.9 .5,-1.3 1.7,-.9 1.5,-.7 .4,-1.4 -1.1,-1.7 -2.2,-.2 -.2,-1.3 .8,-1.6 1.4,-.2 1.3,-1.5 1.9,-.1 3.4,-3.2 .4,-1.4 1.5,-2.3 3.8,-4.1 2.5,-.9 1.9,-.9 2.1,.8 1.4,2.6 -1.5,0 -1.4,-1.5 -3,2 -1.7,.1 -.2,3.1 -3.1,4.9 .6,2 2.3,0 -.6,1 -1.4,.1 -2.4,1.8 0,.9 1.9,1 3.4,-.6 1.4,-1.7 1.4,.1 3,-1.7 .5,-2.3 1.6,-.1 6.3,.8 1,-1.1 1,-4.5 -1.6,1.1 .6,-2.2 -1.6,-1.4 .8,-1.5 .1,1.5 3.4,0 .7,-1 1.6,-.1 -.3,1.7 1.9,.1 -1.9,1.3 4.1,1.1 -3.5,.4 -1.3,1.2 .9,1.4 4.6,-1.7 2.3,1.7 .7,-.9 .6,1.4 4,2.3 h 2.9 l 3.9,-.5 4.3,1.1 2,1.9 4.5,.4 1.8,-1.5 .8,2.4 -1.8,.7 1.2,1.2 7.4,3.8 1.4,2.5 5.4,4.1 3.3,-2 -.6,-2.2 -3.5,-2 3.1,1.2 .5,-.7 .9,1.3 0,2.7 2.1,-.6 2.1,1.8 -2.5,-9.8 1.2,1.3 1.4,6 2.2,2.5 2.4,-.4 1.8,3.5 h .9 l .6,5.6 3.4,.5 1.6,2.2 1.8,1.1 .4,2.8 -1.8,2.6 2.9,1.6 1.2,-2.4 -.2,3.1 -.8,.9 1.4,1.7 .7,-2.4 -.2,-1.2 .8,.2 .6,2.3 -1,1.4 .6,2.6 .5,.4 .3,-1.6 .7,.6 -.3,2 1.2,.2 -.4,.9 1.7,-.1 0,-1 h -1 l .1,-1.7 -.8,-.6 1.7,-.3 .5,-.8 0,-1.6 .5,1.3 -.6,1.8 1.2,3.9 1.8,.1 2.2,-4.2 .1,-1.9 -1.3,-4 -.1,-1.2 .5,-1.2 -.7,-.7 -1.7,.1 -2.5,-2 -1.7,0 -2,-1.4 -1.5,0 -.5,-1.6 -1.4,-.3 -.2,-1.5 -1,-.5 .1,-1.7 -5.1,-7.4 -1.8,-1.5 v -1.2 l -4.3,-3.5 -.7,-1.1 -1.6,-2 -1.9,-.6 0,-2.2 -1.2,-1.3 -1.7,-.7 -2.1,1.3 -1.6,2.1 -.4,2.4 -1.5,.1 -2.5,2.7 -.8,-.3 v -2.5 l -2.4,-2.2 -2.3,-2 -.5,-2 -2.5,-1.3 .2,-2.2 -2.8,-.1 -.7,1.1 -1.2,0 -.7,-.7 -1.2,.8 -1.8,-1.2 0,-85.8 -6.9,-4.1 -1.8,-.5 -2.2,1.1 -2.2,.1 -2.3,-1.6 -4.3,-.6 -5.8,-3.6 -5.7,-.4 -2,.5 -.2,-1.8 -1.8,-.7 1.1,-1 -.2,-.9 -3.2,-1.1 h -2.4 l -.4,.4 -.9,-.6 .1,-2.6 -.8,-.9 -2.5,2.9 -.8,-.1 v -.8 l 1.7,-.8 v -.8 l -1.9,-2.4 -1.1,-.1 -4.5,3.1 h -3.9 l .4,-.9 -1.8,-.1 -5.2,3.4 -1.8,0 -.6,-.8 -2.7,1.5 -3.6,3.7 -2.8,2.7 -1.5,1.2  -2.6,.1 -2.2,-.4 -2.3,-1.3 v 0 l -2.8,3.9 -.1,2.4 2.6,2.4 2.1,4.5 .2,5.3 2.9,2 3.4,.4 .7,.8 -1.5,2.3 .7,2.7 -1.7,-2.6 v -2.4 l -1.5,-.3 .1,1.2 .7,2.1 2.9,3.7 h -1.4 l -2.2,1.1 -6.2,-2.5 -.1,-2 1.4,-1.3 0,-1.4 -2.1,-.5 -2.3,.2 -4.8,.2 1.5,2.3 -1.9,-1.8 -8.4,1.2 -.8,1.5 4.9,4.7 -.8,1.4 -.3,2 -.7,.8 -.1,1.9 4.4,3.6 4.1,.2 4.6,1.9 h 2 l .8,-.6 3.8,.1 .1,-.8 1.2,1.1 .1,2 -2.5,-.1 .1,3.3 .5,3.2 -2.9,2.7 -1.9,-.1 -2,-.8 -1,.1 -3.1,2.1 -1.7,.2 -1.4,-2.8 -3.1,0 -2.2,2 -.5,1.8 -3.3,1.8 -5.3,4.3 -.3,3.1 .7,2.2 1,1.2 1,-.4 .9,1 -.8,.6 -1.5,.9 1.1,1.5 -2.6,1.1 .8,2.2 1.7,2.3 .8,4.1 4,1.5 2.6,-.8 1.7,-1.1 .5,2.1 .3,4.4 -1.9,1.4 0,4.4 -.6,.9 h -1.7 l 1.7,1.2 2.1,-.1 .4,-1 4.6,-.6 2,2.6 1.3,-.7 1.3,5.1 1,.5 1,-.7 .1,-2.4 .9,-1 .7,1.1 .2,1.6 1.6,.4 4.7,-1.2 .2,1.2 -2,1.1 -1.6,1.7 -2.8,7 -4.3,2 -1.4,1.5 -.3,1.4 -1,-.6 -9.3,3.3 -1.8,4.1 -1.3,-.4 .5,-1.1 -1.5,-1.4 -3.5,-.2 -5.3,3.2 -2.2,1.3 -2.3,0 -.5,2.4 z">
+<title>Alaska</title></path>
+
+<path class="az" d="m 139.6,387.6 3,-2.2 .8,-2.4 -1,-1.6 -1.8,-.2 -1.1,-1.6 1.1,-6.9 1.6,-.3 2.4,-3.2 1.6,-7 2.4,-3.6 4.8,-1.7 1.3,-1.3 -.4,-1.9 -2.3,-2.5 -1.2,-5.8 -1.4,-1.8 -1.3,-3.4 .9,-2.1 1.4,-3 .5,-2.9 -.5,-4.9 1,-13.6 3.5,-.6 3.7,1.4 1.2,2.7 h 2 l 2.4,-2.9 3.4,-17.5 46.2,8.2 40,6 -17.4,124.1 -37.3,-5.4 -64.2,-37.5 .5,-2.9 2,-1.8 z">
+<title>Arizona</title></path>
+
+<path class="ar" d="m 584.2,367 .9,-2.2 1.2,.5 .7,-1 -.8,-.7 .3,-1.5 -1.1,-.9 .6,-1 -.1,-1.5 -1.1,-.1 .8,-.8 1.3,.8 .3,-1.4 -.4,-1.1 .1,-.7 2,.6 -.4,-1.5 1.6,-1.3 -.5,-.9 -1.1,.1 -.6,-.9 .9,-.9 1.6,-.2 .5,-.8 1.4,-.2 -.1,-.8 -.9,-.9 v -.5 h 1.5 l .4,-.7 -1.4,-1 -.1,-.6 -11.2,.8 2.8,-5.1 1.7,-1.5 v -2.2 l -1.6,-2.5 -39.8,2 -39.1,.7 4.1,24.4 -.7,39 2.6,2.3 2.8,-1.3 3.2,.8 .2,11.9 52.3,-1.3 1.2,-1.5 .5,-3 -1.5,-2.3 -.5,-2.2 .9,-.7 v -.8 l -1.7,-1.1 -.1,-.7 1.6,-.9 -1.2,-1.1 1.7,-7.1 3.4,-1.6 v -.8 l -1.1,-1.4 2.9,-5.4 h 1.9 l 1.5,-1.2 -.3,-5.2 3.1,-4.5 1.8,-.6 -.5,-3.1 z">
+<title>Arkansas</title></path>
+
+<path class="ca" d="m 69.4,365.6 3.4,5.2 -1.4,.1 -1.8,-1.9 z m 1.9,-9.8 1.8,4.1 2.6,1 .7,-.6 -1.3,-2.5 -2.6,-2.4 z m -19.9,-19 v 2.4 l 2,1.2 4.4,-.2 1,-1 -3.1,-.2 z m -5.9,.1 3.3,.5 1.4,2.2 h -3.8 z m 47.9,45.5 -1,-3 .2,-3 -.4,-7.9 -1.8,-4.8 -1.2,-1.4 -.6,-1.5 -7,-8.6 -3.6,.1 -2,-1.9 1.1,-1.8 -.7,-3.7 -2.2,-1.2 -3.9,-.6 -2.8,-1.3 -1.5,-1.9 -4.5,-6.6 -2.7,-2.2 -3.7,-.5 -3.1,-2.3 -4.7,-1.5 -2.8,-.3 -2.5,-2.5 .2,-2.8 .8,-4.8 1.8,-5.1 -1.4,-1.6 -4,-9.4 -2.7,-3.7 -.4,-3 -1.6,-2.3 .2,-2.5 -2,-5 -2.9,-2.7 .6,-7.1 2.4,-.8 1.8,-3.1 -.4,-3.2 -1,-.9 h -2.5 l -2.5,-3.3 -1.5,-3.5 v -7.5 l 1.2,-4.2 .2,-2.1 2.5,.2 -.1,1.6 -.8,.7 v 2.5 l 3.7,3.2 v -4.7 l -1.4,-3.4 .5,-1.1 -1,-1.7 2.8,-1.5 -1.9,-3 -1.4,.5 -1.5,3.8 .5,1.3 -.8,1 -.9,-.1 -5.4,-6.1 .7,-5.6 -1.1,-3.9 -6.5,-12.8 .8,-10.7 2.3,-3.6 .2,-6.4 -5.5,-11.1 .3,-5.2 6.9,-7.5 1.7,-2.4 -.1,-1.4 4,-9.2 .1,-8.4 .9,-2.5 66.1,18.6 -16.4,63.1 1.1,3.5 70.4,105 -.9,2.1 1.3,3.4 1.4,1.8 1.2,5.8 2.3,2.5 .4,1.9 -1.3,1.3 -4.8,1.7 -2.4,3.6 -1.6,7 -2.4,3.2 -1.6,.3 -1.1,6.9 1.1,1.6 1.8,.2 1,1.6 -.8,2.4 -3,2.2 -2.2,-.1 z">
+<title>California</title></path>
+
+<path class="co" d="m 374.6,323.3 -16.5,-1 -51.7,-4.8 -52.6,-6.5 11.5,-88.3 44.9,5.7 37.5,3.4 33.1,2.4 -1.4,22.1 z">
+<title>Colorado</title></path>
+
+<path class="ct" d="m 873.5,178.9 .4,-1.1 -3.2,-12.3 -.1,-.3 -14.9,3.4 v .7 l -.9,.3 -.5,-.7 -10.5,2.4 2.8,16.3 1.8,1.5 -3.5,3.4 1.7,2.2 5.4,-4.5 1.7,-1.3 h .8 l 2.4,-3.1 1.4,.1 2.9,-1.1 h 2.1 l 5.3,-2.7 2.8,-.9 1,-1 1.5,.5 z">
+<title>Connecticut</title></path>
+
+<path class="de" d="m 822.2,226.6 -1.6,.3 -1.5,1.1 -1.2,2.1 7.6,27.1 10.9,-2.3 -2.2,-7.6 -1.1,.5 -3.3,-2.6 -.5,-1.7 -1.8,-1 -.2,-3.7 -2.1,-2.2 -1.1,-.8 -1.2,-1.1 -.4,-3.2 .3,-2.1 1,-2.2 z">
+<title>Delaware</title></path>
+
+<path class="fl" d="m 751.7,445.1 -4,-.7 -1.7,-.9 -2.2,1.4 v 2.5 l 1.4,2.1 -.5,4.3 -2.1,.6 -1,-1.1 -.6,-3.2 -50.1,3.3 -3.3,-6 -48.8,5.1 -.5,2.9 2.5,2.8 1.7,.7 .9,1.2 -.4,7.3 -1.1,.6 .5,.4 1,-.3 .7,-.8 10.5,-2.7 9.2,-.5 8.1,1.9 8.5,5 2.4,.8 2.2,2 -.1,2.7 h 2.4 l 1.9,-1 2.5,.1 2,-.8 2.9,-2 3.1,-2.9 1.1,-.4 .6,.5 h 1.4 l .5,-.8 -.5,-1.2 -.6,-.6 .2,-.8 2,-1.1 5,-.4 .8,1 1,.1 2.3,1 3,1.8 1.2,1.7 1.1,1.2 2.8,1.4 v 2.4 l 2.8,1.9 1,.1 1.6,1.4 .7,1.6 1,.2 .8,2.1 .7,.6 1,-1.1 2.9,.1 .5,1.4 1.1,.9 v 1.3 l 2.9,2.2 .2,9.6 -1.8,5.8 1,1.2 -.2,3.4 -.8,1.4 .7,1.2 2.3,2.3 .3,1.5 .8,1 -.4,-1.9 1.3,-.6 .8,-3.6 -3,-1.2 .1,-.6 2.6,-.4 .9,2.6 1.1,.6 .1,-2 1.1,.3 .6,.8 -.1,.7 -2.9,4.2 -.2,1.1 -1.7,1.9 v 1.1 l 3.7,3.8 5.3,7.9 1.8,2.1 v 1.8 l 2.8,4.6 2.3,.6 .7,-1.2 -2.1,.3 -3,-4.5 .2,-1.4 1.5,-.8 v -1.5 l -.6,-1.3 .9,-.9 .4,.9 .7,.5 v 4 l -1.2,-.6 -.8,.9 1.4,1.6 1,2.6 1.2,-.6 2.3,1.2 2.1,2.2 1.6,5.1 3.1,4.8 .8,-1.3 2.8,-.5 3.2,1.3 .3,1.7 3.3,3.8 .1,1.1 2.2,2.7 -.7,.5 v 2.7 l 2.7,1.4 h 1.5 l 2.7,-1.8 1.5,.3 1.1,.4 2.3,-1.7 .2,-.7 1.2,.3 2.4,-1.7 1.3,-2.3 -.7,-3.2 -.2,-1.3 1.1,-4 .6,-.2 .6,1.6 .8,-1.8 -.8,-7.2 -.4,-10.5 -1,-6.8 -.7,-1.7 -6.6,-11.1 -5.2,-9.1 -2.2,-3.3 -1.3,-3.6 -.2,-3.4 .9,-.3 v -.9 l -1.1,-2.2 -4,-4 -7.6,-9.7 -5.7,-10.4 -4.3,-10.7 -.6,-3.7 -1.2,-1 -.5,-3.8 z m 9.2,134.5 1.7,-.1 -.7,-1 z m 7.3,-1.1 v -.7 l 1.6,-.2 3.7,-3.3 1.5,-.6 2.4,-.9 .3,1.3 1.7,.8 -2.6,1.2 h -2.4 l -3.9,2.5 z m 17.2,-7.6 -3,1.4 -1,1.3 1.1,.1 z m 3.8,-2.9 -1.1,.3 -1.4,2 1.1,-.2 1.5,-1.6 z m 8.3,-15.7 -1.7,5.6 -.8,1 -1,2.6 -1.2,1.6 -.7,1.7 -1.9,2.2 v .9 l 2.7,-2.8 2.4,-3.5 .6,-2 2.1,-4.9 z">
+<title>Florida</title></path>
+
+<path class="ga" d="m 761.8,414.1 v 1.4 l -4.2,6.2 -1.2,.2 1.5,.5 v 2 l -.9,1.1 -.6,6 -2.3,6.2 .5,2 .7,5.1 -3.6,.3 -4,-.7 -1.7,-.9 -2.2,1.4 v 2.5 l 1.4,2.1 -.5,4.3 -2.1,.6 -1,-1.1 -.6,-3.2 -50.1,3.3 -3.3,-6 -.7,-2.2 -1.5,-1.5 -.5,-1.4 .6,-6.3 -2.4,-5.7 .5,-2.6 .3,-3.7 2.2,-3.8 -.2,-1.1 -1.7,-1 v -3.2 l -1.8,-1.9 -2.9,-6.1 -12.9,-45.8 22.9,-2.9 21.4,-3 -.1,1.9 -1.9,1 -1.4,3.2 .2,1.3 6.1,3.8 2.6,-.3 3.1,4 .4,1.7 4.2,5.1 2.6,1.7 1.4,.2 2.2,1.6 1.1,2.2 2,1.6 1.8,.5 2.7,2.7 .1,1.4 2.6,2.8 5,2.3 3.6,6.7 .3,2.7 3.9,2.1 2.5,4.8 .8,3.1 4.2,.4 z">
+<title>Georgia</title></path>
+
+<!-- Hawaii is shown in the same scale as the contiguous United States. The Northwestern Hawaiian Islands are not shown. -->
+<path class="hi" d="m 317,553.7 -.2,3.2 1.7,1.9 .1,1.2 -4.8,4.5 -.1,1.2 1.9,3.2 1.7,4.2 v 2.6 l -.5,1.2 .1,3.4 4.1,2.1 1.1,1.1 1.2,-1.1 2.1,-3.6 4.5,-2.9 3.3,-.5 2.5,-1 1.7,-1.2 3.2,-3.5 -2.8,-1.1 -1.4,-1.4 .1,-1.7 -.5,-.6 h -2 l .2,-2.5 -.7,-1.2 -2.6,-2.3 -4.5,-1.9 -2.8,-.2 -3.3,-2.7 -1.2,-.6 z m -15.3,-17 -1.1,1.5 -.1,1.7 2.7,2.4 1.9,.5 .6,1 .4,3 3.6,.2 5.3,-2.6 -.1,-2.5 -1.4,-.5 -3.5,-2.6 -1.8,-.3 -2.9,1.3 -1.5,-2.7 z m -1.5,11.5 .9,-1.4 2.5,-.3 .6,1.8 z m -7,-8.7 1.7,4 3.1,-.6 .3,-2 -1.4,-1.5 z m -4.1,-6.7 -1.1,2.4 h 5 l 4.8,1.6 2.5,-1.6 .2,-1.5 -4.8,.2 z m -16,-10.6 -1.9,2.1 -2.9,.6 .8,2.2 2.2,2.8 .1,1 2.1,-.3 2.3,.1 1.7,1.2 3.5,-.8 v -.7 l -1,-.8 -.5,-2.1 -.8,-.3 -.5,1 -1.2,-1.3 .2,-1.4 -1.8,-3.3 -1.1,-.7 z m -31.8,-12.4 -4.2,2.9 .2,2.3 2.4,1.2 1.9,1.3 2.7,.4 2.6,-2.2 -.2,-1.9 .8,-1.7 v -1.4 l -1,-.9 z m -10.8,4.8 -.3,1.2 -1.9,.9 -.6,1.8 1,.8 1.1,-1.5 1.9,-.6 .4,-2.6 z">
+<title>Hawaii</title></path>
+
+<path class="id" d="m 165.3,183.1 -24.4,-5.4 8.5,-37.3 2.9,-5.8 .4,-2.1 .8,-.9 -.9,-2 -2.9,-1.2 .2,-4.2 4,-5.8 2.5,-.8 1.6,-2.3 -.1,-1.6 1.8,-1.6 3.2,-5.5 4.2,-4.8 -.5,-3.2 -3.5,-3.1 -1.6,-3.6 1.1,-4.3 -.7,-4 12.7,-56.1 14.2,3 -4.8,22 3.7,7.4 -1.6,4.8 3.6,4.8 1.9,.7 3.9,8.3 v 2.1 l 2.3,3 h .9 l 1.4,2.1 h 3.2 v 1.6 l -7.1,17 -.5,4.1 1.4,.5 1.6,2.6 2.8,-1.4 3.6,-2.4 1.9,1.9 .5,2.5 -.5,3.2 2.5,9.7 2.6,3.5 2.3,1.4 .4,3 v 4.1 l 2.3,2.3 1.6,-2.3 6.9,1.6 2.1,-1.2 9,1.7 2.8,-3.3 1.8,-.6 1.2,1.8 1.6,4.1 .9,.1 -8.5,54.8 -47.9,-8.2 z">
+<title>Idaho</title></path>
+
+<path class="il" d="m 623.5,265.9 -1,5.2 v 2 l 2.4,3.5 v .7 l -.3,.9 .9,1.9 -.3,2.4 -1.6,1.8 -1.3,4.2 -3.8,5.3 -.1,7 h -1 l .9,1.9 v .9 l -2.2,2.7 .1,1.1 1.5,2.2 -.1,.9 -3.7,.6 -.6,1.2 -1.2,-.6 -1,.5 -.4,3.3 1.7,1.8 -.4,2.4 -1.5,.3 -6.9,-3 -4,3.7 .3,1.8 h -2.8 l -1.4,-1.5 -1.8,-3.8 v -1.9 l .8,-.6 .1,-1.3 -1.7,-1.9 -.9,-2.5 -2.7,-4.1 -4.8,-1.3 -7.4,-7.1 -.4,-2.4 2.8,-7.6 -.4,-1.9 1.2,-1.1 v -1.3 l -2.8,-1.5 -3,-.7 -3.4,1.2 -1.3,-2.3 .6,-1.9 -.7,-2.4 -8.6,-8.4 -2.2,-1.5 -2.5,-5.9 -1.2,-5.4 1.4,-3.7 .7,-.7 .1,-2.3 -.7,-.9 1,-1.5 1.8,-.6 .9,-.3 1,-1.2 v -2.4 l 1.7,-2.4 .5,-.5 .1,-3.5 -.9,-1.4 -1,-.3 -1.1,-1.6 1,-4 3,-.8 h 2.4 l 4.2,-1.8 1.7,-2.2 .1,-2.4 1.1,-1.3 1.3,-3.2 -.1,-2.6 -2.8,-3.5 h -1.2 l -.9,-1.1 .2,-1.6 -1.7,-1.7 -2.5,-1.3 .5,-.6 45.9,-2.8 .1,4.6 3.4,4.6 1.2,4.1 1.6,3.2 z">
+<title>Illinois</title></path>
+
+<path class="in" d="m 629.2,214.8 -5.1,2.3 -4.7,-1.4 4.1,50.2 -1,5.2 v 2 l 2.4,3.5 v .7 l -.3,.9 .9,1.9 -.3,2.4 -1.6,1.8 -1.3,4.2 -3.8,5.3 -.1,7 h -1 l .9,1.9 1.1,.8 .6,-1 -.7,-1.7 4.6,-.5 .2,1.2 1.1,.2 .4,-.9 -.6,-1.3 .3,-.8 1.3,.8 1.7,-.4 1.7,.6 3.4,2.1 1.8,-2.8 3.5,-2.2 3,3.3 1.6,-2.1 .3,-2.7 3.8,-2.3 .2,1.3 1.9,1.2 3,-.2 1.2,-.7 .1,-3.4 2.5,-3.7 4.6,-4.4 -.1,-1.7 1.2,-3.8 2.2,1 6.7,-4.5 -.4,-1.7 -1.5,-2.1 1,-1.9 -6.6,-57.2 -.1,-1.4 -32.4,3.4 z">
+<title>Indiana</title></path>
+
+<path class="ia" d="m 556.9,183 2.1,1.6 .6,1.1 -1.6,3.3 -.1,2.5 2,5.5 2.7,1.5 3.3,.7 1.3,2.8 -.5,.6 2.5,1.3 1.7,1.7 -.2,1.6 .9,1.1 h 1.2 l 2.8,3.5 .1,2.6 -1.3,3.2 -1.1,1.3 -.1,2.4 -1.7,2.2 -4.2,1.8 h -2.4 l -3,.8 -1,4 1.1,1.6 1,.3 .9,1.4 -.1,3.5 -.5,.5 -1.7,2.4 v 2.4 l -1,1.2 -.9,.3 -1.8,.6 -1,1.5 .7,.9 -.1,2.3 -.7,.7 -1.5,-.8 -1.1,-1.1 -.6,-1.6 -1.7,-1.3 -14.3,.8 -27.2,1.2 -25.9,-.1 -1.8,-4.4 .7,-2.2 -.8,-3.3 .2,-2.9 -1.3,-.7 -.4,-6.1 -2.8,-5 -.2,-3.7 -2.2,-4.3 -1.3,-3.7 v -1.4 l -.6,-1.7 v -2.3 l -.5,-.9 -.7,-1.7 -.3,-1.3 -1.3,-1.2 1,-4.3 1.7,-5.1 -.7,-2 -1.3,-.4 -.4,-1.6 1,-.5 .1,-1.1 -1.3,-1.5 .1,-1.6 2.2,.1 h 28.2 l 36.3,-.9 18.6,-.7 z">
+<title>Iowa</title></path>
+
+<path class="ks" d="m 459.1,259.5 -43.7,-1.2 -36,-2 -4.8,67 67.7,2.9 62,.1 -.5,-48.1 -3.2,-.7 -2.6,-4.7 -2.5,-2.5 .5,-2.3 2.7,-2.6 .1,-1.2 -1.5,-2.1 -.9,1 -2,-.6 -2.9,-3 z">
+<title>Kansas</title></path>
+
+<path class="ky" d="m 692.1,322.5 -20.5,1.4 -5.2,.8 -17.4,1 -2.6,.8 -22.6,2 -.7,-.6 h -3.7 l 1.2,3.2 -.6,.9 -23.3,1.5 1,-2.7 1.4,.9 .7,-.4 1.2,-4.1 -1,-1 1,-2 .2,-.9 -1.3,-.8 -.3,-1.8 4,-3.7 6.9,3 1.5,-.3 .4,-2.4 -1.7,-1.8 .4,-3.3 1,-.5 1.2,.6 .6,-1.2 3.7,-.6 .1,-.9 -1.5,-2.2 -.1,-1.1 2.2,-2.7 0,-.9 1.1,.8 .6,-1 -.7,-1.7 4.6,-.5 .2,1.2 1.1,.2 .4,-.9 -.6,-1.3 .3,-.8 1.3,.8 1.7,-.4 1.7,.6 3.4,2.1 1.8,-2.8 3.5,-2.2 3,3.3 1.6,-2.1 .3,-2.7 3.8,-2.3 .2,1.3 1.9,1.2 3,-.2 1.2,-.7 .1,-3.4 2.5,-3.7 4.6,-4.4 -.1,-1.7 1.2,-3.8 2.2,1 6.7,-4.5 -.4,-1.7 -1.5,-2.1 1,-1.9 1.3,.5 2.2,.1 1.9,-.8 2.9,1.2 2.2,3.4 v 1 l 4.1,.7 2.3,-.2 1.9,2.1 2.2,.2 v -1 l 1.9,-.8 3,.8 1.2,.8 1.3,-.7 h .9 l .6,-1.7 3.4,-1.8 .5,.8 .8,2.9 3.5,1.4 1.2,2.1 -.1,1.1 .6,1 -.6,3.6 1.9,1.6 .8,1.1 1,.6 -.1,.9 4.4,5.6 h 1.4 l 1.5,1.8 1.2,.3 1.4,-.1 -4.9,6.6 -2.9,1 -3,3 -.4,2.2 -2.1,1.3 -.1,1.7 -1.4,1.4 -1.8,.5 -.5,1.9 -1,.4 -6.9,4.2 z m -98,11.3 -.7,-.7 .2,-1 h 1.1 l .7,.7 -.3,1 z">
+<title>Kentucky</title></path>
+
+<path class="la" d="m 602.5,472.8 -1.2,-1.8 .3,-1.3 -4.8,-6.8 .9,-4.6 1,-1.4 .1,-1.4 -36,2 1.7,-11.9 2.4,-4.8 6,-8.4 -1.8,-2.5 h 2 v -3.3 l -2.4,-2.5 .5,-1.7 -1.2,-1 -1.6,-7.1 .6,-1.4 -52.3,1.3 .5,19.9 .7,3.4 2.6,2.8 .7,5.4 3.8,4.6 .8,4.3 h 1 l -.1,7.3 -3.3,6.4 1.3,2.3 -1.3,1.5 .7,3 -.1,4.3 -2.2,3.5 -.1,.8 -1.7,1.2 1,1.8 1.2,1.1 1.6,-1.3 5.3,-.9 6.1,-.1 9.6,3.8 8,1 1.5,-1.4 1.8,-.2 4.8,2.2 1.6,-.4 1.1,-1.5 -4.2,-1.8 -2.2,1 -1.1,-.2 -1.4,-2 3.3,-2.2 1.6,-.1 v 1.7 l 1.5,-.1 3.4,-.3 .4,2.3 1.1,.4 .6,1.9 4.8,1 1.7,1.6 v .7 h -1.2 l -1.5,1.7 1.7,1.2 5.4,1 2.7,2.8 4.4,-1 -3.7,.2 -.1,-.6 2.8,-.7 .2,-1.8 1.2,-.3 v -1.4 l 1.1,.1 v 1.6 l 2.5,.1 .8,-1.9 .9,.3 .2,2.5 1.2,.2 -1.8,2 2.6,-.9 2,-1.1 2.9,-3.3 h -.7 l -1.3,1.2 -.4,-.1 -.5,-.8 .9,-1.2 v -2.3 l 1.1,-.8 .7,.7 1,-.8 1,-.1 .6,1.3 -.6,1.9 h 2.4 l 5.1,1.7 .5,1.3 1.6,1.4 2.8,.1 1.3,.7 1.8,-1 .9,-1.7 v -1.7 h -1.4 l -1.2,-1.4 -1.1,-1.1 -3.2,-.9 -2.6,.2 -4.2,-2.4 v -2.3 l 1.3,-1 2.4,.6 -3.1,-1.6 .2,-.8 h 3.6 l 2.6,-3.5 -2.6,-1.8 .8,-1.5 -1.2,-.8 h -.8 l -2,2.1 v 2.1 l -.6,.7 -1.1,-.1 -1.6,-1.4 h -1.3 v -1.5 l .6,-.7 .8,.7 1.7,-1.6 .7,-1.6 .8,-.3 z m -10.3,-2.7 1.9,1 .8,1.1 2.5,.1 1.5,.8 .2,1.4 -.4,.6 -.9,-1.5 -1.4,1.2 -.9,1.4 -2.8,.8 -1.6,.1 -3.7,-1 .1,-1.7 2,-2 1.1,-2.4 z m -4.7,1.2 v 1.1 l -1.8,2 h -1.2 v -2.2 l 1.6,-1.5 z">
+<title>Louisiana</title></path>
+
+<path class="me" d="m 875,128.7 .6,4 3.2,2 .8,2.2 2.3,1.4 1.4,-.3 1,-3 -.8,-2.9 1.6,-.9 .5,-2.8 -.6,-1.3 3.3,-1.9 -2.2,-2.3 .9,-2.4 1.4,-2.2 .5,3.2 1.6,-2 1.3,.9 1.2,-.8 v -1.7 l 3.2,-1.3 .3,-2.9 2.5,-.2 2.7,-3.7 v -.7 l -.9,-.5 -.1,-3.3 .6,-1.1 .2,1.6 1,-.5 -.2,-3.2 -.9,.3 -.1,1.2 -1.2,-1.4 .9,-1.4 .6,.1 1.1,-.4 .5,2.8 2,-.3 2.9,.7 v -1 l -1.1,-1.2 1.3,.1 .1,-2.3 .6,.8 .3,1.9 2.1,1.5 .2,-1 .9,-.2 -.3,-.8 .8,-.6 -.1,-1.6 -1.6,-.2 -2,.7 1.4,-1.6 .7,-.8 1.3,-.2 .4,1.3 1.7,1.6 .4,-2.1 2.3,-1.2 -.9,-1.3 .1,-1.7 1.1,.5 h .7 l 1.7,-1.4 .4,-2.3 2.2,.3 .1,-.7 .2,-1.6 .5,1.4 1.5,-1 2.3,-4.1 -.1,-2.2 -1.4,-2 -3,-3.2 h -1.9 l -.8,2.2 -2.9,-3 .3,-.8 v -1.5 l -1.6,-4.5 -.8,-.2 -.7,.4 h -4.8 l -.3,-3.6 -8.1,-26 -7.3,-3.7 -2.9,-.1 -6.7,6.6 -2.7,-1 -1,-3.9 h -2.7 l -6.9,19.5 .7,6.2 -1.7,2.4 -.4,4.6 1.3,3.7 .8,.2 v 1.6 l -1.6,4.5 -1.5,1.4 -1.3,2.2 -.4,7.8 -2.4,-1 -1.5,.4 z m 34.6,-24.7 -1,.8 v 1.3 l .7,-.8 .9,.8 .4,-.5 1.1,.2 -1,-.8 .4,-.8 z m -1.7,2.6 -1,1.1 .5,.4 -.1,1 h 1.1 v -1.8 z m -3,-1.6 .9,1.3 1,.5 .3,-1 v -1.8 l -1.3,-.7 -.4,1.2 z m -1,5 -1.7,-1.7 1.6,-2.4 .8,.3 .2,1.1 1,.8 v 1.1 l -1,1 z">
+<title>Maine</title></path>
+
+<path class="md" d="m 822.9,269.3 0,-1.7 h -.8 l 0,1.8 z m 11.8,-3.9 1.2,-2.2 .1,-2.5 -.6,-.6 -.7,.9 -.2,2.1 -.8,1.4 -.3,1.1 -4.6,1.6 -.7,.8 -1.3,.2 -.4,.9 -1.3,.6 -.3,-2.5 .4,-.7 -.8,-.5 .2,-1.5 -1.6,1 v -2 l 1.2,-.3 -1.9,-.4 -.7,-.8 .4,-1.3 -.8,-.6 -.7,1.6 .5,.8 -.7,.6 -1.1,.5 -2,-1 -.2,-1.2 -1,-1.1 -1.4,-1.7 1.5,-.8 -1,-.6 v -.9 l .6,-1 1.7,-.3 -1.4,-.6 -.1,-.7 -1.3,-.1 -.4,1.1 -.6,.3 .1,-3.4 1,-1 .8,.7 .1,-1.6 -1,-.9 -.9,1.1 -1,1.4 -.6,-1 .2,-2.4 .9,-1 .9,.9 1.2,-.7 -.4,-1.7 -1,1 -.9,-2.1 -.2,-1.7 1.1,-2.4 1.1,-1.4 1.4,-.2 -.5,-.8 .5,-.6 -.3,-.7 .2,-2.1 -1.5,.4 -.8,1.1 1,1.3 -2.6,3.6 -.9,-.4 -.7,.9 -.6,2.2 -1.8,.5 1.3,.6 1.3,1.3 -.2,.7 .9,1.2 -1.1,1 .5,.3 -.5,1.3 v 2.1 l -.5,1.3 .9,1.1 .7,3.4 1.3,1.4 1.6,1.4 .4,2.8 1.6,2 .4,1.4 v 1 h -.7 l -1.5,-1.2 -.4,.2 -1.2,-.2 -1.7,-1.4 -1.4,-.3 -1,.5 -1.2,-.3 -.4,.2 -1.7,-.8 -1,-1 -1,-1.3 -.6,-.2 -.8,.7 -1.6,1.3 -1.1,-.8 -.4,-2.3 .8,-2.1 -.3,-.5 .3,-.4 -.7,-1 1,-.1 1,-.9 .4,-1.8 1.7,-2.6 -2.6,-1.8 -1,1.7 -.6,-.6 h -1 l -.6,-.1 -.4,-.4 .1,-.5 -1.7,-.6 -.8,.3 -1.2,-.1 -.7,-.7 -.5,-.2 -.2,-.7 .6,-.8 v -.9 l -1.2,-.2 -1,-.9 -.9,.1 -1.6,-.3 -.9,-.4 .2,-1.6 -1,-.5 -.2,-.7 h -.7 l -.8,-1.2 .2,-1 -2.6,.4 -2.2,-1.6 -1.4,.3 -.9,1.4 h -1.3 l -1.7,2.9 -3.3,.4 -1.9,-1 -2.6,3.8 -2.2,-.3 -3.1,3.9 -.9,1.6 -1.8,1.6 -1.7,-11.4 60.5,-11.8 7.6,27.1 10.9,-2.3 0,5.3 -.1,3.1 -1,1.8 z m -13.4,-1.8 -1.3,.9 .8,1.8 1.7,.8 -.4,-1.6 z">
+<title>Maryland</title></path>
+
+<path class="ma" d="m 899.9,174.2 h 3.4 l .9,-.6 .1,-1.3 -1.9,-1.8 .4,1 -1.5,1.5 h -2.3 l .1,.8 z m -9,1.8 -1.2,-.6 1,-.8 .6,-2.1 1.2,-1 .8,-.2 .6,.9 1.1,.2 .6,-.6 .5,1.9 -1.3,.3 -2.8,.7 z m -34.9,-23.4 18.4,-3.8 1,-1.5 .3,-1.7 1.9,-.6 .5,-1.1 1.7,-1.1 1.3,.3 1.7,3.3 1,.4 1.1,-1.3 .8,1.3 v 1.1 l -3,2.4 .2,.8 -.9,1 .4,.8 -1.3,.3 .9,1.2 -.8,.7 .6,1 .9,-.2 .3,-.8 1.1,.6 h 1.8 l 2.5,2.6 .2,2.6 1.8,.1 .8,1.1 .6,2 1,.7 h 1.9 l 1.9,-.1 .8,-.9 1.6,-1.2 1.1,-.3 -1.2,-2.1 -.3,.9 -1.5,-3.6 h -.8 l -.4,.9 -1.2,-1 1.3,-1.1 1.8,.4 2.3,2.1 1.3,2.7 1.2,3.3 -1,2.8 v -1.8 l -.7,-1 -3.5,2.3 -.9,-.3 -1.6,1 -.1,1.2 -2.2,1.2 -2,2.1 -2,1.9 h -1.2 l 3.3,-3.3 .5,-1.9 -.5,-.6 -.3,-1.3 -.9,-.1 -.1,1.3 -1,1.2 h -1.2 l -.3,1.1 .4,1.2 -1.2,1.1 -1.1,-.2 -.4,1 -1.4,-3 -1.3,-1.1 -2.6,-1.3 -.6,-2.2 h -.8 l -.7,-2.6 -6.5,2 -.1,-.3 -14.9,3.4 v .7 l -.9,.3 -.5,-.7 -10.5,2.4 -.7,-1 .5,-15 z">
+<title>Massachusetts</title></path>
+
+<path class="mi" d="m 663.3,209.8 .1,1.4 21.4,-3.5 .5,-1.2 3.9,-5.9 v -4.3 l .8,-2.1 2.2,-.8 2,-7.8 1,-.5 1,.6 -.2,.6 -1.1,.8 .3,.9 .8,.4 1.9,-1.4 .4,-9.8 -1.6,-2.3 -1.2,-3.7 v -2.5 l -2.3,-4.4 v -1.8 l -1.2,-3.3 -2.3,-3 -2.9,-1 -4.8,3 -2.5,4.6 -.2,.9 -3,3.5 -1.5,-.2 -2.9,-2.8 -.1,-3.4 1.5,-1.9 2,-.2 1.2,-1.7 .2,-4 .8,-.8 1.1,-.1 .9,-1.7 -.2,-9.6 -.3,-1.3 -1.2,-1.2 -1.7,-1 -.1,-1.8 .7,-.6 1.8,.8 -.3,-1.7 -1.9,-2.7 -.7,-1.6 -1.1,-1.1 h -2.2 l -8.1,-2.9 -1.4,-1.7 -3.1,-.3 -1.2,.3 -4.4,-2.3 h -1.4 l .5,1 -2.7,-.1 .1,.6 .6,.6 -2.5,2.1 .1,1.8 1.5,2.3 1.5,.2 v .6 l -1.5,.5 -2.1,-.1 -2.8,2.5 .1,2.5 .4,5.8 -2.2,3.4 .8,-4.5 -.8,-.6 -.9,5.3 -1,-2.3 .5,-2.3 -.5,-1 .6,-1.3 -.6,-1.1 1,-1 v -1.2 l -1.3,.6 -1.3,3.1 -.7,.7 -1.3,2.4 -1.7,-.2 -.1,1.2 h -1.6 l .2,1.5 .2,2 -3,1.2 .1,1.3 1,1.7 -.1,5.2 -1.3,4.4 -1.7,2.5 1.2,1.4 .8,3.5 -1,2.5 -.2,2.1 1.7,3.4 2.5,4.9 1.2,1.9 1.6,6.9 -.1,8.8 -.9,3.9 -2,3.2 -.9,3.7 -2,3 -1.2,1 z m -95.8,-96.8 3,3.8 17,3.8 1.4,1 4,.8 .7,.5 2.8,-.2 4.9,.8 1.4,1.5 -1,1 .8,.8 3.8,.7 1.2,1.2 .1,4.4 -1.3,2.8 2,.1 1,-.8 .9,.8 -1.1,3.1 1,1.6 1.2,.3 .8,-1.8 2.9,-4.6 1.6,-6 2.3,-2 -.5,-1.6 .5,-.9 1,1.6 -.3,2.2 2.9,-2.2 .2,-2.3 2.1,.6 .8,-1.6 .7,.6 -.7,1.5 -1,.5 -1,2 1.4,1.8 1.1,-.5 -.5,-.7 1,-1.5 1.9,-1.7 h .8 l .2,-2.6 2,-1.8 7.9,-.5 1.9,-3.1 3.8,-.3 3.8,1.2 4.2,2.7 .7,-.2 -.2,-3.5 .7,-.2 4.5,1.1 1.5,-.2 2.9,-.7 1.7,.4 1.8,.1 v -1.1 l -.7,-.9 -1.5,-.2 -1.1,-.8 .5,-1.4 -.8,-.3 -2.6,.1 -.1,-1 1.1,-.8 .6,.8 .5,-1.8 -.7,-.7 .7,-.2 -1.4,-1.3 .3,-1.3 .1,-1.9 h -1.3 l -1.5,1 -1.9,.1 -.5,1.8 -1.9,.2 -.3,-1.2 -2.2,.1 -1,1.2 -.7,-.1 -.2,-.8 -2.6,.4 -.1,-4.8 1,-2 -.7,-.1 -1.8,1.1 h -2.2 l -3.8,2.7 -6.2,.3 -4.1,.8 -1.9,1.5 -1.4,1.3 -2.5,1.7 -.3,.8 -.6,-1.7 -1.3,-.6 v .6 l .7,.7 v 1.3 l -1.5,-.6 h -.6 l -.3,1.2 -2,-1.9 -1.3,-.2 -1.3,1.5 -3.2,-.1 -.5,-1.4 -2,-1.9 -1.3,-1.6 v -.7 l -1.1,-1.4 -2.6,-1.2 -3.3,-.1 -1.1,-.9 h -1.4 l -.7,.4 -2.2,2.2 -.7,1.1 -1,-.7 .2,-1 .8,-2.1 3.2,-5 .8,-.2 1.7,-1.9 .7,-1.6 3,-.6 .8,-.6 -.1,-1 -.5,-.5 -4.5,.2 -2,.5 -2.6,1.2 -1.2,1.2 -1.7,2.2 -1.8,1 -3.3,3.4 -.4,1.6 -7.4,4.6 -4,.5 -1.8,.4 -2.3,3 -1.8,.7 -4.4,2.3 z m 100.7,3.8 3.8,.1 .6,-.5 -.2,-2 -1.7,-1.8 -1.9,.1 -.1,.5 1.1,.4 -1.6,.8 -.3,1 -.6,-.6 -.4,.8 z m -75.1,-41.9 -2.3,.2 -2.7,1.9 -7.1,5.3 .8,1 1.8,.3 2.8,-2 -1.1,-.5 2.3,-1.6 h 1 l 3,-1.9 -.1,-.9 z m 41.1,62.8 v 1 l 2.1,1.6 -.2,-2.4 z m -.7,2.8 1.1,.1 v .9 h -1 z m 21.4,-21.3 v .9 l .8,-.2 v -.5 z m 4.7,3.1 -.1,-1.1 -1.6,-.2 -.6,-.4 h -.9 l -.4,.3 .9,.4 1.1,1.1 z m -18,1.2 -.1,1.1 -.3,.7 .2,2.2 .4,.3 .7,.1 .5,-.9 .1,-1.6 -.3,-.6 -.1,-1.1 z">
+<title>Michigan</title></path>
+
+<path class="mn" d="m 464.7,68.6 -1.1,2.8 .8,1.4 -.3,5.1 -.5,1.1 2.7,9.1 1.3,2.5 .7,14 1,2.7 -.4,5.8 2.9,7.4 .3,5.8 -.1,2.1 -.1,2.2 -.9,2 -3.1,1.9 -.3,1.2 1.7,2.5 .4,1.8 2.6,.6 1.5,1.9 -.2,39.5 h 28.2 l 36.3,-.9 18.6,-.7 -1.1,-4.5 -.2,-3 -2.2,-3 -2.8,-.7 -5.2,-3.6 -.6,-3.3 -6.3,-3.1 -.2,-1.3 h -3.3 l -2.2,-2.6 -2,-1.3 .7,-5.1 -.9,-1.6 .5,-5.4 1,-1.8 -.3,-2.7 -1.2,-1.3 -1.8,-.3 v -1.7 l 2.8,-5.8 5.9,-3.9 -.4,-13 .9,.4 .6,-.5 .1,-1.1 .9,-.6 1.4,1.2 .7,-.1 v 0 l -1.2,-2.2 4.3,-3.1 3.1,-3.7 1.6,-.8 4.7,-5.9 6.3,-5.8 3.9,-2.1 6.3,-2.7 7.6,-4.5 -.6,-.4 -3.7,.7 -2.8,.1 -1,-1.6 -1.4,-.9 -9.8,1.2 -1,-2.8 -1.6,-.1 -1.7,.8 -3.7,3.1 h -4.1 l -2.1,-1 -.3,-1.7 -3.9,-.8 -.6,-1.6 -.7,-1.3 -1,.9 -2.6,.1 -9.9,-5.5 h -2.9 l -.8,-.7 -3.1,1.3 -.8,1.3 -3.3,.8 -1.3,-.2 v -1.7 l -.7,-.9 h -5.9 l -.4,-1.4 h -2.6 l -1.1,.4 -2.4,-1.7 .3,-1.4 -.6,-2.4 -.7,-1.1 -.2,-3 -1,-3.1 -2.1,-1.6 h -2.9 l .1,8 -30.9,-.4 z">
+<title>Minnesota</title></path>
+
+<path class="ms" d="m 623.8,468.6 -5,.1 -2.4,-1.5 -7.9,2.5 -.9,-.7 -.5,.2 -.1,1.6 -.6,.1 -2.6,2.7 -.7,-.1 -.6,-.7 -1.2,-1.8 .3,-1.3 -4.8,-6.8 .9,-4.6 1,-1.4 .1,-1.4 -36,2 1.7,-11.9 2.4,-4.8 6,-8.4 -1.8,-2.5 h 2 v -3.3 l -2.4,-2.5 .5,-1.7 -1.2,-1 -1.6,-7.1 .6,-1.4 1.2,-1.5 .5,-3 -1.5,-2.3 -.5,-2.2 .9,-.7 v -.8 l -1.7,-1.1 -.1,-.7 1.6,-.9 -1.2,-1.1 1.7,-7.1 3.4,-1.6 v -.8 l -1.1,-1.4 2.9,-5.4 h 1.9 l 1.5,-1.2 -.3,-5.2 3.1,-4.5 1.8,-.6 -.5,-3.1 38.3,-2.6 1.3,2 -1.3,67 4.4,33.2 z">
+<title>Mississippi</title></path>
+
+<path class="mo" d="m 555.3,248.9 -1.1,-1.1 -.6,-1.6 -1.7,-1.3 -14.3,.8 -27.2,1.2 -25.9,-.1 1.3,1.3 -.3,1.4 2.1,3.7 3.9,6.3 2.9,3 2,.6 .9,-1 1.5,2.1 -.1,1.2 -2.7,2.6 -.5,2.3 2.5,2.5 2.6,4.7 3.2,.7 .5,48.1 .2,10.8 39.1,-.7 39.8,-2 1.6,2.5 v 2.2 l -1.7,1.5 -2.8,5.1 11.2,-.8 1,-2 1.2,-.5 v -.7 l -1.2,-1.1 -.6,-1 1.7,.2 .8,-.7 -1.4,-1.5 1.4,-.5 .1,-1 -.6,-1 v -1.3 l -.7,-.7 .2,-1 h 1.1 l .7,.7 -.3,1 .8,.7 .8,-1 1,-2.7 1.4,.9 .7,-.4 1.2,-4.1 -1,-1 1,-2 .2,-.9 -1.3,-.8 h -2.8 l -1.4,-1.5 -1.8,-3.8 v -1.9 l .8,-.6 .1,-1.3 -1.7,-1.9 -.9,-2.5 -2.7,-4.1 -4.8,-1.3 -7.4,-7.1 -.4,-2.4 2.8,-7.6 -.4,-1.9 1.2,-1.1 v -1.3 l -2.8,-1.5 -3,-.7 -3.4,1.2 -1.3,-2.3 .6,-1.9 -.7,-2.4 -8.6,-8.4 -2.2,-1.5 -2.5,-5.9 -1.2,-5.4 1.4,-3.7 z">
+<title>Missouri</title></path>
+
+<path class="mt" d="m 247,130.5 57.3,7.9 51,5.3 2,-20.7 5.2,-66.7 -53.5,-5.6 -54.3,-7.7 -65.9,-12.5 -4.8,22 3.7,7.4 -1.6,4.8 3.6,4.8 1.9,.7 3.9,8.3 v 2.1 l 2.3,3 h .9 l 1.4,2.1 h 3.2 v 1.6 l -7.1,17 -.5,4.1 1.4,.5 1.6,2.6 2.8,-1.4 3.6,-2.4 1.9,1.9 .5,2.5 -.5,3.2 2.5,9.7 2.6,3.5 2.3,1.4 .4,3 v 4.1 l 2.3,2.3 1.6,-2.3 6.9,1.6 2.1,-1.2 9,1.7 2.8,-3.3 1.8,-.6 1.2,1.8 1.6,4.1 .9,.1 z">
+<title>Montana</title></path>
+
+<path class="ne" d="m 402.5,191.1 38,1.6 3.4,3.2 1.7,.2 2.1,2 1.8,-.1 1.8,-2 1.5,.6 1,-.7 .7,.5 .9,-.4 .7,.4 .9,-.4 1,.5 1.4,-.6 2,.6 .6,1.1 6.1,2.2 1.2,1.3 .9,2.6 1.8,.7 1.5,-.2 .5,.9 v 2.3 l .6,1.7 v 1.4 l 1.3,3.7 2.2,4.3 .2,3.7 2.8,5 .4,6.1 1.3,.7 -.2,2.9 .8,3.3 -.7,2.2 1.8,4.4 1.3,1.3 -.3,1.4 2.1,3.7 3.9,6.3 h -32.4 l -43.7,-1.2 -36,-2 1.4,-22.1 -33.1,-2.4 3.7,-44.2 z">
+<title>Nebraska</title></path>
+
+<path class="nv" d="m 167.6,296.8 -3.4,17.5 -2.4,2.9 h -2 l -1.2,-2.7 -3.7,-1.4 -3.5,.6 -1,13.6 .5,4.9 -.5,2.9 -1.4,3 -70.4,-105 -1.1,-3.5 16.4,-63.1 47,11.2 24.4,5.4 23.3,4.7 z">
+<title>Nevada</title></path>
+
+<path class="nh" d="m 862.6,93.6 -1.3,.1 -1,-1.1 -1.9,1.4 -.5,6.1 1.2,2.3 -1.1,3.5 2.1,2.8 -.4,1.7 .1,1.3 -1.1,2.1 -1.4,.4 -.6,1.3 -2.1,1 -.7,1.5 1.4,3.4 -.5,2.5 .5,1.5 -1,1.9 .4,1.9 -1.3,1.9 .2,2.2 -.7,1.1 .7,4.5 .7,1.5 -.5,2.6 .9,1.8 -.2,2.5 -.5,1.3 -.1,1.4 2.1,2.6 18.4,-3.8 1,-1.5 .3,-1.7 1.9,-.6 .5,-1.1 1.7,-1.1 1.3,.3 .8,-4.8 -2.3,-1.4 -.8,-2.2 -3.2,-2 -.6,-4 -11.9,-36.8 z">
+<title>New Hampshire</title></path>
+
+<path class="nj" d="m 842.5,195.4 -14.6,-4.9 -1.8,2.5 .1,2.2 -3,5.4 1.5,1.8 -.7,2 -1,1 .5,3.6 2.7,.9 1,2.8 2.1,1.1 4.2,3.2 -3.3,2.6 -1.6,2.3 -1.8,3 -1.6,.6 -1.4,1.7 -1,2.2 -.3,2.1 .8,.9 .4,2.3 1.2,.6 2.4,1.5 1.8,.8 1.6,.8 .1,1.1 .8,.1 1.1,-1.2 .8,.4 2.1,.2 -.2,2.9 .2,2.5 1.8,-.7 1.5,-3.9 1.6,-4.8 2.9,-2.8 .6,-3.5 -.6,-1.2 1.7,-2.9 v -1.2 l -.7,-1.1 1.2,-2.7 -.3,-3.6 -.6,-8.2 -1.2,-1.4 v 1.4 l .5,.6 h -1.1 l -.6,-.4 -1.3,-.2 -.9,.6 -1.2,-1.6 .7,-1.7 v -1 l 1.7,-.7 .8,-2.1 z">
+<title>New Jersey</title></path>
+
+<path class="nm" d="m 357.5,332.9 h -.8 l -7.9,99.3 -31.8,-2.6 -34.4,-3.6 -.3,3 2,2.2 -30.8,-4.1 -1.4,10.2 -15.7,-2.2 17.4,-124.1 52.6,6.5 51.7,4.8 z">
+<title>New Mexico</title></path>
+
+<path class="ny" d="m 872.9,181.6 -1.3,.1 -.5,1 z m -30.6,22.7 .7,.6 1.3,-.3 1.1,.3 .9,-1.3 h 1.9 l 2.4,-.9 5.1,-2.1 -.5,-.5 -1.9,.8 -2,.9 .2,-.8 2.6,-1.1 .8,-1 1.2,.1 4.1,-2.3 v .7 l -4.2,3 4.5,-2.8 1.7,-2.2 1.5,-.1 4.5,-3.1 3.2,-3.1 3,-2.3 1,-1.2 -1.7,-.1 -1,1.2 -.2,.7 -.9,.7 -.8,-1.1 -1.7,1 -.1,.9 -.9,-.2 .5,-.9 -1.2,-.7 -.6,.9 .9,.3 .2,.5 -.3,.5 -1.4,2.6 h -1.9 l .9,-1.8 .9,-.6 .3,-1.7 1.4,-1.6 .9,-.8 1.5,-.7 -1.2,-.2 -.7,.9 h -.7 l -1.1,.8 -.2,1 -2.2,2.1 -.4,.9 -1.4,.9 -7.7,1.9 .2,.9 -.9,.7 -2,.3 -1,-.6 -.2,1.1 -1.1,-.4 .1,1 -1.2,-.1 -1.2,.5 -.2,1.1 h -1 l .2,1 h -.7 l .2,1 -1.8,.4 -1.5,2.3 z m -.8,-.4 -1.6,.4 v 1 l -.7,1.6 .6,.7 2.4,-2.3 -.1,-.9 z m -10.1,-95.2 -.6,1.9 1.4,.9 -.4,1.5 .5,3.2 2.2,2.3 -.4,2.2 .6,2 -.4,1 -.3,3.8 3.1,6.7 -.8,1.8 .9,2.2 .9,-1.6 1.9,1.5 3,14.2 -.5,2 1.1,1 -.5,15 .7,1 2.8,16.3 1.8,1.5 -3.5,3.4 1.7,2.2 -1.3,3.3 -1.5,1.7 -1.5,2.3 -.2,-.7 .4,-5.9 -14.6,-4.9 -1.6,-1.1 -1.9,.3 -3,-2.2 -3,-5.8 h -2 l -.4,-1.5 -1.7,-1.1 -70.5,13.9 -.8,-6 4.3,-3.9 .6,-1.7 3.9,-2.5 .6,-2.4 2.3,-2 .8,-1.1 -1.7,-3.3 -1.7,-.5 -1.8,-3 -.2,-3.2 7.6,-3.9 8.2,-1.6 h 4.4 l 3.2,1.6 .9,-.1 1.8,-1.6 3.4,-.7 h 3 l 2.6,-1.3 2.5,-2.6 2.4,-3.1 1.9,-.4 1.1,-.5 .4,-3.2 -1.4,-2.7 -1.2,-.7 2,-1.3 -.1,-1.8 h -1.5 l -2.3,-1.4 -.1,-3.1 6.2,-6.1 .7,-2.4 3.7,-6.3 5.9,-6.4 2.1,-1.7 2.5,.1 20.6,-5.2 z">
+<title>New York</title></path>
+
+<path class="nc" d="m 829,300.1 -29.1,6.1 -39.4,7.3 -29.4,3.5 v 5.2 l -1.5,-.1 -1.4,1.2 -2.4,5.2 -2.6,-1.1 -3.5,2.5 -.7,2.1 -1.5,1.2 -.8,-.8 -.1,-1.5 -.8,-.2 -4,3.3 -.6,3.4 -4.7,2.4 -.5,1.2 -3.2,2.6 -3.6,.5 -4.6,3 -.8,4.1 -1.3,.9 -1.5,-.1 -1.4,1.3 -.1,4.9 21.4,-3 4.4,-1.9 1.3,-.1 7.3,-4.3 23.2,-2.2 .4,.5 -.2,1.4 .7,.3 1.2,-1.5 3.3,3 .1,2.6 19.7,-2.8 24.5,17.1 4,-2.2 3,-.7 h 1.7 l 1.1,1.1 .8,-2 .6,-5 1.7,-3.9 5.4,-6.1 4.1,-3.5 5.4,-2.3 2.5,-.4 1.3,.4 .7,1.1 3.3,-6.6 3.3,-5.3 -.7,-.3 -4.4,6.8 -.5,-.8 2,-2.2 -.4,-1.5 -2,-.5 1,1.3 -1.2,.1 -1.2,-1.8 -1.2,2 -1.6,.2 1,-2.7 .7,-1.7 -.2,-2.9 -2.2,-.1 .9,-.9 1.1,.3 2.7,.1 .8,-.5 h 2.3 l 2,-1.9 .2,-3.2 1.3,-1.4 1.2,-.2 1.3,-1 -.5,-3.7 -2.2,-3.8 -2.7,-.2 -.9,1.6 -.5,-1 -2.7,.2 -1.2,.4 -1.9,1.2 -.3,-.4 h -.9 l -1.8,1.2 -2.6,.5 v -1.3 l .8,-1 1,.7 h 1 l 1.7,-2.1 3.7,-1.7 2,-2.2 h 2.4 l .8,1.3 1.7,.8 -.5,-1.5 -.3,-1.6 -2.8,-3.1 -.3,-1.4 -.4,1 -.9,-1.3 z m 7,31 2.7,-2.5 4.6,-3.3 v -3.7 l -.4,-3.1 -1.7,-4.2 1.5,1.4 1,3.2 .4,7.6 -1.7,.4 -3.1,2.4 -3.2,3.2 z m 1.9,-19.3 -.9,-.2 v 1 l 2.5,2.2 -.2,-1.4 z m 2.9,2.1 -1.4,-2.8 -2.2,-3.4 -2.4,-3 -2.2,-4.3 -.8,-.7 2.2,4.3 .3,1.3 3.4,5.5 1.8,2.1 z">
+<title>North Carolina</title></path>
+
+<path class="nd" d="m 464.7,68.6 -1.1,2.8 .8,1.4 -.3,5.1 -.5,1.1 2.7,9.1 1.3,2.5 .7,14 1,2.7 -.4,5.8 2.9,7.4 .3,5.8 -.1,2.1 -29.5,-.4 -46,-2.1 -39.2,-2.9 5.2,-66.7 44.5,3.4 55.3,1.6 z">
+<title>North Dakota</title></path>
+
+<path class="oh" d="m 685.7,208.8 1.9,-.4 3,1.3 2.1,.6 .7,.9 h 1 l 1,-1.5 1.3,.8 h 1.5 l -.1,1 -3.1,.5 -2,1.1 1.9,.8 1.6,-1.5 2.4,-.4 2.2,1.5 1.5,-.1 2.5,-1.7 3.6,-2.1 5.2,-.3 4.9,-5.9 3.8,-3.1 9.3,-5.1 4.9,29.9 -2.2,1.2 1.4,2.1 -.1,2.2 .6,2 -1.1,3.4 -.1,5.4 -1,3.6 .5,1.1 -.4,2.2 -1.1,.5 -2,3.3 -1.8,2 h -.6 l -1.8,1.7 -1.3,-1.2 -1.5,1.8 -.3,1.2 h -1.3 l -1.3,2.2 .1,2.1 -1,.5 1.4,1.1 v 1.9 l -1,.2 -.7,.8 -1,.5 -.6,-2.1 -1.6,-.5 -1,2.3 -.3,2.2 -1.1,1.3 1.3,3.6 -1.5,.8 -.4,3.5 h -1.5 l -3.2,1.4 -1.2,-2.1 -3.5,-1.4 -.8,-2.9 -.5,-.8 -3.4,1.8 -.6,1.7 h -.9 l -1.3,.7 -1.2,-.8 -3,-.8 -1.9,.8 v 1 l -2.2,-.2 -1.9,-2.1 -2.3,.2 -4.1,-.7 v -1 l -2.2,-3.4 -2.9,-1.2 -1.9,.8 -2.2,-.1 -1.3,-.5 -6.6,-57.2 21.4,-3.5 z">
+<title>Ohio</title></path>
+
+<path class="ok" d="m 501.5,398.6 -4.6,-3.8 -2.2,-.9 -.5,1.6 -5.1,.3 -.6,-1.5 -5,2.5 -1.6,-.7 -3.7,.3 -.6,1.7 -3.6,.9 -1.3,-1.2 -1.2,.1 -2,-1.8 -2.1,.7 -2,-.5 -1.8,-2 -2.5,4.2 -1.2,.8 -1,-1.8 .3,-2 -1.2,-.7 -2.3,2.5 -1.7,-1.2 -.1,-1.5 -1.3,.5 -2.6,-1.7 -3,2.6 -2.3,-1.1 .7,-2.1 -2.3,.1 -1.9,-3 -3.5,-1.1 -2,2.3 -2.3,-2.2 -1.4,.4 -2,.1 -3.5,-1.9 -2.3,.1 -1.2,-.7 -.5,-2.9 -2.3,-1.7 -1.1,1.5 -1.4,-1 -1.2,-.4 -1.1,1 -1.5,-.3 -2.5,-3 -2.7,-1.3 1.4,-42.7 -52.6,-3.2 .6,-10.6 16.5,1 67.7,2.9 62,.1 .2,10.8 4.1,24.4 -.7,39 z">
+<title>Oklahoma</title></path>
+
+<path class="or" d="m 93.9,166.5 47,11.2 8.5,-37.3 2.9,-5.8 .4,-2.1 .8,-.9 -.9,-2 -2.9,-1.2 .2,-4.2 4,-5.8 2.5,-.8 1.6,-2.3 -.1,-1.6 1.8,-1.6 3.2,-5.5 4.2,-4.8 -.5,-3.2 -3.5,-3.1 -1.6,-3.6 -30.3,-7.3 -2.8,1 -5.4,-.9 -1.8,-.9 -1.5,1.2 -3.3,-.4 -4.5,.5 -.9,.7 -4.2,-.4 -.8,-1.6 -1.2,-.2 -4.4,1.3 -1.6,-1.1 -2.2,.8 -.2,-1.8 -2.3,-1.2 -1.5,-.2 -1,-1.1 -3,.3 -1.2,-.8 h -1.2 l -1.2,.9 -5.5,.7 -6.6,-4.2 1.1,-5.6 -.4,-4.1 -3.2,-3.7 -3.7,.1 -.4,-1.1 .4,-1.2 -.7,-.8 -1,.1 -1.1,1.3 -1.5,-.2 -.5,-1.1 -1,-.1 -.7,.6 -2,-1.9 v 4.3 l -1.3,1.3 -1.1,3.5 -.1,2.3 -4.5,12.3 -13.2,31.3 -3.2,4.6 -1.6,-.1 .1,2.1 -5.2,7.1 -.3,3.3 1,1.3 .1,2.4 -1.2,1.1 -1.2,3 .1,5.7 1.2,2.9 z">
+<title>Oregon</title></path>
+
+<path class="pa" d="m 826.3,189.4 -1.9,.3 -3,-2.2 -3,-5.8 h -2 l -.4,-1.5 -1.7,-1.1 -70.5,13.9 -.8,-6 -4.2,3.4 -.9,.1 -2.7,3 -3.3,1.7 4.9,29.9 3.2,19.7 17.4,-2.9 60.5,-11.8 1.2,-2.1 1.5,-1.1 1.6,-.3 1.6,.6 1.4,-1.7 1.6,-.6 1.8,-3 1.6,-2.3 3.3,-2.6 -4.2,-3.2 -2.1,-1.1 -1,-2.8 -2.7,-.9 -.5,-3.6 1,-1 .7,-2 -1.5,-1.8 3,-5.4 -.1,-2.2 1.8,-2.5 z">
+<title>Pennsylvania</title></path>
+
+<path class="ri" d="m 883.2,170.7 -1.3,-1.1 -2.6,-1.3 -.6,-2.2 h -.8 l -.7,-2.6 -6.5,2 3.2,12.3 -.4,1.1 .4,1.8 5.6,-3.6 .1,-3 -.8,-.8 .4,-.6 -.1,-1.3 -.9,-.7 1.2,-.4 -.9,-1.6 1.8,.7 .3,1.4 .7,1.2 -1.4,-.8 1.1,1.7 -.3,1.2 -.6,-1.1 v 2.5 l .6,-.9 .4,.9 1.3,-1.5 -.2,-2.5 1.4,3.1 1,-.9 z m -4.7,12.2 h .9 l .5,-.6 -.8,-1.3 -.7,.7 z">
+<title>Rhode Island</title></path>
+
+<path class="sc" d="m 772.3,350.2 -19.7,2.8 -.1,-2.6 -3.3,-3 -1.2,1.5 -.7,-.3 .2,-1.4 -.4,-.5 -23.2,2.2 -7.3,4.3 -1.3,.1 -4.4,1.9 -.1,1.9 -1.9,1 -1.4,3.2 .2,1.3 6.1,3.8 2.6,-.3 3.1,4 .4,1.7 4.2,5.1 2.6,1.7 1.4,.2 2.2,1.6 1.1,2.2 2,1.6 1.8,.5 2.7,2.7 .1,1.4 2.6,2.8 5,2.3 3.6,6.7 .3,2.7 3.9,2.1 2.5,4.8 .8,3.1 4.2,.4 .8,-1.5 h .6 l 1.8,-1.5 .5,-2 3.2,-2.1 .3,-2.4 -1.2,-.9 .8,-.7 .8,.4 1.3,-.4 1.8,-2.1 3.8,-1.8 1.6,-2.4 .1,-.7 4.8,-4.4 -.1,-.5 -.9,-.8 1.1,-1.5 h .8 l .4,.5 .7,-.8 h 1.3 l .6,-1.5 2.3,-2.1 -.3,-5.4 .8,-2.3 3.6,-6.2 2.4,-2.2 2.2,-1.1 z">
+<title>South Carolina</title></path>
+
+<path class="sd" d="m 396.5,125.9 46,2.1 29.5,.4 -.1,2.2 -.9,2 -3.1,1.9 -.3,1.2 1.7,2.5 .4,1.8 2.6,.6 1.5,1.9 -.2,39.5 -2.2,-.1 -.1,1.6 1.3,1.5 -.1,1.1 -1,.5 .4,1.6 1.3,.4 .7,2 -1.7,5.1 -1,4.3 1.3,1.2 .3,1.3 .7,1.7 -1.5,.2 -1.8,-.7 -.9,-2.6 -1.2,-1.3 -6.1,-2.2 -.6,-1.1 -2,-.6 -1.4,.6 -1,-.5 -.9,.4 -.7,-.4 -.9,.4 -.7,-.5 -1,.7 -1.5,-.6 -1.8,2 -1.8,.1 -2.1,-2 -1.7,-.2 -3.4,-3.2 -38,-1.6 -51.1,-3.5 3.9,-43.9 2,-20.7 z">
+<title>South Dakota</title></path>
+
+<path class="tn" d="m 620.9,365.1 45.7,-4 22.9,-2.9 .1,-4.9 1.4,-1.3 1.5,.1 1.3,-.9 .8,-4.1 4.6,-3 3.6,-.5 3.2,-2.6 .5,-1.2 4.7,-2.4 .6,-3.4 4,-3.3 .8,.2 .1,1.5 .8,.8 1.5,-1.2 .7,-2.1 3.5,-2.5 2.6,1.1 2.4,-5.2 1.4,-1.2 1.5,.1 0,-5.2 .3,-.7 -4.6,.5 -.2,1 -28.9,3.3 -5.6,1.4 -20.5,1.4 -5.2,.8 -17.4,1 -2.6,.8 -22.6,2 -.7,-.6 h -3.7 l 1.2,3.2 -.6,.9 -23.3,1.5 -.8,1 -.8,-.7 h -1 v 1.3 l .6,1 -.1,1 -1.4,.5 1.4,1.5 -.8,.7 -1.7,-.2 .6,1 1.2,1.1 v .7 l -1.2,.5 -1,2 .1,.6 1.4,1 -.4,.7 h -1.5 v .5 l .9,.9 .1,.8 -1.4,.2 -.5,.8 -1.6,.2 -.9,.9 .6,.9 1.1,-.1 .5,.9 -1.6,1.3 .4,1.5 -2,-.6 -.1,.7 .4,1.1 -.3,1.4 -1.3,-.8 -.8,.8 1.1,.1 .1,1.5 -.6,1 1.1,.9 -.3,1.5 .8,.7 -.7,1 -1.2,-.5 -.9,2.2 -1.6,.7 z">
+<title>Tennessee</title></path>
+
+<path class="tx" d="m 282.3,429 .3,-3 34.4,3.6 31.8,2.6 7.9,-99.3 .8,0 52.6,3.2 -1.4,42.7 2.7,1.3 2.5,3 1.5,.3 1.1,-1 1.2,.4 1.4,1 1.1,-1.5 2.3,1.7 .5,2.9 1.2,.7 2.3,-.1 3.5,1.9 2,-.1 1.4,-.4 2.3,2.2 2,-2.3 3.5,1.1 1.9,3 2.3,-.1 -.7,2.1 2.3,1.1 3,-2.6 2.6,1.7 1.3,-.5 .1,1.5 1.7,1.2 2.3,-2.5 1.2,.7 -.3,2 1,1.8 1.2,-.8 2.5,-4.2 1.8,2 2,.5 2.1,-.7 2,1.8 1.2,-.1 1.3,1.2 3.6,-.9 .6,-1.7 3.7,-.3 1.6,.7 5,-2.5 .6,1.5 5.1,-.3 .5,-1.6 2.2,.9 4.6,3.8 6.4,1.9 2.6,2.3 2.8,-1.3 3.2,.8 .2,11.9 .5,19.9 .7,3.4 2.6,2.8 .7,5.4 3.8,4.6 .8,4.3 h 1 l -.1,7.3 -3.3,6.4 1.3,2.3 -1.3,1.5 .7,3 -.1,4.3 -2.2,3.5 -.1,.8 -1.7,1.2 1,1.8 1.2,1.1 -3.5,.3 -8.4,3.9 -3.5,1.4 -1.8,1.8 -.7,-.5 2.1,-2.3 1.8,-.7 .5,-.9 -2.9,-.1 -.7,-.8 .8,-2 -.9,-1.8 h -.6 l -2.4,1.3 -1.9,2.6 .3,1.7 3.3,3.4 1.3,.3 v .8 l -2.3,1.6 -4.9,4 -4,3.9 -3.2,1.4 -5,3 -3.7,2 -4.5,1.9 -4.1,2.5 3.2,-3 v -1.1 l .6,-.8 -.2,-1.8 -1.5,-.1 -1.1,1.5 -2.6,1.3 -1.8,-1.2 -.3,-1.7 h -1.5 l .8,2.2 1.4,.7 1.2,.9 1.8,1.6 -.7,.8 -3.9,1.7 -1.7,.1 -1.2,-1.2 -.5,2.1 .5,1.1 -2.7,2 -1.5,.2 -.8,.7 -.4,1.7 -1.8,3.3 -1.6,.7 -1.6,-.6 -1.8,1.1 .3,1.4 1.3,.8 1,.8 -1.8,3.5 -.3,2.8 -1,1.7 -1.4,1 -2.9,.4 1.8,.6 1.9,-.6 -.4,3.2 -1.1,-.1 .2,1.2 .3,1.4 -1.3,.9 v 3.1 l 1.6,1.4 .6,3.1 -.4,2.2 -1,.4 .4,1.5 1.1,.4 .8,1.7 v 2.6 l 1.1,2.1 2.2,2.6 -.1,.7 -2.2,-.2 -1.6,1.4 .2,1.4 -.9,-.3 -1.4,-.2 -3.4,-3.7 -2.3,-.6 h -7.1 l -2.8,-.8 -3.6,-3 -1.7,-1 -2.1,.1 -3.2,-2.6 -5.4,-1.6 v -1.3 l -1.4,-1.8 -.9,-4.7 -1.1,-1.7 -1.7,-1.4 v -1.6 l -1.4,-.6 .6,-2.6 -.3,-2.2 -1.3,-1.4 .7,-3 -.8,-3.2 -1.7,-1.4 h -1.1 l -4,-3.5 .1,-1.9 -.8,-1.7 -.8,-.2 -.9,-2.4 -2,-1.6 -2.9,-2.5 -.2,-2.1 -1,-.7 .2,-1.6 .5,-.7 -1.4,-1.5 .1,-.7 -2,-2.2 .1,-2.1 -2.7,-4.9 -.1,-1.7 -1.8,-3.1 -5.1,-4.8 v -1.1 l -3.3,-1.7 -.1,-1.8 -1.2,-.4 v -.7 l -.8,-.2 -2.1,-2.8 h -.8 l -.7,-.6 -1.3,1.1 h -2.2 l -2.6,-1.1 h -4.6 l -4.2,-2.1 -1.3,1.9 -2.2,-.6 -3.3,1.2 -1.7,2.8 -2,3.2 -1.1,4.4 -1.4,1.2 -1.1,.1 -.9,1.6 -1.3,.6 -.1,1.8 -2.9,.1 -1.8,-1.5 h -1 l -2,-2.9 -3.6,-.5 -1.7,-2.3 -1.3,-.2 -2.1,-.8 -3.4,-3.4 .2,-.8 -1.6,-1.2 -1,-.1 -3.4,-3.1 -.1,-2 -2.3,-4 .2,-1.6 -.7,-1.3 .8,-1.5 -.1,-2.4 -2.6,-4.1 -.6,-4.2 -1.6,-1.6 v -1 l -1.2,-.2 -.7,-1.1 -2.4,-1.7 -.9,-.1 -1.9,-1.6 v -1.1 l -2.9,-1.8 -.6,-2.1 -2.6,-2.3 -3.2,-4.4 -3,-1.3 -2.1,-1.8 .2,-1.2 -1.3,-1.4 -1.7,-3.7 -2.4,-1 z m 174.9,138.3 .8,.1 -.6,-4.8 -3.5,-12.3 -.2,-8.1 4.9,-10.5 6.1,-8.2 7.2,-5.1 v -.7 h -.8 l -2.6,1 -3.6,2.3 -.7,1.5 -8.2,11.6 -2.8,7.9 v 8.8 l 3.6,12 z">
+<title>Texas</title></path>
+
+<path class="ut" d="m 233.2,217.9 3.3,-21.9 -47.9,-8.2 -21,109 46.2,8.2 40,6 11.5,-88.3 z">
+<title>Utah</title></path>
+
+<path class="vt" d="m 859.1,102.4 -1.1,3.5 2.1,2.8 -.4,1.7 .1,1.3 -1.1,2.1 -1.4,.4 -.6,1.3 -2.1,1 -.7,1.5 1.4,3.4 -.5,2.5 .5,1.5 -1,1.9 .4,1.9 -1.3,1.9 .2,2.2 -.7,1.1 .7,4.5 .7,1.5 -.5,2.6 .9,1.8 -.2,2.5 -.5,1.3 -.1,1.4 2.1,2.6 -12.4,2.7 -1.1,-1 .5,-2 -3,-14.2 -1.9,-1.5 -.9,1.6 -.9,-2.2 .8,-1.8 -3.1,-6.7 .3,-3.8 .4,-1 -.6,-2 .4,-2.2 -2.2,-2.3 -.5,-3.2 .4,-1.5 -1.4,-.9 .6,-1.9 -.8,-1.7 27.3,-6.9 z">
+<title>Vermont</title></path>
+
+<path class="va" d="m 834.7,265.4 -1.1,2.8 .5,1.1 .4,-1.1 .8,-3.1 z m -34.6,-7 -.7,-1 1,-.1 1,-.9 .4,-1.8 -.2,-.5 .1,-.5 -.3,-.7 -.6,-.5 -.4,-.1 -.5,-.4 -.6,-.6 h -1 l -.6,-.1 -.4,-.4 .1,-.5 -1.7,-.6 -.8,.3 -1.2,-.1 -.7,-.7 -.5,-.2 -.2,-.7 .6,-.8 v -.9 l -1.2,-.2 -1,-.9 -.9,.1 -1.6,-.3 -.4,.7 -.4,1.6 -.5,2.3 -10,-5.2 -.2,.9 .9,1.6 -.8,2.3 .1,2.9 -1.2,.8 -.5,2.1 -.9,.8 -1.4,1.8 -.9,.8 -1,2.5 -2.4,-1.1 -2.3,8.5 -1.3,1.6 -2.8,-.5 -1.3,-1.9 -2.3,-.7 -.1,4.7 -1.4,1.7 .4,1.5 -2.1,2.2 .4,1.9 -3.7,6.3 -1,3.3 1.5,1.2 -1.5,1.9 .1,1.4 -2.3,2 -.7,-1.1 -4.3,3.1 -1.5,-1 -.6,1.4 .8,.5 -.5,.9 -5.5,2.4 -3,-1.8 -.8,1.7 -1.9,1.8 -2.3,.1 -4.4,-2.3 -.1,-1.5 -1.5,-.7 .8,-1.2 -.7,-.6 -4.9,6.6 -2.9,1 -3,3 -.4,2.2 -2.1,1.3 -.1,1.7 -1.4,1.4 -1.8,.5 -.5,1.9 -1,.4 -6.9,4.2 28.9,-3.3 .2,-1 4.6,-.5 -.3,.7 29.4,-3.5 39.4,-7.3 29.1,-6.1 -.6,-1.2 .4,-.1 .9,.9 -.1,-1.4 -.3,-1.9 1.6,1.2 .9,2.1 v -1.3 l -3.4,-5.5 v -1.2 l -.7,-.8 -1.3,.7 .5,1.4 h -.8 l -.4,-1 -.6,.9 -.9,-1.1 -2.1,-.1 -.2,.7 1.5,2.1 -1.4,-.7 -.5,-1 -.4,.8 -.8,.1 -1.5,1.7 .3,-1.6 v -1.4 l -1.5,-.7 -1.8,-.5 -.2,-1.7 -.6,-1.3 -.6,1.1 -1.7,-1 -2,.3 .2,-.9 1.5,-.2 .9,.5 1.7,-.8 .9,.4 .5,1 v .7 l 1.9,.4 .3,.9 .9,.4 .9,1.2 1.4,-1.6 h .6 l -.1,-2.1 -1.3,1 -.6,-.9 1.5,-.2 -1.2,-.9 -1.2,.6 -.1,-1.7 -1.7,.2 -2.2,-1.1 -1.8,-2.2 3.6,2.2 .9,.3 1.7,-.8 -1.7,-.9 .6,-.6 -1,-.5 .8,-.2 -.3,-.9 1.1,.9 .4,-.8 .4,1.3 1.2,.8 .6,-.5 -.5,-.6 -.1,-2.5 -1.1,-.1 -1.6,-.8 .9,-1.1 -2,-.1 -.4,-.5 -1.4,.6 -1.4,-.8 -.5,-1.2 -2.1,-1.2 -2.1,-1.8 -2.2,-1.9 3,1.3 .9,1.2 2.1,.7 2.3,2.5 .2,-1.7 .6,1.3 2.3,.5 v -4 l -.8,-1.1 1.1,.4 .1,-1.6 -3.1,-1.4 -1.6,-.2 -1.3,-.2 .3,-1.2 -1.5,-.3 -.1,-.6 h -1.8 l -.2,.8 -.7,-1 h -2.7 l -1,-.4 -.2,-1 -1.2,-.6 -.4,-1.5 -.6,-.4 -.7,1.1 -.9,.2 -.9,.7 h -1.5 l -.9,-1.3 .4,-3.1 .5,-2.4 .6,.5 z m 21.9,11.6 .9,-.1 0,-.6 -.8,.1 z m 7.5,14.2 -1,2.7 1.2,-1.3 z m -1.8,-15.3 .7,.3 -.2,1.9 -.5,-.5 -1.3,1 1,.4 -1.8,4.4 .1,8.1 1.9,3.1 .5,-1.5 .4,-2.7 -.3,-2.3 .7,-.9 -.2,-1.4 1.2,-.6 -.6,-.5 .5,-.7 .8,1.1 -.2,1.1 -.4,3.9 1.1,-2.2 .4,-3.1 .1,-3 -.3,-2 .6,-2.3 1.1,-1.8 .1,-2.2 .3,-.9 -4.6,1.6 -.7,.8 z">
+<title>Virginia</title></path>
+
+<path class="wa" d="m 161.9,83.6 .7,4 -1.1,4.3 -30.3,-7.3 -2.8,1 -5.4,-.9 -1.8,-.9 -1.5,1.2 -3.3,-.4 -4.5,.5 -.9,.7 -4.2,-.4 -.8,-1.6 -1.2,-.2 -4.4,1.3 -1.6,-1.1 -2.2,.8 -.2,-1.8 -2.3,-1.2 -1.5,-.2 -1,-1.1 -3,.3 -1.2,-.8 h -1.2 l -1.2,.9 -5.5,.7 -6.6,-4.2 1.1,-5.6 -.4,-4.1 -3.2,-3.7 -3.7,.1 -.4,-1.1 .4,-1.2 -.7,-.8 -1,.1 -2.1,-1.5 -1.2,.4 -2,-.1 -.7,-1.5 -1.6,-.3 2.5,-7.5 -.7,6 .5,.5 v -2 l .8,-.2 1.1,2.3 -.5,-2.2 1.2,-4.2 1.8,.4 -1.1,-2 -1,.3 -1.5,-.4 .2,-4.2 .2,1.5 .9,.5 .6,-1.6 h 3.2 l -2.2,-1.2 -1.7,-1.9 -1.4,1.6 1.2,-3.1 -.3,-4.6 -.2,-3.6 .9,-6.1 -.5,-2 -1.4,-2.1 .1,-4 .4,-2.7 2,-2.3 -.7,-1.4 .2,-.6 .9,.1 7.8,7.6 4.7,1.9 5.1,2.5 3.2,-.1 .2,3 1,-1.6 h .7 l .6,2.7 .5,-2.6 1.4,-.2 .5,.7 -1.1,.6 .1,1.6 .7,-1.5 h 1.1 l -.4,2.6 -1.1,-.8 .4,1.4 -.1,1.5 -.8,.7 -2.5,2.9 1.2,-3.4 -1.6,.4 -.4,2.1 -3.8,2.8 -.4,1 -2.1,2.2 -.1,1 h 2.2 l 2.4,-.2 .5,-.9 -3.9,.5 v -.6 l 2.6,-2.8 1.8,-.8 1.9,-.2 1,-1.6 3,-2.3 v -1.4 h 1.1 l .1,4 h -1.5 l -.6,.8 -1.1,-.9 .3,1.1 v 1.7 l -.7,.7 -.3,-1.6 -.8,.8 .7,.6 -.9,1.1 h 1.3 l .7,-.5 .1,2 -1,1.9 -.9,1 -.1,1.8 -1,-.2 -.2,-1.4 .9,-1.1 -.8,-.5 -.8,.7 -.7,2.2 -.8,.9 -.1,-2 .8,-1.1 -.2,-1.1 -1.2,1.2 .1,2.2 -.6,.4 -2.1,-.4 -1.3,1.2 2.2,-.6 -.2,2.2 1,-1.8 .4,1.4 .5,-1 .7,1.8 h .7 l .7,-.8 .6,-.1 2,-1.9 .2,-1.2 .8,.6 .3,.9 .7,-.3 .1,-1.2 h 1.3 l .2,-2.9 -.1,-2.7 .9,.3 -.7,-2.1 1.4,-.8 .2,-2.4 2.3,-2.2 1,.1 .3,-1.4 -1.2,-1.4 -.1,-3.5 -.8,.9 .7,2.9 -.6,.1 -.6,-1.9 -.6,-.5 .3,-2.3 1.8,-.1 .3,.7 .3,-1.6 -1.6,-1.7 -.6,-1.6 -.2,2 .9,1.1 -.7,.4 -1,-.8 -1.8,1.3 1.5,.5 .2,2.4 -.3,1.8 .9,-1.3 1.4,2.3 -.4,1.9 h -1.5 v -1.2 l -1.5,-1.2 .5,-3 -1.9,-2.6 2.7,-3 .6,-4.1 h .9 l 1.4,3.2 v -2.6 l 1.2,.3 v -3.3 l -.9,-.8 -1.2,2.5 -1,-3 1.3,-.1 -1.5,-4.9 1.9,-.6 25.4,7.5 31.7,8 23.6,5.5 z m -78.7,-39.4 h .5 l .1,.8 -.5,.3 .1,.6 -.7,.4 -.2,-.9 .5,-.4 z m 5,-4.3 -1.2,1.9 -.1,.8 .4,.2 .5,-.6 1.1,.1 z m -.4,-21.6 .5,.6 1.3,-.3 .2,-1 1.2,-1.8 -1,-.4 -.7,1.6 -.1,-1.6 -1.1,.2 -.7,1.4 z m 3.2,-5.5 .7,1.5 -.9,.2 -.8,.4 -.2,-2.4 z m -2.7,-1.6 -1.1,-.2 .5,1.4 z m -1,2.5 .8,.4 -.4,1.1 1.7,-.5 -.2,-2.2 -.9,-.2 z m -2.7,-.4 .3,2.7 1.6,1.3 .6,-1.9 -1.1,-2.2 z m 1.9,-1.1 -1.1,-1 -.9,.1 1.8,1.5 z m 3.2,-7 h -1.2 v .8 l 1.2,.6 z m -.9,32.5 .4,-2.7 h -1.1 l -.2,1.9 z">
+<title>Washington</title></path>
+
+<path class="wv" d="m 723.4,297.5 -.8,1.2 1.5,.7 .1,1.5 4.4,2.3 2.3,-.1 1.9,-1.8 .8,-1.7 3,1.8 5.5,-2.4 .5,-.9 -.8,-.5 .6,-1.4 1.5,1 4.3,-3.1 .7,1.1 2.3,-2 -.1,-1.4 1.5,-1.9 -1.5,-1.2 1,-3.3 3.7,-6.3 -.4,-1.9 2.1,-2.2 -.4,-1.5 1.4,-1.7 .1,-4.7 2.3,.7 1.3,1.9 2.8,.5 1.3,-1.6 2.3,-8.5 2.4,1.1 1,-2.5 .9,-.8 1.4,-1.8 .9,-.8 .5,-2.1 1.2,-.8 -.1,-2.9 .8,-2.3 -.9,-1.6 .2,-.9 10,5.2 .5,-2.3 .4,-1.6 .4,-.7 -.9,-.4 .2,-1.6 -1,-.5 -.2,-.7 h -.7 l -.8,-1.2 .2,-1 -2.6,.4 -2.2,-1.6 -1.4,.3 -.9,1.4 h -1.3 l -1.7,2.9 -3.3,.4 -1.9,-1 -2.6,3.8 -2.2,-.3 -3.1,3.9 -.9,1.6 -1.8,1.6 -1.7,-11.4 -17.4,2.9 -3.2,-19.7 -2.2,1.2 1.4,2.1 -.1,2.2 .6,2 -1.1,3.4 -.1,5.4 -1,3.6 .5,1.1 -.4,2.2 -1.1,.5 -2,3.3 -1.8,2 h -.6 l -1.8,1.7 -1.3,-1.2 -1.5,1.8 -.3,1.2 h -1.3 l -1.3,2.2 .1,2.1 -1,.5 1.4,1.1 v 1.9 l -1,.2 -.7,.8 -1,.5 -.6,-2.1 -1.6,-.5 -1,2.3 -.3,2.2 -1.1,1.3 1.3,3.6 -1.5,.8 -.4,3.5 h -1.5 l -3.2,1.4 -.1,1.1 .6,1 -.6,3.6 1.9,1.6 .8,1.1 1,.6 -.1,.9 4.4,5.6 h 1.4 l 1.5,1.8 1.2,.3 1.4,-.1 z">
+<title>West Virginia</title></path>
+
+<path class="wi" d="m 611,144 -2.9,.8 .2,2.3 -2.4,3.4 -.2,3.1 .6,.7 .8,-.7 .5,-1.6 2,-1.1 1.6,-4.2 3.5,-1.1 .8,-3.3 .7,-.9 .4,-2.1 1.8,-1.1 v -1.5 l 1,-.9 1.4,.1 v 2 l -1,.1 .5,1.2 -.7,2.2 -.6,.1 -1.2,4.5 -.7,.5 -2.8,7.2 -.3,4.2 .6,2 .1,1.3 -2.4,1.9 .3,1.9 -.9,3.1 .3,1.6 .4,3.7 -1.1,4.1 -1.5,5 1,1.5 -.3,.3 .8,1.7 -.5,1.1 1.1,.9 v 2.7 l 1.3,1.5 -.4,3 .3,4 -45.9,2.8 -1.3,-2.8 -3.3,-.7 -2.7,-1.5 -2,-5.5 .1,-2.5 1.6,-3.3 -.6,-1.1 -2.1,-1.6 -.2,-2.6 -1.1,-4.5 -.2,-3 -2.2,-3 -2.8,-.7 -5.2,-3.6 -.6,-3.3 -6.3,-3.1 -.2,-1.3 h -3.3 l -2.2,-2.6 -2,-1.3 .7,-5.1 -.9,-1.6 .5,-5.4 1,-1.8 -.3,-2.7 -1.2,-1.3 -1.8,-.3 v -1.7 l 2.8,-5.8 5.9,-3.9 -.4,-13 .9,.4 .6,-.5 .1,-1.1 .9,-.6 1.4,1.2 .7,-.1 h 2.6 l 6.8,-2.6 .3,-1 h 1.2 l .7,-1.2 .4,.8 1.8,-.9 1.8,-1.7 .3,.5 1,-1 2.2,1.6 -.8,1.6 -1.2,1.4 .5,1.5 -1.4,1.6 .4,.9 2.3,-1.1 v -1.4 l 3.3,1.9 1.9,.7 1.9,.7 3,3.8 17,3.8 1.4,1 4,.8 .7,.5 2.8,-.2 4.9,.8 1.4,1.5 -1,1 .8,.8 3.8,.7 1.2,1.2 .1,4.4 -1.3,2.8 2,.1 1,-.8 .9,.8 -1.1,3.1 1,1.6 1.2,.3 z m -49.5,-37.3 -.5,.1 -1.5,1.6 .2,.5 1.5,-.6 v -.6 l .9,-.3 z m 1.6,-1.1 -1,.3 -.2,.7 .9,-.1 z m -1.3,-1.6 -.2,.9 h 1.7 l .6,-.4 .1,-1 z m 2.8,-3 -.3,1.9 1.2,-.5 .1,-1.4 z m 58.3,31.9 -2,.3 -.4,1.3 1.3,1.7 z">
+<title>Wisconsin</title></path>
+
+<path class="wy" d="m 355.3,143.7 -51,-5.3 -57.3,-7.9 -2,10.7 -8.5,54.8 -3.3,21.9 32.1,4.8 44.9,5.7 37.5,3.4 3.7,-44.2 z">
+<title>Wyoming</title></path>
+
+<path class="dc" d="m 803.5,252 -2.6,-1.8 -1,1.7 .5,.4 .4,.1 .6,.5 .3,.7 -.1,.5 .2,.5 z">
+<title>District of Columbia</title></path>
+
+</g>
+
+<g class="borders" fill="none">
+<path class="al-fl" d="m 687.6,447.4 -48.8,5.1 -.5,2.9 2.5,2.8 1.7,.7 .9,1.2 -.4,7.3 -1.1,.6"/>
+<path class="al-ga" d="m 666.6,361.1 12.9,45.8 2.9,6.1 1.8,1.9 v 3.2 l 1.7,1 .2,1.1 -2.2,3.8 -.3,3.7 -.5,2.6 2.4,5.7 -.6,6.3 .5,1.4 1.5,1.5 .7,2.2"/>
+<path class="al-ms" d="m 620.9,365.1 1.3,2 -1.3,67 4.4,33.2"/>
+<path class="al-tn" d="m 620.9,365.1 45.7,-4"/>
+<path class="ar-la" d="m 516.7,414.2 52.3,-1.3"/>
+<path class="ar-mo" d="m 591.7,344.9 -11.2,.8 2.8,-5.1 1.7,-1.5 v -2.2 l -1.6,-2.5 -39.8,2 -39.1,.7"/>
+<path class="ar-ms" d="m 569,412.9 1.2,-1.5 .5,-3 -1.5,-2.3 -.5,-2.2 .9,-.7 v -.8 l -1.7,-1.1 -.1,-.7 1.6,-.9 -1.2,-1.1 1.7,-7.1 3.4,-1.6 0,-.8 -1.1,-1.4 2.9,-5.4 h 1.9 l 1.5,-1.2 -.3,-5.2 3.1,-4.5 1.8,-.6 -.5,-3.1"/>
+<path class="ar-ok" d="m 507.9,400.5 .7,-39 -4.1,-24.4"/>
+<path class="ar-tn" d="m 582.6,367.7 1.6,-.7 .9,-2.2 1.2,.5 .7,-1 -.8,-.7 .3,-1.5 -1.1,-.9 .6,-1 -.1,-1.5 -1.1,-.1 .8,-.8 1.3,.8 .3,-1.4 -.4,-1.1 .1,-.7 2,.6 -.4,-1.5 1.6,-1.3 -.5,-.9 -1.1,.1 -.6,-.9 .9,-.9 1.6,-.2 .5,-.8 1.4,-.2 -.1,-.8 -.9,-.9 0,-.5 h 1.5 l .4,-.7 -1.4,-1 -.1,-.6"/>
+<path class="ar-tx" d="m 507.9,400.5 2.6,2.3 2.8,-1.3 3.2,.8 .2,11.9"/>
+<path class="az-ca" d="m 149,338.1 -.9,2.1 1.3,3.4 1.4,1.8 1.2,5.8 2.3,2.5 .4,1.9 -1.3,1.3 -4.8,1.7 -2.4,3.6 -1.6,7 -2.4,3.2 -1.6,.3 -1.1,6.9 1.1,1.6 1.8,.2 1,1.6 -.8,2.4 -3,2.2 -2.2,-.1"/>
+<path class="az-nm" d="m 253.8,311 -17.4,124.1"/>
+<path class="az-nv" d="m 167.6,296.8 -3.4,17.5 -2.4,2.9 h -2 l -1.2,-2.7 -3.7,-1.4 -3.5,.6 -1,13.6 .5,4.9 -.5,2.9 -1.4,3"/>
+<path class="az-ut" d="m 167.6,296.8 46.2,8.2 40,6"/>
+<path class="ca-nv" d="m 93.9,166.5 -16.4,63.1 1.1,3.5 70.4,105"/>
+<path class="ca-or" d="m 27.8,147.9 66.1,18.6"/>
+<path class="co-ks" d="m 379.4,256.3 -4.8,67"/>
+<path class="co-ne" d="m 347.7,231.8 33.1,2.4 -1.4,22.1"/>
+<path class="co-nm" d="m 253.8,311 52.6,6.5 51.7,4.8"/>
+<path class="co-ok" d="m 358.1,322.3 16.5,1"/>
+<path class="co-ut" d="m 265.3,222.7 -11.5,88.3"/>
+<path class="co-wy" d="m 265.3,222.7 44.9,5.7 37.5,3.4"/>
+<path class="ct-ma" d="m 843.8,171.3 10.5,-2.4 .5,.7 .9,-.3 0,-.7 14.9,-3.4 .1,.3"/>
+<path class="ct-ny" d="m 846.6,194.7 -1.7,-2.2 3.5,-3.4 -1.8,-1.5 -2.8,-16.3"/>
+<path class="ct-ri" d="m 870.7,165.5 3.2,12.3 -.4,1.1 .4,1.8"/>
+<path class="dc-md" d="m 801.8,254.6 1.7,-2.6 -2.6,-1.8 -1,1.7"/>
+<path class="dc-va" d="m 799.9,251.9 .5,.4 .4,.1 .6,.5 .3,.7 -.1,.5 .2,.5"/>
+<path class="de-md" d="m 817.9,230.1 7.6,27.1 10.9,-2.3"/>
+<path class="de-nj" d="m 823.8,227.2 -1,2.2 -.3,2.1"/>
+<path class="de-pa" d="m 817.9,230.1 1.2,-2.1 1.5,-1.1 1.6,-.3 1.6,.6"/>
+<path class="fl-ga" d="m 687.6,447.4 3.3,6 50.1,-3.3 .6,3.2 1,1.1 2.1,-.6 .5,-4.3 -1.4,-2.1 v -2.5 l 2.2,-1.4 1.7,.9 4,.7 3.6,-.3"/>
+<path class="ga-nc" d="m 689.5,358.2 21.4,-3"/>
+<path class="ga-sc" d="m 710.9,355.2 -.1,1.9 -1.9,1 -1.4,3.2 .2,1.3 6.1,3.8 2.6,-.3 3.1,4 .4,1.7 4.2,5.1 2.6,1.7 1.4,.2 2.2,1.6 1.1,2.2 2,1.6 1.8,.5 2.7,2.7 .1,1.4 2.6,2.8 5,2.3 3.6,6.7 .3,2.7 3.9,2.1 2.5,4.8 .8,3.1 4.2,.4"/>
+<path class="ga-tn" d="m 666.6,361.1 22.9,-2.9"/>
+<path class="ia-il" d="m 556.8,249.7 .7,-.7 .1,-2.3 -.7,-.9 1,-1.5 1.8,-.6 .9,-.3 1,-1.2 0,-2.4 1.7,-2.4 .5,-.5 .1,-3.5 -.9,-1.4 -1,-.3 -1.1,-1.6 1,-4 3,-.8 h 2.4 l 4.2,-1.8 1.7,-2.2 .1,-2.4 1.1,-1.3 1.3,-3.2 -.1,-2.6 -2.8,-3.5 -1.2,0 -.9,-1.1 .2,-1.6 -1.7,-1.7 -2.5,-1.3 .5,-.6"/>
+<path class="ia-mn" d="m 473.6,182 28.2,0 36.3,-.9 18.6,-.7"/>
+<path class="ia-mo" d="m 484.5,246.8 25.9,.1 27.2,-1.2 14.3,-.8 1.7,1.3 .6,1.6 1.1,1.1 1.5,.8"/>
+<path class="ia-ne" d="m 484.5,246.8 -1.8,-4.4 .7,-2.2 -.8,-3.3 .2,-2.9 -1.3,-.7 -.4,-6.1 -2.8,-5 -.2,-3.7 -2.2,-4.3 -1.3,-3.7 v -1.4 l -.6,-1.7 v -2.3 l -.5,-.9"/>
+<path class="ia-sd" d="m 473.5,204.2 -.7,-1.7 -.3,-1.3 -1.3,-1.2 1,-4.3 1.7,-5.1 -.7,-2 -1.3,-.4 -.4,-1.6 1,-.5 .1,-1.1 -1.3,-1.5 .1,-1.6 2.2,.1"/>
+<path class="ia-wi" d="m 567.2,202 -1.3,-2.8 -3.3,-.7 -2.7,-1.5 -2,-5.5 .1,-2.5 1.6,-3.3 -.6,-1.1 -2.1,-1.6 -.2,-2.6"/>
+<path class="id-mt" d="m 188.8,30.5 -4.8,22 3.7,7.4 -1.6,4.8 3.6,4.8 1.9,.7 3.9,8.3 v 2.1 l 2.3,3 h .9 l 1.4,2.1 h 3.2 v 1.6 l -7.1,17 -.5,4.1 1.4,.5 1.6,2.6 2.8,-1.4 3.6,-2.4 1.9,1.9 .5,2.5 -.5,3.2 2.5,9.7 2.6,3.5 2.3,1.4 .4,3 v 4.1 l 2.3,2.3 1.6,-2.3 6.9,1.6 2.1,-1.2 9,1.7 2.8,-3.3 1.8,-.6 1.2,1.8 1.6,4.1 .9,.1"/>
+<path class="id-nv" d="m 140.9,177.7 24.4,5.4 23.3,4.7"/>
+<path class="id-or" d="m 140.9,177.7 8.5,-37.3 2.9,-5.8 .4,-2.1 .8,-.9 -.9,-2 -2.9,-1.2 .2,-4.2 4,-5.8 2.5,-.8 1.6,-2.3 -.1,-1.6 1.8,-1.6 3.2,-5.5 4.2,-4.8 -.5,-3.2 -3.5,-3.1 -1.6,-3.6"/>
+<path class="id-ut" d="m 236.5,196 -47.9,-8.2"/>
+<path class="id-wa" d="m 174.6,27.5 -12.7,56.1 .7,4 -1.1,4.3"/>
+<path class="id-wy" d="m 245,141.2 -8.5,54.8"/>
+<path class="il-in" d="m 619.4,215.7 4.1,50.2 -1,5.2 v 2 l 2.4,3.5 v .7 l -.3,.9 .9,1.9 -.3,2.4 -1.6,1.8 -1.3,4.2 -3.8,5.3 -.1,7 h -1 l .9,1.9"/>
+<path class="il-ky" d="m 599.9,322.5 -.3,-1.8 4,-3.7 6.9,3 1.5,-.3 .4,-2.4 -1.7,-1.8 .4,-3.3 1,-.5 1.2,.6 .6,-1.2 3.7,-.6 .1,-.9 -1.5,-2.2 -.1,-1.1 2.2,-2.7 v -.9"/>
+<path class="il-mo" d="m 599.9,322.5 -2.8,0 -1.4,-1.5 -1.8,-3.8 v -1.9 l .8,-.6 .1,-1.3 -1.7,-1.9 -.9,-2.5 -2.7,-4.1 -4.8,-1.3 -7.4,-7.1 -.4,-2.4 2.8,-7.6 -.4,-1.9 1.2,-1.1 v -1.3 l -2.8,-1.5 -3,-.7 -3.4,1.2 -1.3,-2.3 .6,-1.9 -.7,-2.4 -8.6,-8.4 -2.2,-1.5 -2.5,-5.9 -1.2,-5.4 1.4,-3.7"/>
+<path class="il-wi" d="m 567.2,202 45.9,-2.8"/>
+<path class="in-ky" d="m 618.3,302.7 1.1,.8 .6,-1 -.7,-1.7 4.6,-.5 .2,1.2 1.1,.2 .4,-.9 -.6,-1.3 .3,-.8 1.3,.8 1.7,-.4 1.7,.6 3.4,2.1 1.8,-2.8 3.5,-2.2 3,3.3 1.6,-2.1 .3,-2.7 3.8,-2.3 .2,1.3 1.9,1.2 3,-.2 1.2,-.7 .1,-3.4 2.5,-3.7 4.6,-4.4 -.1,-1.7 1.2,-3.8 2.2,1 6.7,-4.5 -.4,-1.7 -1.5,-2.1 1,-1.9"/>
+<path class="in-mi" d="m 630.9,213.2 32.4,-3.4 .1,1.4"/>
+<path class="in-oh" d="m 670,268.4 -6.6,-57.2"/>
+<path class="ks-mo" d="m 504.3,326.3 -.5,-48.1 -3.2,-.7 -2.6,-4.7 -2.5,-2.5 .5,-2.3 2.7,-2.6 .1,-1.2 -1.5,-2.1 -.9,1 -2,-.6 -2.9,-3"/>
+<path class="ks-ne" d="m 379.4,256.3 36,2 43.7,1.2 h 32.4"/>
+<path class="ks-ok" d="m 374.6,323.3 67.7,2.9 62,.1"/>
+<path class="ky-mo" d="m 596.7,333.5 1,-2.7 1.4,.9 .7,-.4 1.2,-4.1 -1,-1 1,-2 .2,-.9 -1.3,-.8 m -5.8,11.3 -.7,-.7 .2,-1 h 1.1 l .7,.7 -.3,1"/>
+<path class="ky-oh" d="m 670,268.4 1.3,.5 2.2,.1 1.9,-.8 2.9,1.2 2.2,3.4 v 1 l 4.1,.7 2.3,-.2 1.9,2.1 2.2,.2 v -1 l 1.9,-.8 3,.8 1.2,.8 1.3,-.7 h .9 l .6,-1.7 3.4,-1.8 .5,.8 .8,2.9 3.5,1.4 1.2,2.1"/>
+<path class="ky-tn" d="m 596.7,333.5 23.3,-1.5 .6,-.9 -1.2,-3.2 h 3.7 l .7,.6 22.6,-2 2.6,-.8 17.4,-1 5.2,-.8 20.5,-1.4 5.6,-1.4 m -103.6,12.7 h 1"/>
+<path class="ky-va" d="m 697.7,321.1 6.9,-4.2 1,-.4 .5,-1.9 1.8,-.5 1.4,-1.4 .1,-1.7 2.1,-1.3 .4,-2.2 3,-3 2.9,-1 4.9,-6.6"/>
+<path class="ky-wv" d="m 709.3,279.4 -.1,1.1 .6,1 -.6,3.6 1.9,1.6 .8,1.1 1,.6 -.1,.9 4.4,5.6 h 1.4 l 1.5,1.8 1.2,.3 1.4,-.1"/>
+<path class="la-ms" d="m 569,412.9 -.6,1.4 1.6,7.1 1.2,1 -.5,1.7 2.4,2.5 v 3.3 l -2,0 1.8,2.5 -6,8.4 -2.4,4.8 -1.7,11.9 36,-2 -.1,1.4 -1,1.4 -.9,4.6 4.8,6.8 -.3,1.3 1.2,1.8 .6,.7"/>
+<path class="la-tx" d="m 516.7,414.2 .5,19.9 .7,3.4 2.6,2.8 .7,5.4 3.8,4.6 .8,4.3 h 1 l -.1,7.3 -3.3,6.4 1.3,2.3 -1.3,1.5 .7,3 -.1,4.3 -2.2,3.5 -.1,.8 -1.7,1.2 1,1.8 1.2,1.1"/>
+<path class="ma-nh" d="m 856,152.6 18.4,-3.8 1,-1.5 .3,-1.7 1.9,-.6 .5,-1.1 1.7,-1.1 1.3,.3"/>
+<path class="ma-ny" d="m 843.8,171.3 -.7,-1 .5,-15"/>
+<path class="ma-ri" d="m 870.7,165.5 6.5,-2 .7,2.6 h .8 l .6,2.2 2.6,1.3 1.3,1.1 1.4,3"/>
+<path class="ma-vt" d="m 843.6,155.3 12.4,-2.7"/>
+<path class="md-pa" d="m 757.4,241.9 60.5,-11.8"/>
+<path class="md-va" d="m 822.9,269.3 -.8,.1 m 13.2,-4.3 -.6,.3 m -1.3,.2 -4.6,1.6 -.7,.8 m -28.2,-16.1 -.6,-.6 h -1 l -.6,-.1 -.4,-.4 .1,-.5 -1.7,-.6 -.8,.3 -1.2,-.1 -.7,-.7 -.5,-.2 -.2,-.7 .6,-.8 v -.9 l -1.2,-.2 -1,-.9 -.9,.1 -1.6,-.3 m 11.6,13.5 .3,-.4 -.7,-1 1,-.1 1,-.9 .4,-1.8"/>
+<path class="md-wv" d="m 757.4,241.9 1.7,11.4 1.8,-1.6 .9,-1.6 3.1,-3.9 2.2,.3 2.6,-3.8 1.9,1 3.3,-.4 1.7,-2.9 h 1.3 l .9,-1.4 1.4,-.3 2.2,1.6 2.6,-.4 -.2,1 .8,1.2 h .7 l .2,.7 1,.5 -.2,1.6 .9,.4"/>
+<path class="me-nh" d="m 881.9,138.3 -2.3,-1.4 -.8,-2.2 -3.2,-2 -.6,-4 -11.9,-36.8"/>
+<path class="mi-oh" d="m 663.4,211.2 21.4,-3.5"/>
+<path class="mi-wi" d="m 565.6,112.3 1.9,.7 3,3.8 17,3.8 1.4,1 4,.8 .7,.5 2.8,-.2 4.9,.8 1.4,1.5 -1,1 .8,.8 3.8,.7 1.2,1.2 .1,4.4 -1.3,2.8 2,.1 1,-.8 .9,.8 -1.1,3.1 1,1.6 1.2,.3"/>
+<path class="mn-nd" d="m 462.3,61.3 2.4,7.3 -1.1,2.8 .8,1.4 -.3,5.1 -.5,1.1 2.7,9.1 1.3,2.5 .7,14 1,2.7 -.4,5.8 2.9,7.4 .3,5.8 -.1,2.1"/>
+<path class="mn-sd" d="m 473.6,182 .2,-39.5 -1.5,-1.9 -2.6,-.6 -.4,-1.8 -1.7,-2.5 .3,-1.2 3.1,-1.9 .9,-2 .1,-2.2"/>
+<path class="mn-wi" d="m 556.7,180.4 -1.1,-4.5 -.2,-3 -2.2,-3 -2.8,-.7 -5.2,-3.6 -.6,-3.3 -6.3,-3.1 -.2,-1.3 -3.3,0 -2.2,-2.6 -2,-1.3 .7,-5.1 -.9,-1.6 .5,-5.4 1,-1.8 -.3,-2.7 -1.2,-1.3 -1.8,-.3 v -1.7 l 2.8,-5.8 5.9,-3.9 -.4,-13 .9,.4 .6,-.5 .1,-1.1 .9,-.6 1.4,1.2 .7,-.1"/>
+<path class="mo-ne" d="m 491.5,259.5 -3.9,-6.3 -2.1,-3.7 .3,-1.4 -1.3,-1.3"/>
+<path class="mo-ok" d="m 504.3,326.3 .2,10.8"/>
+<path class="mo-tn" d="m 591.7,344.9 1,-2 1.2,-.5 v -.7 l -1.2,-1.1 -.6,-1 1.7,.2 .8,-.7 -1.4,-1.5 1.4,-.5 .1,-1 -.6,-1 0,-1.3 m 1,0 .8,.7 .8,-1"/>
+<path class="ms-tn" d="m 582.6,367.7 38.3,-2.6"/>
+<path class="mt-nd" d="m 362.5,56.3 -5.2,66.7"/>
+<path class="mt-sd" d="m 357.3,123 -2,20.7"/>
+<path class="mt-wy" d="m 355.3,143.7 -51,-5.3 -57.3,-7.9 -2,10.7"/>
+<path class="nc-sc" d="m 710.9,355.2 4.4,-1.9 1.3,-.1 7.3,-4.3 23.2,-2.2 .4,.5 -.2,1.4 .7,.3 1.2,-1.5 3.3,3 .1,2.6 19.7,-2.8 24.5,17.1"/>
+<path class="nc-tn" d="m 731.1,317 0,5.2 -1.5,-.1 -1.4,1.2 -2.4,5.2 -2.6,-1.1 -3.5,2.5 -.7,2.1 -1.5,1.2 -.8,-.8 -.1,-1.5 -.8,-.2 -4,3.3 -.6,3.4 -4.7,2.4 -.5,1.2 -3.2,2.6 -3.6,.5 -4.6,3 -.8,4.1 -1.3,.9 -1.5,-.1 -1.4,1.3 -.1,4.9"/>
+<path class="nc-va" d="m 731.1,317 29.4,-3.5 39.4,-7.3 29.1,-6.1"/>
+<path class="nd-sd" d="m 357.3,123 39.2,2.9 46,2.1 29.5,.4"/>
+<path class="ne-sd" d="m 351.4,187.6 51.1,3.5 38,1.6 3.4,3.2 1.7,.2 2.1,2 1.8,-.1 1.8,-2 1.5,.6 1,-.7 .7,.5 .9,-.4 .7,.4 .9,-.4 1,.5 1.4,-.6 2,.6 .6,1.1 6.1,2.2 1.2,1.3 .9,2.6 1.8,.7 1.5,-.2"/>
+<path class="ne-wy" d="m 347.7,231.8 3.7,-44.2"/>
+<path class="nh-vt" d="m 857.9,100.1 1.2,2.3 -1.1,3.5 2.1,2.8 -.4,1.7 .1,1.3 -1.1,2.1 -1.4,.4 -.6,1.3 -2.1,1 -.7,1.5 1.4,3.4 -.5,2.5 .5,1.5 -1,1.9 .4,1.9 -1.3,1.9 .2,2.2 -.7,1.1 .7,4.5 .7,1.5 -.5,2.6 .9,1.8 -.2,2.5 -.5,1.3 -.1,1.4 2.1,2.6"/>
+<path class="nj-ny" d="m 827.9,190.5 14.6,4.9 -.4,5.9"/>
+<path class="nj-pa" d="m 823.8,227.2 1.4,-1.7 1.6,-.6 1.8,-3 1.6,-2.3 3.3,-2.6 -4.2,-3.2 -2.1,-1.1 -1,-2.8 -2.7,-.9 -.5,-3.6 1,-1 .7,-2 -1.5,-1.8 3,-5.4 -.1,-2.2 1.8,-2.5"/>
+<path class="nm-ok" d="m 358.1,322.3 -.6,10.6"/>
+<path class="nm-tx" d="m 284.3,431.2 -2,-2.2 .3,-3 34.4,3.6 31.8,2.6 7.9,-99.3 .8,0"/>
+<path class="nv-or" d="m 93.9,166.5 47,11.2"/>
+<path class="nv-ut" d="m 188.6,187.8 -21,109"/>
+<path class="ny-pa" d="m 827.9,190.5 -1.6,-1.1 -1.9,.3 -3,-2.2 -3,-5.8 h -2 l -.4,-1.5 -1.7,-1.1 -70.5,13.9 -.8,-6"/>
+<path class="ny-vt" d="m 843.6,155.3 -1.1,-1 .5,-2 -3,-14.2 -1.9,-1.5 -.9,1.6 -.9,-2.2 .8,-1.8 -3.1,-6.7 .3,-3.8 .4,-1 -.6,-2 .4,-2.2 -2.2,-2.3 -.5,-3.2 .4,-1.5 -1.4,-.9 .6,-1.9 -.8,-1.7"/>
+<path class="oh-pa" d="m 736.8,225.1 -4.9,-29.9"/>
+<path class="oh-wv" d="m 709.3,279.4 3.2,-1.4 h 1.5 l .4,-3.5 1.5,-.8 -1.3,-3.6 1.1,-1.3 .3,-2.2 1,-2.3 1.6,.5 .6,2.1 1,-.5 .7,-.8 1,-.2 v -1.9 l -1.4,-1.1 1,-.5 -.1,-2.1 1.3,-2.2 h 1.3 l .3,-1.2 1.5,-1.8 1.3,1.2 1.8,-1.7 h .6 l 1.8,-2 2,-3.3 1.1,-.5 .4,-2.2 -.5,-1.1 1,-3.6 .1,-5.4 1.1,-3.4 -.6,-2 .1,-2.2 -1.4,-2.1 2.2,-1.2"/>
+<path class="ok-tx" d="m 357.5,332.9 52.6,3.2 -1.4,42.7 2.7,1.3 2.5,3 1.5,.3 1.1,-1 1.2,.4 1.4,1 1.1,-1.5 2.3,1.7 .5,2.9 1.2,.7 2.3,-.1 3.5,1.9 2,-.1 1.4,-.4 2.3,2.2 2,-2.3 3.5,1.1 1.9,3 2.3,-.1 -.7,2.1 2.3,1.1 3,-2.6 2.6,1.7 1.3,-.5 .1,1.5 1.7,1.2 2.3,-2.5 1.2,.7 -.3,2 1,1.8 1.2,-.8 2.5,-4.2 1.8,2 2,.5 2.1,-.7 2,1.8 1.2,-.1 1.3,1.2 3.6,-.9 .6,-1.7 3.7,-.3 1.6,.7 5,-2.5 .6,1.5 5.1,-.3 .5,-1.6 2.2,.9 4.6,3.8 6.4,1.9"/>
+<path class="or-wa" d="m 161.5,91.9 -30.3,-7.3 -2.8,1 -5.4,-.9 -1.8,-.9 -1.5,1.2 -3.3,-.4 -4.5,.5 -.9,.7 -4.2,-.4 -.8,-1.6 -1.2,-.2 -4.4,1.3 -1.6,-1.1 -2.2,.8 -.2,-1.8 -2.3,-1.2 -1.5,-.2 -1,-1.1 -3,.3 -1.2,-.8 h -1.2 l -1.2,.9 -5.5,.7 -6.6,-4.2 1.1,-5.6 -.4,-4.1 -3.2,-3.7 -3.7,.1 -.4,-1.1 .4,-1.2 -.7,-.8 -1,.1"/>
+<path class="pa-wv" d="m 736.8,225.1 3.2,19.7 17.4,-2.9"/>
+<path class="sd-wy" d="m 351.4,187.6 3.9,-43.9"/>
+<path class="tn-va" d="m 697.7,321.1 28.9,-3.3 .2,-1 4.6,-.5 -.3,.7"/>
+<path class="ut-wy" d="m 236.5,196 -3.3,21.9 32.1,4.8"/>
+<path class="va-wv" d="m 722.7,296.9 .7,.6 -.8,1.2 1.5,.7 .1,1.5 4.4,2.3 2.3,-.1 1.9,-1.8 .8,-1.7 3,1.8 5.5,-2.4 .5,-.9 -.8,-.5 .6,-1.4 1.5,1 4.3,-3.1 .7,1.1 2.3,-2 -.1,-1.4 1.5,-1.9 -1.5,-1.2 1,-3.3 3.7,-6.3 -.4,-1.9 2.1,-2.2 -.4,-1.5 1.4,-1.7 .1,-4.7 2.3,.7 1.3,1.9 2.8,.5 1.3,-1.6 2.3,-8.5 2.4,1.1 1,-2.5 .9,-.8 1.4,-1.8 .9,-.8 .5,-2.1 1.2,-.8 -.1,-2.9 .8,-2.3 -.9,-1.6 .2,-.9 10,5.2 .5,-2.3 .4,-1.6 .4,-.7"/>
+</g>
+
+<circle class="state borders dccircle dc" cx="801.6" cy="252.1" r="5">
+<title>District of Columbia</title></circle>
+
+<path class="separator1" fill="none" d="m 215,493 v 55 l 36,45 m -251,-168 h 147 l 68,68 h 85 l 54,54 v 46"/>
+
+</svg>
+
+      <button class="map-zoom-btn" id="map-zoom-btn" onclick="toggleNortheastZoom()" aria-label="Zoom to Northeast states">&#128269;</button>
+      <div class="compass-rose" aria-hidden="true">
+        <div class="compass-ring">
+          <div class="compass-needle"></div>
+          <span class="compass-dir north">North</span>
+          <span class="compass-dir east">East</span>
+          <span class="compass-dir south">South</span>
+          <span class="compass-dir west">West</span>
+        </div>
+      </div>
+
+
+    </div>
+
+    <div class="info-panel" id="info-panel">
+      <h2 id="state-name">California</h2>
+      <div class="abbreviation" id="state-abbr">CA</div>
+      <div class="capital">Capital: <strong id="state-capital">Sacramento</strong></div>
+      <div class="fun-fact" id="state-fact">The most populated state with 39 million people!</div>
+    </div>
+
+    <div class="quiz-setup" id="quiz-setup">
+      <h3>Choose Your Quiz Challenge</h3>
+      <div class="quiz-size-options">
+        <button class="btn btn-quiz-size btn-quiz-10" onclick="startQuiz(10)">10 States</button>
+        <button class="btn btn-quiz-size btn-quiz-25" onclick="startQuiz(25)">25 States</button>
+        <button class="btn btn-quiz-size btn-quiz-50" onclick="startQuiz(50)">All 50 States</button>
+      </div>
+    </div>
+
+    <div class="quiz-bar" id="quiz-bar">
+      <div class="quiz-prompt" id="quiz-prompt">Can you find Alabama?</div>
+      <div class="quiz-lives" id="quiz-lives">❤️❤️❤️</div>
+      <div class="quiz-score" id="quiz-score">Score: 0 / 50</div>
+      <button class="btn btn-repeat" onclick="repeatStateName()">🔊 Repeat</button>
+    </div>
+
+    <section class="scoreboard-panel" id="scoreboard-panel">
+      <h2 class="scoreboard-title">Rainbow High Scores</h2>
+      <p class="scoreboard-subtitle">Saved on this device for local play, split by quiz size, with earned prize awards.</p>
+      <div class="scoreboard-columns">
+        <section class="score-column">
+          <h3>10 States</h3>
+          <ol class="scoreboard-list" id="scoreboard-list-10"></ol>
+        </section>
+        <section class="score-column">
+          <h3>25 States</h3>
+          <ol class="scoreboard-list" id="scoreboard-list-25"></ol>
+        </section>
+        <section class="score-column">
+          <h3>50 States</h3>
+          <ol class="scoreboard-list" id="scoreboard-list-50"></ol>
+        </section>
+      </div>
+      <div class="score-actions">
+        <button class="btn btn-score-reset" onclick="resetHighScores()">Reset High Scores</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="quiz-end" id="quiz-end">
+    <h2>Quiz Complete!</h2>
+    <p id="final-score">Your score: 45 / 50</p>
+    <div class="quiz-end-actions">
+      <button class="btn btn-play-again" onclick="setMode('quiz')">Play Again</button>
+      <button class="btn btn-view-scoreboard" onclick="setMode('scoreboard')">View Scoreboard</button>
+    </div>
+  </div>
+
+  <div class="name-entry-overlay" id="name-entry-overlay" role="dialog" aria-modal="true" aria-labelledby="name-entry-title">
+    <div class="name-entry-card">
+      <h3 id="name-entry-title">New High Score!</h3>
+      <p class="name-entry-message" id="name-entry-message">Enter your name for the scoreboard:</p>
+      <input class="name-entry-input" id="name-entry-input" type="text" maxlength="24" placeholder="Player Name" />
+      <div class="name-entry-actions">
+        <button class="btn btn-name-save" id="name-entry-save-btn" type="button">Save Score</button>
+        <button class="btn btn-name-anon" id="name-entry-anon-btn" type="button">Use Anonymous</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="reset-confirm-overlay" id="reset-confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="reset-confirm-title">
+    <div class="reset-confirm-card">
+      <h3 class="reset-confirm-title" id="reset-confirm-title">Reset High Scores</h3>
+      <p class="reset-confirm-prompt">Enter 3+6 to confirm</p>
+      <div class="reset-confirm-display" id="reset-confirm-display">&nbsp;</div>
+      <div class="reset-confirm-feedback" id="reset-confirm-feedback">Use the keypad below</div>
+      <div class="reset-keypad" id="reset-keypad">
+        <button class="reset-key-btn" type="button" data-key="1">1</button>
+        <button class="reset-key-btn" type="button" data-key="2">2</button>
+        <button class="reset-key-btn" type="button" data-key="3">3</button>
+        <button class="reset-key-btn" type="button" data-key="4">4</button>
+        <button class="reset-key-btn" type="button" data-key="5">5</button>
+        <button class="reset-key-btn" type="button" data-key="6">6</button>
+        <button class="reset-key-btn" type="button" data-key="7">7</button>
+        <button class="reset-key-btn" type="button" data-key="8">8</button>
+        <button class="reset-key-btn" type="button" data-key="9">9</button>
+        <button class="reset-key-btn action" type="button" id="reset-key-clear">Clear</button>
+        <button class="reset-key-btn" type="button" data-key="0">0</button>
+        <button class="reset-key-btn action" type="button" id="reset-key-back">Back</button>
+      </div>
+      <div class="reset-confirm-actions">
+        <button class="btn btn-reset-cancel" id="reset-confirm-cancel" type="button">Cancel</button>
+        <button class="btn btn-reset-confirm" id="reset-confirm-submit" type="button" disabled>Reset Scores</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="prize-overlay" id="prize-overlay" role="dialog" aria-modal="true" aria-labelledby="prize-title">
+    <div class="prize-card">
+      <h3 class="prize-title" id="prize-title">
+        <span class="prize-title-main" id="prize-title-main">Congratulations!</span>
+        <span class="prize-title-sub" id="prize-title-sub">You've won a...</span>
+      </h3>
+      <div class="prize-icon" id="prize-icon">🧸</div>
+      <div class="prize-name" id="prize-name">Rainbow Teddy Bear</div>
+      <p class="prize-message" id="prize-message">You earned a fun prize for finishing the quiz!</p>
+      <button class="btn btn-claim-prize" id="prize-claim-btn" type="button">Claim Prize</button>
+    </div>
+  </div>
+
+  <canvas id="confetti"></canvas>
+
+  <script>
+    // === DATA LAYER ===
+    // 8 bright, kid-friendly colors
+    const COLORS = {
+      CORAL: "#FF6B6B",      // Bright coral red
+      SKY: "#4ECDC4",        // Sky blue/turquoise
+      SUNSHINE: "#FFD93D",   // Golden yellow
+      MINT: "#6BCB77",       // Mint green
+      LAVENDER: "#A29BFE",   // Lavender purple
+      PEACH: "#FFA07A",      // Peach orange
+      ROSE: "#FF6B9D",       // Rose pink
+      TEAL: "#45B7D1"        // Teal blue
+    };
+
+    const STATES = [
+      { id: "AL", abbr: "AL", name: "Alabama", capital: "Montgomery", color: COLORS.MINT, facts: ["Home to the first electric trolley system!", "The state motto is 'We Dare Defend Our Rights'", "Sweet tea is the official state drink!", "Has more species of freshwater fish than any other state"] },
+      { id: "AK", abbr: "AK", name: "Alaska", capital: "Juneau", color: COLORS.PEACH, facts: ["The largest and coldest state!", "Has more coastline than all other states combined!", "The state motto is 'North to the Future'", "You can see the Northern Lights here!", "One-third of Alaska is inside the Arctic Circle"] },
+      { id: "AZ", abbr: "AZ", name: "Arizona", capital: "Phoenix", color: COLORS.ROSE, facts: ["One of the hottest states, home to the Grand Canyon!", "The Grand Canyon is over a mile deep!", "Has more copper than any other state", "The state motto is 'God Enriches'", "Pluto was discovered here in 1930!"] },
+      { id: "AR", abbr: "AR", name: "Arkansas", capital: "Little Rock", color: COLORS.TEAL, facts: ["The only state with a diamond mine!", "The state motto is 'The People Rule'", "Home to the first Walmart store!", "Has over 600,000 acres of lakes", "The milk jug was invented here!"] },
+      { id: "CA", abbr: "CA", name: "California", capital: "Sacramento", color: COLORS.SUNSHINE, facts: ["The most populated state with 39 million people!", "Home to the tallest trees in the world!", "The state motto is 'Eureka' which means 'I have found it'", "Hollywood is the movie capital of the world!", "Has both the highest and lowest points in the continental US"] },
+      { id: "CO", abbr: "CO", name: "Colorado", capital: "Denver", color: COLORS.LAVENDER, facts: ["Has the highest average elevation of any state!", "The state motto is 'Nothing Without Providence'", "Home to the Rocky Mountains!", "Has more than 50 mountain peaks over 14,000 feet tall", "The world's largest natural hot springs pool is here"] },
+      { id: "CT", abbr: "CT", name: "Connecticut", capital: "Hartford", color: COLORS.MINT, facts: ["Home to the first hamburger in 1900!", "The state motto is 'He Who Transplanted Still Sustains'", "The Frisbee was invented here!", "Has the oldest newspaper still being published", "Produces more helicopters than anywhere in the world"] },
+      { id: "DE", abbr: "DE", name: "Delaware", capital: "Dover", color: COLORS.SUNSHINE, facts: ["The first state to ratify the Constitution!", "The state motto is 'Liberty and Independence'", "Has no sales tax!", "The smallest state except Rhode Island", "Named after Lord De La Warr"] },
+      { id: "FL", abbr: "FL", name: "Florida", capital: "Tallahassee", color: COLORS.SKY, facts: ["Has more golf courses than any other state!", "The state motto is 'In God We Trust'", "Disney World is the most visited vacation resort in the world!", "The orange blossom is the state flower", "Has the longest coastline in the continental US"] },
+      { id: "GA", abbr: "GA", name: "Georgia", capital: "Atlanta", color: COLORS.PEACH, facts: ["The Peach State, and peanut capital of the world!", "The state motto is 'Wisdom, Justice, and Moderation'", "The largest state east of the Mississippi River!", "Coca-Cola was invented here in 1886", "Home to the busiest airport in the world"] },
+      { id: "HI", abbr: "HI", name: "Hawaii", capital: "Honolulu", color: COLORS.CORAL, facts: ["The only state made entirely of islands!", "The state motto is 'The Life of the Land is Perpetuated in Righteousness'", "Has 8 main islands and over 100 smaller ones", "Home to active volcanoes!", "The only state that grows coffee"] },
+      { id: "ID", abbr: "ID", name: "Idaho", capital: "Boise", color: COLORS.CORAL, facts: ["Grows more potatoes than any other state!", "The state motto is 'Let It Be Perpetual'", "Home to the deepest river gorge in North America", "Has over 3,000 miles of rivers", "The first place in the world to use nuclear power"] },
+      { id: "IL", abbr: "IL", name: "Illinois", capital: "Springfield", color: COLORS.SUNSHINE, facts: ["Home to the world's first skyscraper in Chicago!", "The state motto is 'State Sovereignty, National Union'", "Abraham Lincoln lived here before becoming president", "The birthplace of Walt Disney!", "Chicago's O'Hare is one of the busiest airports"] },
+      { id: "IN", abbr: "IN", name: "Indiana", capital: "Indianapolis", color: COLORS.ROSE, facts: ["Home to the famous Indianapolis 500 car race!", "The state motto is 'The Crossroads of America'", "Produces more popcorn than any other state", "Santa Claus, Indiana gets half a million letters each year!", "The first professional baseball game was played here"] },
+      { id: "IA", abbr: "IA", name: "Iowa", capital: "Des Moines", color: COLORS.PEACH, facts: ["Grows more corn than any other state!", "The state motto is 'Our Liberties We Prize and Our Rights We Will Maintain'", "The state fair is the oldest in America", "Ice cream was first served here!", "Has some of the richest farmland in the world"] },
+      { id: "KS", abbr: "KS", name: "Kansas", capital: "Topeka", color: COLORS.SKY, facts: ["The geographic center of the United States!", "The state motto is 'To the Stars Through Difficulties'", "Home to more tornadoes than most states", "The world's largest ball of twine is here!", "Wheat is the state's biggest crop"] },
+      { id: "KY", abbr: "KY", name: "Kentucky", capital: "Frankfort", color: COLORS.LAVENDER, facts: ["Famous for the Kentucky Derby horse race!", "The state motto is 'United We Stand, Divided We Fall'", "Home to the world's longest cave system", "Produces 95% of the world's bourbon!", "Bluegrass music was born here"] },
+      { id: "LA", abbr: "LA", name: "Louisiana", capital: "Baton Rouge", color: COLORS.SUNSHINE, facts: ["Home to jazz music and the biggest Mardi Gras!", "The state motto is 'Union, Justice, and Confidence'", "New Orleans is known as the birthplace of jazz", "The pelican is the state bird", "Has a unique legal system based on French law"] },
+      { id: "ME", abbr: "ME", name: "Maine", capital: "Augusta", color: COLORS.TEAL, facts: ["The easternmost state, where the sun rises first!", "The state motto is 'I Direct'", "Produces 90% of America's toothpicks!", "Home to over 60 lighthouses", "Lobster fishing is a major industry"] },
+      { id: "MD", abbr: "MD", name: "Maryland", capital: "Annapolis", color: COLORS.ROSE, facts: ["The narrowest state at one point, only 1 mile wide!", "The state motto is 'Manly Deeds, Womanly Words'", "The US National Anthem was written here!", "Home to the Chesapeake Bay", "Has the oldest state capitol still in use"] },
+      { id: "MA", abbr: "MA", name: "Massachusetts", capital: "Boston", color: COLORS.CORAL, facts: ["Where the American Revolution began!", "The state motto is 'By the Sword We Seek Peace'", "Home to Harvard, the oldest university in America", "Basketball was invented here in 1891!", "The first subway in America opened in Boston"] },
+      { id: "MI", abbr: "MI", name: "Michigan", capital: "Lansing", color: COLORS.LAVENDER, facts: ["Has more shoreline than any state except Alaska!", "The state motto is 'If You Seek a Pleasant Peninsula, Look About You'", "Surrounded by four of the five Great Lakes!", "Detroit is known as the Motor City", "No point in Michigan is more than 85 miles from a Great Lake"] },
+      { id: "MN", abbr: "MN", name: "Minnesota", capital: "Saint Paul", color: COLORS.CORAL, facts: ["The Land of 10,000 Lakes!", "The state motto is 'The Star of the North'", "Actually has more than 11,000 lakes!", "The headwaters of the Mississippi River are here", "The Mall of America is the largest shopping mall in the US"] },
+      { id: "MS", abbr: "MS", name: "Mississippi", capital: "Jackson", color: COLORS.SKY, facts: ["Named after the mighty Mississippi River!", "The state motto is 'By Valor and Arms'", "The teddy bear was invented here!", "Produces more catfish than any other state", "Root beer was invented in Biloxi"] },
+      { id: "MO", abbr: "MO", name: "Missouri", capital: "Jefferson City", color: COLORS.MINT, facts: ["Home to the Gateway Arch, the tallest monument!", "The state motto is 'The Welfare of the People Shall Be the Supreme Law'", "The ice cream cone was invented here!", "Mark Twain was born in Missouri", "Kansas City has more fountains than any city except Rome"] },
+      { id: "MT", abbr: "MT", name: "Montana", capital: "Helena", color: COLORS.TEAL, facts: ["Has more elk, deer, and antelope than people!", "The state motto is 'Gold and Silver'", "The fourth largest state by area", "Home to Glacier National Park", "Has the largest grizzly bear population in the lower 48 states"] },
+      { id: "NE", abbr: "NE", name: "Nebraska", capital: "Lincoln", color: COLORS.CORAL, facts: ["The only state with a unicameral legislature!", "The state motto is 'Equality Before the Law'", "The Reuben sandwich was invented here", "Has more miles of river than any other state", "Kool-Aid was invented in Nebraska!"] },
+      { id: "NV", abbr: "NV", name: "Nevada", capital: "Carson City", color: COLORS.MINT, facts: ["The driest state in the nation!", "The state motto is 'All for Our Country'", "Las Vegas is known as the Entertainment Capital of the World", "More gold is mined here than any other state", "Home to Area 51!"] },
+      { id: "NH", abbr: "NH", name: "New Hampshire", capital: "Concord", color: COLORS.PEACH, facts: ["Has the shortest ocean coastline of any state!", "The state motto is 'Live Free or Die'", "The first state to declare independence from England", "Home to the strongest wind ever recorded on Earth!", "Has no state sales tax or income tax"] },
+      { id: "NJ", abbr: "NJ", name: "New Jersey", capital: "Trenton", color: COLORS.TEAL, facts: ["The most densely populated state!", "The state motto is 'Liberty and Prosperity'", "Has the most diners in the world!", "The lightbulb was invented here by Thomas Edison", "Home to the first boardwalk in the world"] },
+      { id: "NM", abbr: "NM", name: "New Mexico", capital: "Santa Fe", color: COLORS.SKY, facts: ["Has the oldest capital city in the United States!", "The state motto is 'It Grows as It Goes'", "Santa Fe was founded in 1610!", "Home to the first atomic bomb test", "Has more PhD holders per capita than any other state"] },
+      { id: "NY", abbr: "NY", name: "New York", capital: "Albany", color: COLORS.LAVENDER, facts: ["The Statue of Liberty welcomes visitors to New York City!", "The state motto is 'Ever Upward'", "New York City is the most populous city in America", "Home to Niagara Falls!", "The first pizzeria in America opened in NYC"] },
+      { id: "NC", abbr: "NC", name: "North Carolina", capital: "Raleigh", color: COLORS.SUNSHINE, facts: ["Where the first airplane flight happened!", "The state motto is 'To Be Rather Than to Seem'", "The Wright Brothers flew at Kitty Hawk in 1903!", "Produces more sweet potatoes than any other state", "Home to the first state university in America"] },
+      { id: "ND", abbr: "ND", name: "North Dakota", capital: "Bismarck", color: COLORS.ROSE, facts: ["The geographic center of North America!", "The state motto is 'Liberty and Union, Now and Forever'", "Produces more honey than any other state", "Has the most wildlife refuges of any state", "The least visited state in America"] },
+      { id: "OH", abbr: "OH", name: "Ohio", capital: "Columbus", color: COLORS.MINT, facts: ["More astronauts come from Ohio than any other state!", "The state motto is 'With God, All Things Are Possible'", "Eight presidents were born here!", "Home to the Rock and Roll Hall of Fame", "The first traffic light was installed in Cleveland"] },
+      { id: "OK", abbr: "OK", name: "Oklahoma", capital: "Oklahoma City", color: COLORS.ROSE, facts: ["Has more man-made lakes than any other state!", "The state motto is 'Labor Conquers All Things'", "The parking meter was invented here!", "Home to more Native American tribes than any other state", "The shopping cart was invented in Oklahoma City"] },
+      { id: "OR", abbr: "OR", name: "Oregon", capital: "Salem", color: COLORS.LAVENDER, facts: ["Has the deepest lake in the United States!", "The state motto is 'She Flies With Her Own Wings'", "Crater Lake is 1,943 feet deep!", "The only state with a two-sided flag", "No sales tax in Oregon!"] },
+      { id: "PA", abbr: "PA", name: "Pennsylvania", capital: "Harrisburg", color: COLORS.PEACH, facts: ["Where the Declaration of Independence was signed!", "The state motto is 'Virtue, Liberty, and Independence'", "Philadelphia was America's first capital", "The first computer was built here!", "Hershey is the chocolate capital of America"] },
+      { id: "RI", abbr: "RI", name: "Rhode Island", capital: "Providence", color: COLORS.SKY, facts: ["The smallest state, only 48 miles long!", "The state motto is 'Hope'", "You could fit Rhode Island into Alaska 425 times!", "Has the longest official state name!", "The first circus in America was here"] },
+      { id: "SC", abbr: "SC", name: "South Carolina", capital: "Columbia", color: COLORS.TEAL, facts: ["Where the Civil War began at Fort Sumter!", "The state motto is 'While I Breathe, I Hope'", "The first tea farm in America is here", "Has more golf courses per capita than any other state", "The Carolina Reaper is the world's hottest pepper!"] },
+      { id: "SD", abbr: "SD", name: "South Dakota", capital: "Pierre", color: COLORS.SUNSHINE, facts: ["Home to Mount Rushmore and Crazy Horse!", "The state motto is 'Under God the People Rule'", "Mount Rushmore took 14 years to carve!", "Has the largest natural indoor warm water pool", "The geographic center of the United States"] },
+      { id: "TN", abbr: "TN", name: "Tennessee", capital: "Nashville", color: COLORS.CORAL, facts: ["The birthplace of country music and rock and roll!", "The state motto is 'Agriculture and Commerce'", "Elvis Presley's home, Graceland, is in Memphis", "Has more than 10,000 caves!", "The Grand Ole Opry is the longest-running radio show"] },
+      { id: "TX", abbr: "TX", name: "Texas", capital: "Austin", color: COLORS.LAVENDER, facts: ["The second largest state by size and population!", "The state motto is 'Friendship'", "Bigger than any country in Europe!", "The first word spoken from the moon was 'Houston'", "Has its own power grid separate from the rest of the US"] },
+      { id: "UT", abbr: "UT", name: "Utah", capital: "Salt Lake City", color: COLORS.PEACH, facts: ["Has five incredible national parks!", "The state motto is 'Industry'", "Home to the Mighty Five national parks", "The Great Salt Lake is saltier than the ocean!", "Has the youngest population in America"] },
+      { id: "VT", abbr: "VT", name: "Vermont", capital: "Montpelier", color: COLORS.SUNSHINE, facts: ["Produces more maple syrup than any other state!", "The state motto is 'Freedom and Unity'", "Montpelier is the smallest state capital", "Ben & Jerry's ice cream was founded here!", "Has more covered bridges per square mile than any state"] },
+      { id: "VA", abbr: "VA", name: "Virginia", capital: "Richmond", color: COLORS.CORAL, facts: ["Eight U.S. presidents were born here!", "The state motto is 'Thus Always to Tyrants'", "More presidents born here than any other state", "The first permanent English settlement was Jamestown", "Home to the Pentagon!"] },
+      { id: "WA", abbr: "WA", name: "Washington", capital: "Olympia", color: COLORS.ROSE, facts: ["Named after President George Washington!", "The state motto is 'By and By'", "The only state named after a president", "Seattle gets less rain than New York City!", "Produces the most apples in America"] },
+      { id: "WV", abbr: "WV", name: "West Virginia", capital: "Charleston", color: COLORS.SKY, facts: ["The most mountainous state east of the Mississippi!", "The state motto is 'Mountaineers Are Always Free'", "The first state formed during the Civil War", "Has the oldest population in America", "Mother's Day was founded here!"] },
+      { id: "WI", abbr: "WI", name: "Wisconsin", capital: "Madison", color: COLORS.LAVENDER, facts: ["America's Dairyland, famous for cheese!", "The state motto is 'Forward'", "Produces more cheese than any other state", "The typewriter was invented here!", "The Ice Cream Sundae was invented in Wisconsin"] },
+      { id: "WY", abbr: "WY", name: "Wyoming", capital: "Cheyenne", color: COLORS.MINT, facts: ["The least populated state and home to Yellowstone!", "The state motto is 'Equal Rights'", "Yellowstone was the world's first national park!", "The first state to give women the right to vote", "Has more pronghorn antelope than people"] }
+    ];
+
+    // === STATE MANAGEMENT ===
+    const QUIZ_TYPES = [10, 25, 50];
+    let mode = 'home';
+    let quizQueue = [];
+    let currentStateIndex = 0;
+    let currentQuizSize = 50;
+    let attempts = 0;
+    let eliminatedStates = [];
+    let correctCount = 0;
+    let wrongCount = 0;
+    let hasSpokenFunFactLabel = false;
+    let defaultMapViewBox = null;
+    let northeastMapViewBox = null;
+    let isNortheastZoomed = false;
+    let viewBoxAnimationFrame = null;
+    const NORTHEAST_STATE_IDS = ['ME', 'NH', 'VT', 'MA', 'RI', 'CT', 'NY', 'NJ', 'PA', 'DE', 'MD', 'DC'];
+    let stateAdjacency = null;
+    const HIGH_SCORE_KEY = 'state-game-high-scores';
+    const MAX_HIGH_SCORES = 10;
+    const QUIZ_PRIZES = [
+      { id: 'teddy-bear', icon: '🧸', name: 'Cartoon Teddy Bear' },
+      { id: 'lion-pal', icon: '🦁', name: 'Cartoon Lion Buddy' },
+      { id: 'lollipop', icon: '🍭', name: 'Rainbow Lollipop' },
+      { id: 'blue-elephant', icon: '🐘', name: 'Blue Elephant Friend' },
+      { id: 'panda-plush', icon: '🐼', name: 'Panda Plush Pal' },
+      { id: 'unicorn-buddy', icon: '🦄', name: 'Sparkle Unicorn' },
+      { id: 'rocket-toy', icon: '🚀', name: 'Toy Rocket' },
+      { id: 'kite', icon: '🪁', name: 'Colorful Kite' },
+      { id: 'ice-cream', icon: '🍦', name: 'Swirly Ice Cream' },
+      { id: 'drum', icon: '🥁', name: 'Boom Boom Drum' },
+      { id: 'star-trophy', icon: '🏆', name: 'Star Trophy' },
+      { id: 'bubble-tea', icon: '🧋', name: 'Bubble Tea Cup' }
+    ];
+    const DEFAULT_QUIZ_PRIZE = { id: 'star-sticker', icon: '⭐', name: 'Star Sticker' };
+
+    // === UTILITIES ===
+    let selectedVoice = null;
+    let useGoogleTTS = false;
+    let exploreSpeechToken = 0;
+    const GOOGLE_TTS_API_KEY = ''; // Add your API key here to automatically use Google's high-quality voice
+    const USER_PREFERRED_VOICE = 'Microsoft Jenny Online (Natural)';
+    const PREFERRED_JENNY_HINTS = [
+      'microsoft jenny online (natural)',
+      'microsoft jenny online',
+      'microsoft jenny natural',
+      'microsoft jenny',
+      'jenny'
+    ];
+    const SECONDARY_VOICE_HINTS = [
+      'microsoft aria online',
+      'google us english female',
+      'microsoft zira',
+      'samantha',
+      'karen',
+      'microsoft emma'
+    ];
+    const APPLE_ZOE_VOICE_HINTS = [
+      'zoe premium',
+      'zoe (premium)',
+      'zoe'
+    ];
+    const APPLE_SIRI_VOICE_HINTS = [
+      'siri voice',
+      'siri female',
+      'siri male',
+      'siri'
+    ];
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function getStateColor(state) {
+      return state.currentColor || state.color;
+    }
+
+    function buildStateAdjacencyMap() {
+      const adjacency = {};
+      STATES.forEach(state => {
+        adjacency[state.id] = new Set();
+      });
+
+      const svg = document.querySelector('.map-container svg');
+      if (!svg) return adjacency;
+
+      svg.querySelectorAll('path').forEach(path => {
+        path.classList.forEach(className => {
+          const match = className.match(/^([a-z]{2})-([a-z]{2})$/);
+          if (!match) return;
+
+          const a = match[1].toUpperCase();
+          const b = match[2].toUpperCase();
+          if (!adjacency[a] || !adjacency[b]) return;
+
+          adjacency[a].add(b);
+          adjacency[b].add(a);
+        });
+      });
+
+      return adjacency;
+    }
+
+    function applyStateColors() {
+      STATES.forEach(state => {
+        const path = document.querySelector(`.${state.id.toLowerCase()}`);
+        if (!path) return;
+        const color = getStateColor(state);
+        path.style.fill = color;
+        path.setAttribute('fill', color);
+      });
+    }
+
+    function rotateStateColors() {
+      if (!stateAdjacency) {
+        stateAdjacency = buildStateAdjacencyMap();
+      }
+
+      const palette = Object.values(COLORS);
+      const stateById = Object.fromEntries(STATES.map(state => [state.id, state]));
+      const orderedIds = shuffle(STATES.map(state => state.id))
+        .sort((a, b) => (stateAdjacency[b]?.size || 0) - (stateAdjacency[a]?.size || 0));
+
+      const assignedColors = {};
+
+      orderedIds.forEach(stateId => {
+        const state = stateById[stateId];
+        if (!state) return;
+
+        const neighbors = stateAdjacency[stateId] || new Set();
+        const usedNeighborColors = new Set();
+        neighbors.forEach(neighborId => {
+          if (assignedColors[neighborId]) {
+            usedNeighborColors.add(assignedColors[neighborId]);
+          }
+        });
+
+        let options = palette.filter(color => !usedNeighborColors.has(color));
+        const previousColor = state.currentColor || state.color;
+
+        if (options.length > 1) {
+          options = options.filter(color => color !== previousColor);
+        }
+
+        if (options.length === 0) {
+          options = palette.filter(color => !usedNeighborColors.has(color));
+        }
+
+        if (options.length === 0) {
+          options = palette.slice();
+        }
+
+        const nextColor = options[Math.floor(Math.random() * options.length)];
+        assignedColors[stateId] = nextColor;
+      });
+
+      STATES.forEach(state => {
+        state.currentColor = assignedColors[state.id] || state.color;
+      });
+
+      applyStateColors();
+    }
+
+    function loadVoices() {
+      const voices = window.speechSynthesis.getVoices();
+
+      if (voices.length === 0) {
+        return; // Voices not loaded yet
+      }
+
+      // If Google API key is provided, use Google TTS automatically
+      if (GOOGLE_TTS_API_KEY) {
+        useGoogleTTS = true;
+        console.log('Using Google Cloud Text-to-Speech (high quality)');
+        return; // Don't show voice selector
+      }
+
+      // Filter to English voices only
+      const englishVoices = voices.filter(v => (v.lang || '').toLowerCase().startsWith('en'));
+      const usEnglishVoices = englishVoices.filter(v => (v.lang || '').toLowerCase().startsWith('en-us'));
+
+      const findByHints = (voiceList, hints) => {
+        for (const hint of hints) {
+          const match = voiceList.find(v => (v.name || '').toLowerCase().includes(hint));
+          if (match) return match;
+        }
+        return null;
+      };
+
+      const platformText = `${navigator.platform || ''} ${navigator.userAgent || ''}`.toLowerCase();
+      const isIpadDesktopMode = (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isApplePlatform = isIpadDesktopMode || /(iphone|ipad|ipod|macintosh|mac os x)/.test(platformText);
+
+      if (isApplePlatform) {
+        const applePreferred =
+          findByHints(usEnglishVoices, APPLE_ZOE_VOICE_HINTS) ||
+          findByHints(englishVoices, APPLE_ZOE_VOICE_HINTS) ||
+          findByHints(voices, APPLE_ZOE_VOICE_HINTS);
+
+        if (applePreferred) {
+          selectedVoice = applePreferred;
+          console.log('Using Apple preferred voice:', selectedVoice.name);
+          return;
+        }
+
+        const siriFallback =
+          findByHints(usEnglishVoices, APPLE_SIRI_VOICE_HINTS) ||
+          findByHints(englishVoices, APPLE_SIRI_VOICE_HINTS) ||
+          findByHints(voices, APPLE_SIRI_VOICE_HINTS);
+
+        if (siriFallback) {
+          selectedVoice = siriFallback;
+          console.log('Using Apple Siri fallback voice:', selectedVoice.name);
+          return;
+        }
+      }
+
+      const preferredMatch =
+        findByHints(usEnglishVoices, [USER_PREFERRED_VOICE.toLowerCase()]) ||
+        findByHints(englishVoices, [USER_PREFERRED_VOICE.toLowerCase()]) ||
+        findByHints(usEnglishVoices, PREFERRED_JENNY_HINTS) ||
+        findByHints(englishVoices, PREFERRED_JENNY_HINTS);
+
+      if (preferredMatch) {
+        selectedVoice = preferredMatch;
+        console.log('Using voice:', selectedVoice.name);
+        return;
+      }
+
+      const secondaryMatch =
+        findByHints(usEnglishVoices, SECONDARY_VOICE_HINTS) ||
+        findByHints(englishVoices, SECONDARY_VOICE_HINTS);
+
+      if (secondaryMatch) {
+        selectedVoice = secondaryMatch;
+        console.log('Using fallback voice:', selectedVoice.name);
+        return;
+      }
+
+      // Fall back to any English female voice, then any English voice.
+      selectedVoice = usEnglishVoices.find(v => (v.name || '').toLowerCase().includes('female')) ||
+        englishVoices.find(v => (v.name || '').toLowerCase().includes('female')) ||
+        usEnglishVoices[0] ||
+        englishVoices[0] ||
+        null;
+
+      if (selectedVoice) {
+        console.log('Using fallback voice:', selectedVoice.name);
+      }
+    }
+
+    async function speak(text, options = {}) {
+      const onStart = typeof options.onStart === 'function' ? options.onStart : null;
+      const onDone = typeof options.onDone === 'function' ? options.onDone : null;
+      if (onStart) {
+        try { onStart(); } catch (_) {}
+      }
+
+      // Try Google TTS if API key is provided
+      if (GOOGLE_TTS_API_KEY && useGoogleTTS) {
+        try {
+          const response = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${GOOGLE_TTS_API_KEY}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              input: { text: text },
+              voice: {
+                languageCode: 'en-US',
+                name: 'en-US-Neural2-F', // High quality female voice
+                ssmlGender: 'FEMALE'
+              },
+              audioConfig: {
+                audioEncoding: 'MP3',
+                speakingRate: 0.9,
+                pitch: 0
+              }
+            })
+          });
+
+          const data = await response.json();
+          if (data.audioContent) {
+            const audio = new Audio('data:audio/mp3;base64,' + data.audioContent);
+            if (onDone) {
+              audio.onended = () => {
+                try { onDone(); } catch (_) {}
+              };
+              audio.onerror = () => {
+                try { onDone(); } catch (_) {}
+              };
+            }
+            audio.play();
+            return;
+          }
+        } catch (error) {
+          console.error('Google TTS error, falling back to browser voice:', error);
+        }
+      }
+
+      // Fall back to browser voice
+      const availableVoices = window.speechSynthesis.getVoices();
+      const selectedStillAvailable = selectedVoice && availableVoices.some(v => v.name === selectedVoice.name && v.lang === selectedVoice.lang);
+      if (!selectedVoice || !selectedStillAvailable) {
+        loadVoices();
+      }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        utterance.voiceURI = selectedVoice.voiceURI;
+      }
+
+      if (onDone) {
+        utterance.onend = () => {
+          try { onDone(); } catch (_) {}
+        };
+        utterance.onerror = () => {
+          try { onDone(); } catch (_) {}
+        };
+      }
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function pause(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function speakBrowserUtterance(text) {
+      return new Promise(resolve => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.9;
+        utterance.pitch = 1.0;
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+          utterance.voiceURI = selectedVoice.voiceURI;
+        }
+        utterance.onend = () => resolve();
+        utterance.onerror = () => resolve();
+        window.speechSynthesis.speak(utterance);
+      });
+    }
+
+    async function speakExploreSegments(segments, options = {}) {
+      if (!Array.isArray(segments) || segments.length === 0) return;
+
+      const token = ++exploreSpeechToken;
+      const cleanSegments = segments.map(s => String(s || '').trim()).filter(Boolean);
+      if (cleanSegments.length === 0) return;
+      const onStart = typeof options.onStart === 'function' ? options.onStart : null;
+      const onDone = typeof options.onDone === 'function' ? options.onDone : null;
+
+      // Keep iOS/browser voices in sync before speaking each sequence.
+      const availableVoices = window.speechSynthesis.getVoices();
+      const selectedStillAvailable = selectedVoice && availableVoices.some(v => v.name === selectedVoice.name && v.lang === selectedVoice.lang);
+      if (!selectedVoice || !selectedStillAvailable) {
+        loadVoices();
+      }
+
+      if (onStart) {
+        try { onStart(); } catch (_) {}
+      }
+
+      try {
+        window.speechSynthesis.cancel();
+        if (token !== exploreSpeechToken) return;
+
+        const pauseBeforeLastMs = Math.max(0, Number(options.pauseBeforeLastMs) || 0);
+        if (cleanSegments.length > 1 && pauseBeforeLastMs > 0) {
+          const firstSpeech = cleanSegments.slice(0, -1).join(' ');
+          const lastSpeech = cleanSegments[cleanSegments.length - 1];
+          await speakBrowserUtterance(firstSpeech);
+          if (token !== exploreSpeechToken) return;
+          await pause(pauseBeforeLastMs);
+          if (token !== exploreSpeechToken) return;
+          await speakBrowserUtterance(lastSpeech);
+          return;
+        }
+
+        const combinedSpeech = cleanSegments.join(' ');
+        await speakBrowserUtterance(combinedSpeech);
+      } finally {
+        if (onDone) {
+          try { onDone(); } catch (_) {}
+        }
+      }
+    }
+
+    function getStateData(id) {
+      return STATES.find(s => s.id === id);
+    }
+
+    function formatAbbreviationForSpeech(abbr) {
+      if (!abbr) return '';
+      return abbr.split('').join('. ') + '.';
+    }
+
+    function normalizeScoreAward(award) {
+      if (!award || typeof award !== 'object') {
+        return { ...DEFAULT_QUIZ_PRIZE };
+      }
+
+      const id = typeof award.id === 'string' && award.id.trim() ? award.id.trim() : DEFAULT_QUIZ_PRIZE.id;
+      const icon = typeof award.icon === 'string' && award.icon.trim() ? award.icon.trim() : DEFAULT_QUIZ_PRIZE.icon;
+      const name = typeof award.name === 'string' && award.name.trim() ? award.name.trim() : DEFAULT_QUIZ_PRIZE.name;
+      return { id, icon, name };
+    }
+
+    function getRandomQuizPrize() {
+      const pick = QUIZ_PRIZES[Math.floor(Math.random() * QUIZ_PRIZES.length)];
+      return normalizeScoreAward(pick);
+    }
+
+    function showPrizeCard(prize, options = {}) {
+      return new Promise(resolve => {
+        const overlay = document.getElementById('prize-overlay');
+        const title = document.getElementById('prize-title');
+        const titleMain = document.getElementById('prize-title-main');
+        const titleSub = document.getElementById('prize-title-sub');
+        const icon = document.getElementById('prize-icon');
+        const name = document.getElementById('prize-name');
+        const message = document.getElementById('prize-message');
+        const claimBtn = document.getElementById('prize-claim-btn');
+        if (!overlay || !title || !titleMain || !titleSub || !icon || !name || !message || !claimBtn) {
+          resolve();
+          return;
+        }
+
+        const safePrize = normalizeScoreAward(prize);
+        const headingMain = options.titleMain || 'Congratulations!';
+        const headingSub = options.titleSub || "You've won a...";
+        const bodyMessage = options.message || 'You unlocked a prize!';
+        const buttonText = options.buttonLabel || 'Close';
+        const announceText = options.announceText;
+
+        titleMain.textContent = headingMain;
+        if (headingSub) {
+          titleSub.textContent = headingSub;
+          titleSub.style.display = 'block';
+        } else {
+          titleSub.textContent = '';
+          titleSub.style.display = 'none';
+        }
+        icon.textContent = safePrize.icon;
+        name.textContent = safePrize.name;
+        message.textContent = bodyMessage;
+        claimBtn.textContent = buttonText;
+        overlay.classList.add('active');
+        if (announceText) {
+          speak(announceText);
+        }
+
+        const cleanup = () => {
+          overlay.classList.remove('active');
+          claimBtn.removeEventListener('click', onClaim);
+          overlay.removeEventListener('click', onOverlayClick);
+          document.removeEventListener('keydown', onKeydown);
+        };
+
+        const onClaim = () => {
+          cleanup();
+          resolve();
+        };
+        const onOverlayClick = (event) => {
+          if (event.target === overlay) {
+            onClaim();
+          }
+        };
+        const onKeydown = (event) => {
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            onClaim();
+          }
+        };
+
+        claimBtn.addEventListener('click', onClaim);
+        overlay.addEventListener('click', onOverlayClick);
+        document.addEventListener('keydown', onKeydown);
+      });
+    }
+
+    function showPrizeSplash(prize, score, quizSize) {
+      return showPrizeCard(prize, {
+        titleMain: 'Congratulations!',
+        titleSub: "You've won a...",
+        message: `You finished ${score}/${quizSize} and unlocked this prize!`,
+        buttonLabel: 'Claim Prize',
+        announceText: `Prize unlocked! You earned a ${normalizeScoreAward(prize).name}!`
+      });
+    }
+
+    function showScoreboardPrizePreview(prize, playerName = 'Player') {
+      const safeName = (playerName || 'Player').trim() || 'Player';
+      return showPrizeCard(prize, {
+        titleMain: `${safeName}'s Award`,
+        titleSub: '',
+        message: `${safeName} earned this prize in quiz mode!`,
+        buttonLabel: 'Close',
+        announceText: null
+      });
+    }
+
+    function animateExploreState(path) {
+      if (!path) return;
+
+      const moves = [
+        { name: 'exploreWiggle', duration: 640, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+        { name: 'exploreHopTilt', duration: 620, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' },
+        { name: 'exploreFloatSpin', duration: 700, easing: 'cubic-bezier(0.2, 0.9, 0.3, 1)' },
+        { name: 'exploreBounceSide', duration: 620, easing: 'cubic-bezier(0.25, 1.2, 0.35, 1)' },
+        { name: 'exploreJelly', duration: 560, easing: 'cubic-bezier(0.3, 0.9, 0.4, 1.2)' }
+      ];
+      const move = moves[Math.floor(Math.random() * moves.length)];
+
+      const clearAnimation = () => {
+        path.style.animation = '';
+        path.style.transformOrigin = '';
+      };
+
+      path.style.transformOrigin = '50% 50%';
+      path.style.animation = `${move.name} ${move.duration}ms ${move.easing}`;
+      path.addEventListener('animationend', clearAnimation, { once: true });
+      setTimeout(clearAnimation, move.duration + 140);
+    }
+
+    function startExploreReadingCue(path) {
+      if (!path) return () => {};
+
+      path.classList.add('explore-reading');
+      let cueAnimation = null;
+      if (typeof path.animate === 'function') {
+        cueAnimation = path.animate([
+          { filter: 'brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0.15))', opacity: 1 },
+          { filter: 'brightness(1.12) drop-shadow(0 0 10px rgba(255,255,255,0.95))', opacity: 0.93 },
+          { filter: 'brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0.15))', opacity: 1 }
+        ], {
+          duration: 700,
+          iterations: Infinity,
+          easing: 'ease-in-out'
+        });
+      }
+
+      let stopped = false;
+      return () => {
+        if (stopped) return;
+        stopped = true;
+        path.classList.remove('explore-reading');
+        if (cueAnimation) cueAnimation.cancel();
+        path.style.filter = '';
+        path.style.opacity = '';
+      };
+    }
+
+    function startWrongStateReadingCue(path) {
+      if (!path) return () => {};
+
+      path.classList.add('explore-reading');
+      path.style.transformOrigin = '50% 50%';
+      let cueAnimation = null;
+      const useWobble = Math.random() < 0.5;
+
+      if (useWobble) {
+        path.style.animation = 'exploreWiggle 560ms ease-in-out infinite';
+      } else if (typeof path.animate === 'function') {
+        cueAnimation = path.animate([
+          { filter: 'brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0.2))', opacity: 1 },
+          { filter: 'brightness(1.15) drop-shadow(0 0 11px rgba(255,255,255,0.95))', opacity: 0.92 },
+          { filter: 'brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0.2))', opacity: 1 }
+        ], {
+          duration: 620,
+          iterations: Infinity,
+          easing: 'ease-in-out'
+        });
+      }
+
+      let stopped = false;
+      return () => {
+        if (stopped) return;
+        stopped = true;
+        path.classList.remove('explore-reading');
+        if (cueAnimation) cueAnimation.cancel();
+        path.style.animation = '';
+        path.style.transformOrigin = '';
+        path.style.filter = '';
+        path.style.opacity = '';
+      };
+    }
+
+    function showNameEntryModal(messageText, defaultName = 'Player') {
+      return new Promise(resolve => {
+        const overlay = document.getElementById('name-entry-overlay');
+        const message = document.getElementById('name-entry-message');
+        const input = document.getElementById('name-entry-input');
+        const saveBtn = document.getElementById('name-entry-save-btn');
+        const anonBtn = document.getElementById('name-entry-anon-btn');
+        if (!overlay || !message || !input || !saveBtn || !anonBtn) {
+          resolve(defaultName);
+          return;
+        }
+
+        message.textContent = messageText;
+        input.value = defaultName;
+        overlay.classList.add('active');
+        setTimeout(() => input.focus(), 10);
+        input.select();
+
+        const cleanup = () => {
+          overlay.classList.remove('active');
+          saveBtn.removeEventListener('click', onSave);
+          anonBtn.removeEventListener('click', onAnonymous);
+          input.removeEventListener('keydown', onKeydown);
+          overlay.removeEventListener('click', onOverlayClick);
+        };
+
+        const finish = (value) => {
+          cleanup();
+          resolve(value);
+        };
+
+        const onSave = () => finish(input.value.trim() || 'Anonymous');
+        const onAnonymous = () => finish('Anonymous');
+        const onKeydown = (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            onSave();
+          } else if (event.key === 'Escape') {
+            event.preventDefault();
+            onAnonymous();
+          }
+        };
+        const onOverlayClick = (event) => {
+          if (event.target === overlay) {
+            onAnonymous();
+          }
+        };
+
+        saveBtn.addEventListener('click', onSave);
+        anonBtn.addEventListener('click', onAnonymous);
+        input.addEventListener('keydown', onKeydown);
+        overlay.addEventListener('click', onOverlayClick);
+      });
+    }
+
+    function showResetChallengeModal() {
+      return new Promise(resolve => {
+        const overlay = document.getElementById('reset-confirm-overlay');
+        const display = document.getElementById('reset-confirm-display');
+        const feedback = document.getElementById('reset-confirm-feedback');
+        const keypad = document.getElementById('reset-keypad');
+        const clearBtn = document.getElementById('reset-key-clear');
+        const backBtn = document.getElementById('reset-key-back');
+        const cancelBtn = document.getElementById('reset-confirm-cancel');
+        const submitBtn = document.getElementById('reset-confirm-submit');
+        if (!overlay || !display || !feedback || !keypad || !clearBtn || !backBtn || !cancelBtn || !submitBtn) {
+          resolve(false);
+          return;
+        }
+
+        let answer = '';
+
+        const updateUi = () => {
+          display.textContent = answer || ' ';
+          const isCorrect = answer === '9';
+          submitBtn.disabled = !isCorrect;
+
+          feedback.classList.remove('error', 'success');
+          if (answer.length === 0) {
+            feedback.textContent = 'Enter 3+6 to confirm';
+          } else if (isCorrect) {
+            feedback.textContent = 'Correct! Tap Reset Scores to continue.';
+            feedback.classList.add('success');
+          } else {
+            feedback.textContent = 'Not quite. Try again!';
+            feedback.classList.add('error');
+          }
+        };
+
+        const cleanup = () => {
+          overlay.classList.remove('active');
+          keypad.removeEventListener('click', onKeypadClick);
+          clearBtn.removeEventListener('click', onClear);
+          backBtn.removeEventListener('click', onBack);
+          cancelBtn.removeEventListener('click', onCancel);
+          submitBtn.removeEventListener('click', onSubmit);
+          overlay.removeEventListener('click', onOverlayClick);
+          document.removeEventListener('keydown', onKeydown);
+        };
+
+        const finish = (confirmed) => {
+          cleanup();
+          resolve(Boolean(confirmed));
+        };
+
+        const pushDigit = (digit) => {
+          if (!/^\d$/.test(digit)) return;
+          answer = digit;
+          updateUi();
+        };
+
+        const onClear = () => {
+          answer = '';
+          updateUi();
+        };
+
+        const onBack = () => {
+          answer = answer.slice(0, -1);
+          updateUi();
+        };
+
+        const onKeypadClick = (event) => {
+          const button = event.target.closest('button[data-key]');
+          if (!button) return;
+          pushDigit(button.getAttribute('data-key') || '');
+        };
+
+        const onCancel = () => finish(false);
+
+        const onSubmit = () => {
+          if (answer === '9') {
+            finish(true);
+            return;
+          }
+          feedback.textContent = 'Oops! Enter 9 to confirm reset.';
+          feedback.classList.remove('success');
+          feedback.classList.add('error');
+        };
+
+        const onOverlayClick = (event) => {
+          if (event.target === overlay) {
+            onCancel();
+          }
+        };
+
+        const onKeydown = (event) => {
+          if (/^\d$/.test(event.key)) {
+            event.preventDefault();
+            pushDigit(event.key);
+          } else if (event.key === 'Backspace') {
+            event.preventDefault();
+            onBack();
+          } else if (event.key === 'Escape') {
+            event.preventDefault();
+            onCancel();
+          } else if (event.key === 'Enter') {
+            event.preventDefault();
+            onSubmit();
+          }
+        };
+
+        answer = '';
+        updateUi();
+        overlay.classList.add('active');
+
+        keypad.addEventListener('click', onKeypadClick);
+        clearBtn.addEventListener('click', onClear);
+        backBtn.addEventListener('click', onBack);
+        cancelBtn.addEventListener('click', onCancel);
+        submitBtn.addEventListener('click', onSubmit);
+        overlay.addEventListener('click', onOverlayClick);
+        document.addEventListener('keydown', onKeydown);
+      });
+    }
+
+    function createEmptyHighScoreBuckets() {
+      const buckets = {};
+      QUIZ_TYPES.forEach(type => {
+        buckets[String(type)] = [];
+      });
+      return buckets;
+    }
+
+    function normalizeScoreList(list, quizSize) {
+      if (!Array.isArray(list)) return [];
+      return list
+        .filter(entry => entry && typeof entry.name === 'string' && Number.isFinite(entry.score))
+        .map(entry => ({
+          name: entry.name.trim() || 'Anonymous',
+          score: Number(entry.score),
+          date: entry.date || '',
+          quizSize,
+          award: normalizeScoreAward(entry.award)
+        }))
+        .sort((a, b) => b.score - a.score || (a.date || '').localeCompare(b.date || ''))
+        .slice(0, MAX_HIGH_SCORES);
+    }
+
+    function loadHighScores() {
+      const emptyBuckets = createEmptyHighScoreBuckets();
+      try {
+        const raw = localStorage.getItem(HIGH_SCORE_KEY);
+        if (!raw) return emptyBuckets;
+
+        const parsed = JSON.parse(raw);
+
+        // Backward compatibility: old format was a single array (50-state mode).
+        if (Array.isArray(parsed)) {
+          emptyBuckets['50'] = normalizeScoreList(parsed, 50);
+          saveHighScores(emptyBuckets);
+          return emptyBuckets;
+        }
+
+        if (!parsed || typeof parsed !== 'object') {
+          return emptyBuckets;
+        }
+
+        QUIZ_TYPES.forEach(type => {
+          const key = String(type);
+          emptyBuckets[key] = normalizeScoreList(parsed[key], type);
+        });
+
+        return emptyBuckets;
+      } catch (error) {
+        console.warn('Could not load high scores:', error);
+        return emptyBuckets;
+      }
+    }
+
+    function saveHighScores(scoreBuckets) {
+      localStorage.setItem(HIGH_SCORE_KEY, JSON.stringify(scoreBuckets));
+    }
+
+    function formatScoreDate(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return '';
+      return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    function renderScoreboardList(listEl, scores, quizSize) {
+      listEl.innerHTML = '';
+
+      if (scores.length === 0) {
+        const empty = document.createElement('li');
+        empty.className = 'score-empty';
+        empty.textContent = 'No scores yet';
+        listEl.appendChild(empty);
+        return;
+      }
+
+      scores.forEach((entry, index) => {
+        const item = document.createElement('li');
+        item.className = 'scoreboard-entry';
+
+        const rank = document.createElement('span');
+        rank.className = 'score-rank';
+        rank.textContent = `#${index + 1}`;
+
+        const name = document.createElement('span');
+        name.className = 'score-name';
+        const dateLabel = formatScoreDate(entry.date);
+        const nameLabel = document.createElement('span');
+        nameLabel.className = 'score-name-label';
+        nameLabel.textContent = dateLabel ? `${entry.name} (${dateLabel})` : entry.name;
+
+        const award = normalizeScoreAward(entry.award);
+        const awardBadge = document.createElement('span');
+        awardBadge.className = 'score-award clickable';
+        awardBadge.title = award.name;
+        awardBadge.setAttribute('role', 'button');
+        awardBadge.setAttribute('tabindex', '0');
+        awardBadge.setAttribute('aria-label', `View prize: ${award.name}`);
+
+        const awardIcon = document.createElement('span');
+        awardIcon.className = 'score-award-icon';
+        awardIcon.textContent = award.icon;
+
+        const awardName = document.createElement('span');
+        awardName.textContent = award.name;
+
+        awardBadge.appendChild(awardIcon);
+        awardBadge.appendChild(awardName);
+        const onOpenAward = () => {
+          showScoreboardPrizePreview(award, entry.name);
+        };
+        awardBadge.addEventListener('click', onOpenAward);
+        awardBadge.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onOpenAward();
+          }
+        });
+        name.appendChild(nameLabel);
+        name.appendChild(awardBadge);
+
+        const score = document.createElement('span');
+        score.className = 'score-value';
+        score.textContent = `${entry.score}/${quizSize}`;
+
+        item.appendChild(rank);
+        item.appendChild(name);
+        item.appendChild(score);
+        listEl.appendChild(item);
+      });
+    }
+
+    function renderScoreboard() {
+      const scoreBuckets = loadHighScores();
+      QUIZ_TYPES.forEach(type => {
+        const list = document.getElementById(`scoreboard-list-${type}`);
+        if (!list) return;
+        renderScoreboardList(list, scoreBuckets[String(type)] || [], type);
+      });
+    }
+
+    async function maybeSaveHighScore(score, prizeAward = null) {
+      const scoreBuckets = loadHighScores();
+      const key = String(currentQuizSize);
+      const scores = scoreBuckets[key] || [];
+      const lowestScore = scores.length > 0 ? scores[scores.length - 1].score : -1;
+      const qualifies = scores.length < MAX_HIGH_SCORES || score > lowestScore;
+
+      if (!qualifies) {
+        return false;
+      }
+
+      const bestScore = scores.length > 0 ? scores[0].score : -1;
+      const isTopScore = score > bestScore;
+      const normalizedAward = normalizeScoreAward(prizeAward);
+      const promptText = isTopScore
+        ? `New high score: ${score}/${currentQuizSize}! You also won ${normalizedAward.icon} ${normalizedAward.name}. Enter your name for the scoreboard.`
+        : `Great score: ${score}/${currentQuizSize}! You won ${normalizedAward.icon} ${normalizedAward.name}. Enter your name for the scoreboard.`;
+
+      const enteredName = await showNameEntryModal(promptText, 'Player');
+      const cleanName = (enteredName || '').trim() || 'Anonymous';
+      scores.push({
+        name: cleanName,
+        score,
+        date: new Date().toISOString(),
+        quizSize: currentQuizSize,
+        award: normalizedAward
+      });
+
+      scores.sort((a, b) => b.score - a.score || (a.date || '').localeCompare(b.date || ''));
+      scoreBuckets[key] = scores.slice(0, MAX_HIGH_SCORES);
+      saveHighScores(scoreBuckets);
+      renderScoreboard();
+      return true;
+    }
+
+    async function resetHighScores() {
+      const confirmed = await showResetChallengeModal();
+      if (!confirmed) return;
+
+      localStorage.removeItem(HIGH_SCORE_KEY);
+      renderScoreboard();
+      speak("High scores cleared!");
+    }
+
+    function fitMapToViewport() {
+      const header = document.querySelector('.header');
+      const mainContent = document.querySelector('.main-content');
+      const mapContainer = document.querySelector('.map-container');
+      const scoreboardPanel = document.getElementById('scoreboard-panel');
+      const svg = document.querySelector('.map-container svg');
+
+      if (!mainContent || !mapContainer) return;
+
+      const verticalGap = 18;
+      const availableHeight = window.innerHeight - verticalGap;
+      const svgWidth = Number(svg && svg.getAttribute('width')) || 959;
+      const svgHeight = Number(svg && svg.getAttribute('height')) || 593;
+      const mapAspect = svgWidth > 0 && svgHeight > 0 ? svgWidth / svgHeight : 1.62;
+      const widthBasedHeight = mainContent.clientWidth / mapAspect;
+      let mapHeight = Math.max(280, Math.min(availableHeight, widthBasedHeight));
+
+      const applyMapHeight = (height) => {
+        mainContent.style.height = `${height}px`;
+        mapContainer.style.height = `${height}px`;
+        if (scoreboardPanel) {
+          scoreboardPanel.style.minHeight = `${height}px`;
+        }
+      };
+
+      applyMapHeight(mapHeight);
+
+      const menuCollapsed = document.body.classList.contains('menu-collapsed');
+      const headerHeight = header && !menuCollapsed
+        ? Math.max(header.getBoundingClientRect().height, header.scrollHeight)
+        : 0;
+      const mainStyles = window.getComputedStyle(mainContent);
+      const mainMargins =
+        (parseFloat(mainStyles.marginTop) || 0) +
+        (parseFloat(mainStyles.marginBottom) || 0);
+      const totalUsedHeight = headerHeight + mainMargins + mapHeight;
+      const overflow = Math.max(0, Math.ceil(totalUsedHeight - window.innerHeight));
+
+      if (overflow > 0) {
+        mapHeight = Math.max(280, mapHeight - overflow - 2);
+        applyMapHeight(mapHeight);
+      }
+
+      if (scoreboardPanel) {
+        scoreboardPanel.style.minHeight = `${mapHeight}px`;
+      }
+
+      positionMapZoomButton();
+    }
+
+    function fitViewBoxToContainer(x, y, width, height, padding = 0) {
+      const mapContainer = document.querySelector('.map-container');
+      let minX = x - padding;
+      let minY = y - padding;
+      let boxWidth = width + padding * 2;
+      let boxHeight = height + padding * 2;
+
+      if (!mapContainer || !boxWidth || !boxHeight) {
+        return { x: minX, y: minY, width: boxWidth, height: boxHeight };
+      }
+
+      const mapStyles = window.getComputedStyle(mapContainer);
+      const innerWidth = mapContainer.clientWidth - parseFloat(mapStyles.paddingLeft) - parseFloat(mapStyles.paddingRight);
+      const innerHeight = mapContainer.clientHeight - parseFloat(mapStyles.paddingTop) - parseFloat(mapStyles.paddingBottom);
+      const containerAspect = innerHeight > 0 ? innerWidth / innerHeight : 1;
+      const viewAspect = boxWidth / boxHeight;
+
+      if (containerAspect > 0) {
+        if (viewAspect > containerAspect) {
+          const targetHeight = boxWidth / containerAspect;
+          const delta = targetHeight - boxHeight;
+          minY -= delta / 2;
+          boxHeight = targetHeight;
+        } else if (viewAspect < containerAspect) {
+          const targetWidth = boxHeight * containerAspect;
+          const delta = targetWidth - boxWidth;
+          minX -= delta / 2;
+          boxWidth = targetWidth;
+        }
+      }
+
+      return { x: minX, y: minY, width: boxWidth, height: boxHeight };
+    }
+
+    function getCurrentSvgViewBox(svg) {
+      const liveViewBox = svg.viewBox && svg.viewBox.baseVal ? svg.viewBox.baseVal : null;
+      if (liveViewBox && liveViewBox.width > 0 && liveViewBox.height > 0) {
+        return {
+          x: liveViewBox.x,
+          y: liveViewBox.y,
+          width: liveViewBox.width,
+          height: liveViewBox.height
+        };
+      }
+
+      return {
+        x: 0,
+        y: 0,
+        width: Number(svg.getAttribute('width')) || 959,
+        height: Number(svg.getAttribute('height')) || 593
+      };
+    }
+
+    function inflateRect(rect, amount) {
+      return {
+        left: rect.left - amount,
+        top: rect.top - amount,
+        right: rect.right + amount,
+        bottom: rect.bottom + amount
+      };
+    }
+
+    function rectsOverlap(a, b) {
+      return !(a.right <= b.left || a.left >= b.right || a.bottom <= b.top || a.top >= b.bottom);
+    }
+
+    function getVisibleStateRects(svg) {
+      const rects = [];
+      STATES.forEach(state => {
+        const path = svg.querySelector(`.${state.id.toLowerCase()}`);
+        if (!path) return;
+        const r = path.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) {
+          rects.push(inflateRect(r, 2));
+        }
+      });
+
+      const dcCircle = svg.querySelector('circle.dc');
+      if (dcCircle) {
+        const r = dcCircle.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) {
+          rects.push(inflateRect(r, 2));
+        }
+      }
+
+      return rects;
+    }
+
+    function projectSvgPointToContainer(svg, container, x, y) {
+      const ctm = svg.getScreenCTM();
+      if (!ctm) return null;
+
+      const point = svg.createSVGPoint();
+      point.x = x;
+      point.y = y;
+      const projected = point.matrixTransform(ctm);
+      const containerRect = container.getBoundingClientRect();
+      return {
+        x: projected.x - containerRect.left,
+        y: projected.y - containerRect.top
+      };
+    }
+
+    function positionMapZoomButton() {
+      const mapContainer = document.querySelector('.map-container');
+      const svg = document.querySelector('.map-container svg');
+      const zoomButton = document.getElementById('map-zoom-btn');
+      const compass = document.querySelector('.compass-rose');
+      if (!mapContainer || !svg || !zoomButton || mapContainer.classList.contains('hidden')) return;
+
+      const containerRect = mapContainer.getBoundingClientRect();
+      if (containerRect.width <= 0 || containerRect.height <= 0) return;
+
+      const buttonWidth = zoomButton.offsetWidth || 60;
+      const buttonHeight = zoomButton.offsetHeight || 60;
+      const margin = 10;
+      const minLeft = margin;
+      const maxLeft = Math.max(minLeft, containerRect.width - buttonWidth - margin);
+      const minTop = margin;
+      const maxTop = Math.max(minTop, containerRect.height - buttonHeight - margin);
+
+      const defaultLeft = containerRect.width * 0.84 - (buttonWidth / 2);
+      const defaultTop = containerRect.height * 0.36 - (buttonHeight / 2);
+      let baseLeft = defaultLeft;
+      let baseTop = defaultTop;
+
+      const njPath = svg.querySelector('.nj');
+      if (njPath) {
+        const njBounds = njPath.getBBox();
+        const projected = projectSvgPointToContainer(
+          svg,
+          mapContainer,
+          njBounds.x + njBounds.width,
+          njBounds.y + (njBounds.height * 0.5)
+        );
+        if (projected) {
+          baseLeft = projected.x + 20;
+          baseTop = projected.y - (buttonHeight * 0.6);
+        }
+      }
+
+      const candidateOffsets = [
+        [0, 0], [38, -18], [38, -52], [0, -52], [58, -8], [58, -42],
+        [20, -70], [0, -80], [68, -76], [78, -26], [18, 24], [58, 22],
+        [-28, -28], [-48, -58], [80, 12]
+      ];
+
+      const stateRects = getVisibleStateRects(svg);
+      const compassRect = (compass && !compass.classList.contains('hidden'))
+        ? inflateRect(compass.getBoundingClientRect(), 8)
+        : null;
+      let best = null;
+
+      for (const [dx, dy] of candidateOffsets) {
+        const left = Math.min(maxLeft, Math.max(minLeft, baseLeft + dx));
+        const top = Math.min(maxTop, Math.max(minTop, baseTop + dy));
+        const buttonRect = {
+          left: containerRect.left + left,
+          top: containerRect.top + top,
+          right: containerRect.left + left + buttonWidth,
+          bottom: containerRect.top + top + buttonHeight
+        };
+
+        let overlapCount = 0;
+        for (const stateRect of stateRects) {
+          if (rectsOverlap(buttonRect, stateRect)) {
+            overlapCount++;
+          }
+        }
+
+        const overlapsCompass = compassRect ? rectsOverlap(buttonRect, compassRect) : false;
+        const score = overlapCount + (overlapsCompass ? 1000 : 0);
+
+        if (score === 0) {
+          best = { left, top, score };
+          break;
+        }
+
+        if (!best || score < best.score) {
+          best = { left, top, score };
+        }
+      }
+
+      if (best) {
+        zoomButton.style.left = `${best.left}px`;
+        zoomButton.style.top = `${best.top}px`;
+      }
+    }
+
+    function animateSvgViewBox(targetViewBox, options = {}) {
+      const svg = document.querySelector('.map-container svg');
+      if (!svg || !targetViewBox) return;
+
+      const preserveAspect = options.preserveAspect || 'xMidYMid meet';
+      const duration = Number.isFinite(options.duration) ? Math.max(0, options.duration) : 800;
+      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const effectiveDuration = prefersReducedMotion ? 0 : duration;
+
+      if (viewBoxAnimationFrame) {
+        cancelAnimationFrame(viewBoxAnimationFrame);
+        viewBoxAnimationFrame = null;
+      }
+
+      svg.setAttribute('preserveAspectRatio', preserveAspect);
+      svg.removeAttribute('width');
+      svg.removeAttribute('height');
+
+      if (effectiveDuration === 0) {
+        svg.setAttribute('viewBox', `${targetViewBox.x} ${targetViewBox.y} ${targetViewBox.width} ${targetViewBox.height}`);
+        positionMapZoomButton();
+        return;
+      }
+
+      const startViewBox = getCurrentSvgViewBox(svg);
+      const startTime = performance.now();
+      const easeInOut = (t) => {
+        if (t < 0.5) return 4 * t * t * t;
+        return 1 - Math.pow(-2 * t + 2, 3) / 2;
+      };
+
+      const step = (timestamp) => {
+        const elapsed = timestamp - startTime;
+        const progress = Math.min(1, elapsed / effectiveDuration);
+        const eased = easeInOut(progress);
+
+        const currentX = startViewBox.x + (targetViewBox.x - startViewBox.x) * eased;
+        const currentY = startViewBox.y + (targetViewBox.y - startViewBox.y) * eased;
+        const currentWidth = startViewBox.width + (targetViewBox.width - startViewBox.width) * eased;
+        const currentHeight = startViewBox.height + (targetViewBox.height - startViewBox.height) * eased;
+
+        svg.setAttribute('viewBox', `${currentX} ${currentY} ${currentWidth} ${currentHeight}`);
+
+        if (progress < 1) {
+          viewBoxAnimationFrame = requestAnimationFrame(step);
+        } else {
+          viewBoxAnimationFrame = null;
+          positionMapZoomButton();
+        }
+      };
+
+      viewBoxAnimationFrame = requestAnimationFrame(step);
+    }
+
+    function applySvgViewBox(viewBox, preserveAspect = 'xMidYMid meet') {
+      const svg = document.querySelector('.map-container svg');
+      if (!svg || !viewBox) return;
+
+      svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`);
+      svg.setAttribute('preserveAspectRatio', preserveAspect);
+      svg.removeAttribute('width');
+      svg.removeAttribute('height');
+      positionMapZoomButton();
+    }
+
+    function computeNortheastViewBox() {
+      const svg = document.querySelector('.map-container svg');
+      if (!svg) return null;
+
+      const elements = NORTHEAST_STATE_IDS
+        .map(id => {
+          if (id === 'DC') return svg.querySelector('.dc');
+          return svg.querySelector(`.${id.toLowerCase()}`);
+        })
+        .filter(Boolean);
+
+      if (elements.length === 0) return null;
+
+      let minX = Number.POSITIVE_INFINITY;
+      let minY = Number.POSITIVE_INFINITY;
+      let maxX = Number.NEGATIVE_INFINITY;
+      let maxY = Number.NEGATIVE_INFINITY;
+
+      elements.forEach(el => {
+        const b = el.getBBox();
+        if (!b.width || !b.height) return;
+        minX = Math.min(minX, b.x);
+        minY = Math.min(minY, b.y);
+        maxX = Math.max(maxX, b.x + b.width);
+        maxY = Math.max(maxY, b.y + b.height);
+      });
+
+      if (!Number.isFinite(minX) || !Number.isFinite(minY) || !Number.isFinite(maxX) || !Number.isFinite(maxY)) {
+        return null;
+      }
+
+      const width = maxX - minX;
+      const height = maxY - minY;
+      const paddingX = width * 0.18;
+      const paddingY = height * 0.16;
+      const paddedX = minX - paddingX;
+      const paddedY = minY - paddingY;
+      const paddedWidth = width + (paddingX * 2);
+      const paddedHeight = height + (paddingY * 2);
+      return fitViewBoxToContainer(paddedX, paddedY, paddedWidth, paddedHeight, 0);
+    }
+
+    function setNortheastZoom(zoomed) {
+      const zoomButton = document.getElementById('map-zoom-btn');
+      isNortheastZoomed = Boolean(zoomed);
+
+      if (isNortheastZoomed) {
+        if (!northeastMapViewBox) {
+          northeastMapViewBox = computeNortheastViewBox();
+        }
+        if (northeastMapViewBox) {
+          animateSvgViewBox(northeastMapViewBox, { duration: 900, preserveAspect: 'xMidYMid meet' });
+        } else {
+          isNortheastZoomed = false;
+          if (defaultMapViewBox) {
+            animateSvgViewBox(defaultMapViewBox, { duration: 900, preserveAspect: 'xMidYMid meet' });
+          }
+        }
+      } else if (defaultMapViewBox) {
+        animateSvgViewBox(defaultMapViewBox, { duration: 900, preserveAspect: 'xMidYMid meet' });
+      }
+
+      if (zoomButton) {
+        zoomButton.classList.toggle('active', isNortheastZoomed);
+      }
+    }
+
+    function toggleNortheastZoom() {
+      setNortheastZoom(!isNortheastZoomed);
+    }
+
+    function cropSvgToStateBounds() {
+      const mapContainer = document.querySelector('.map-container');
+      const svg = document.querySelector('.map-container svg');
+      if (!svg || !mapContainer) return;
+
+      const stateGroup = svg.querySelector('g.state') || svg;
+      const bounds = stateGroup.getBBox();
+      if (!bounds.width || !bounds.height) return;
+
+      const basePadding = Math.max(bounds.width, bounds.height) * 0.006;
+      defaultMapViewBox = fitViewBoxToContainer(bounds.x, bounds.y, bounds.width, bounds.height, basePadding);
+      northeastMapViewBox = null;
+
+      if (isNortheastZoomed) {
+        setNortheastZoom(true);
+      } else {
+        applySvgViewBox(defaultMapViewBox);
+      }
+    }
+
+    // === MAP INITIALIZATION ===
+    function initializeMap() {
+      STATES.forEach(state => {
+        const path = document.querySelector(`.${state.id.toLowerCase()}`);
+        if (path) {
+          // Use style to override SVG attributes for Alaska & Hawaii
+          path.style.fill = getStateColor(state);
+          path.style.stroke = 'white';
+          path.setAttribute('fill', getStateColor(state));
+          path.setAttribute('stroke', 'white');
+          path.setAttribute('role', 'button');
+          path.setAttribute('aria-label', state.name);
+          path.style.cursor = 'pointer';
+          path.addEventListener('click', () => handleStateClick(state.id));
+        }
+      });
+    }
+
+    // === EXPLORE MODE ===
+    function showStateInfo(stateId) {
+      const state = getStateData(stateId);
+      if (!state) return;
+
+      // Pick a random fun fact
+      const randomFact = state.facts[Math.floor(Math.random() * state.facts.length)];
+
+      document.getElementById('state-name').textContent = state.name;
+      document.getElementById('state-abbr').textContent = state.abbr;
+      document.getElementById('state-capital').textContent = state.capital;
+      document.getElementById('state-fact').textContent = randomFact;
+      document.getElementById('info-panel').classList.add('visible');
+
+      const spokenAbbreviation = formatAbbreviationForSpeech(state.abbr);
+      const factLeadIn = hasSpokenFunFactLabel ? '' : 'Fun fact: ';
+      const spokenFact = `${factLeadIn}${randomFact}`;
+      const spokenFactSentence = /[.!?]$/.test(spokenFact) ? spokenFact : `${spokenFact}.`;
+      const path = document.querySelector(`.${stateId.toLowerCase()}`);
+      const stopReadingCue = startExploreReadingCue(path);
+
+      speakExploreSegments([
+        `${state.name}.`,
+        `${spokenAbbreviation}...`,
+        spokenFactSentence,
+        `Capital: ${state.capital}.`
+      ], { pauseBeforeLastMs: 60, onDone: stopReadingCue });
+      hasSpokenFunFactLabel = true;
+
+      const autoZoomOutDelay = Math.min(5200, Math.max(1800, (state.name.length + randomFact.length) * 42));
+      setTimeout(() => {
+        if (mode === 'explore') {
+          setNortheastZoom(false);
+        }
+      }, autoZoomOutDelay);
+
+      animateExploreState(path);
+    }
+
+    function hideStateInfo() {
+      document.getElementById('info-panel').classList.remove('visible');
+    }
+
+    // === QUIZ MODE ===
+    function startQuiz(quizSize = 50) {
+      const chosenSize = Number(quizSize);
+      currentQuizSize = QUIZ_TYPES.includes(chosenSize) ? chosenSize : 50;
+      quizQueue = shuffle(STATES).slice(0, currentQuizSize);
+      currentStateIndex = 0;
+      attempts = 0;
+      eliminatedStates = [];
+      correctCount = 0;
+      wrongCount = 0;
+
+      setNortheastZoom(false);
+      resetMapColors();
+      rotateStateColors();
+      document.getElementById('quiz-end').classList.remove('visible');
+      document.getElementById('prize-overlay').classList.remove('active');
+      document.getElementById('quiz-setup').classList.remove('active');
+      document.getElementById('quiz-bar').classList.add('active');
+
+      askNextState();
+    }
+
+    function buildQuizPrompt(stateName) {
+      const promptStarts = [
+        "Can you find",
+        "Where is",
+        "Can you locate",
+        "Which one is",
+        "Can you point to",
+        "Pick out",
+        "Can you spot",
+        "Can you tap",
+        "Do you see",
+        "Can you help me find"
+      ];
+      const start = promptStarts[Math.floor(Math.random() * promptStarts.length)];
+      return `${start} ${stateName}?`;
+    }
+
+    function buildWrongStateResponse(clickedStateName) {
+      const prefixes = [
+        "Nope, that is",
+        "No, that is",
+        "Incorrect, that state is",
+        "Not this one, that is",
+        "Almost, that is",
+        "Oops, that one is"
+      ];
+      const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+      return `${prefix} ${clickedStateName}.`;
+    }
+
+    function askNextState() {
+      if (currentStateIndex >= quizQueue.length) {
+        endQuiz();
+        return;
+      }
+
+      attempts = 0;
+      eliminatedStates = [];
+      resetMapColors();
+
+      const currentState = quizQueue[currentStateIndex];
+      const promptText = buildQuizPrompt(currentState.name);
+      document.getElementById('quiz-prompt').textContent = promptText;
+      updateLives();
+      updateScore();
+
+      speak(promptText);
+    }
+
+    function repeatStateName() {
+      const currentState = quizQueue[currentStateIndex];
+      if (!currentState) return;
+      const promptText = buildQuizPrompt(currentState.name);
+      document.getElementById('quiz-prompt').textContent = promptText;
+      speak(promptText);
+    }
+
+    function handleCorrectAnswer(stateId) {
+      correctCount++;
+      const path = document.querySelector(`.${stateId.toLowerCase()}`);
+      path.classList.add('correct-flash');
+
+      const state = getStateData(stateId);
+      const praisePhrases = [
+        "That's right",
+        "Way to go",
+        "Excellent",
+        "Good job",
+        "Awesome work",
+        "Great choice",
+        "You got it",
+        "Nice one",
+        "Fantastic"
+      ];
+      const praise = praisePhrases[Math.floor(Math.random() * praisePhrases.length)];
+      speak(`${praise}! ${state.name}!`);
+
+      setTimeout(() => {
+        path.classList.remove('correct-flash');
+        setNortheastZoom(false);
+        currentStateIndex++;
+        askNextState();
+      }, 1500);
+    }
+
+    function handleWrongAnswer(clickedId) {
+      attempts++;
+      wrongCount++;
+
+      const path = document.querySelector(`.${clickedId.toLowerCase()}`);
+      if (path) {
+        path.classList.add('wrong-flash');
+        setTimeout(() => path.classList.remove('wrong-flash'), 400);
+      }
+
+      const currentState = quizQueue[currentStateIndex];
+      const clickedState = getStateData(clickedId);
+      const clickedName = clickedState ? clickedState.name : "a different state";
+      const wrongStateReply = buildWrongStateResponse(clickedName);
+      const stopWrongCue = startWrongStateReadingCue(path);
+      let wrongSpeechText = '';
+
+      if (attempts === 1) {
+        wrongSpeechText = `${wrongStateReply} Try again!`;
+      } else if (attempts === 2) {
+        wrongSpeechText = `${wrongStateReply} Here's more help.`;
+      } else if (attempts === 3) {
+        wrongSpeechText = `${wrongStateReply} One more hint!`;
+      } else {
+        stopWrongCue();
+        // 4th wrong attempt - reveal answer (no point given)
+        const correctPath = document.querySelector(`.${currentState.id.toLowerCase()}`);
+        correctPath.classList.add('correct-flash');
+        correctPath.style.stroke = '#FFD93D';
+        correctPath.style.strokeWidth = '5';
+
+        speak(`Here is ${currentState.name}.`);
+
+        setTimeout(() => {
+          correctPath.classList.remove('correct-flash');
+          correctPath.style.stroke = 'white';
+          correctPath.style.strokeWidth = '1.5';
+          setNortheastZoom(false);
+          currentStateIndex++;
+          askNextState();
+        }, 2000);
+      }
+
+      if (wrongSpeechText) {
+        speak(wrongSpeechText, { onDone: stopWrongCue });
+      }
+
+      if (attempts <= 3) {
+        eliminateRandomStates(15);
+      }
+
+      updateLives();
+    }
+
+    function eliminateRandomStates(count) {
+      const currentState = quizQueue[currentStateIndex];
+      const candidates = STATES.filter(s =>
+        s.id !== currentState.id && !eliminatedStates.includes(s.id)
+      );
+
+      const toEliminate = shuffle(candidates).slice(0, count);
+      toEliminate.forEach(s => {
+        const path = document.querySelector(`.${s.id.toLowerCase()}`);
+        if (path) {
+          path.classList.add('eliminated');
+          eliminatedStates.push(s.id);
+        }
+      });
+    }
+
+    function updateLives() {
+      const hearts = ['❤️', '❤️', '❤️'];
+      for (let i = 0; i < attempts && i < 3; i++) {
+        hearts[i] = '🖤';
+      }
+      document.getElementById('quiz-lives').textContent = hearts.join('');
+    }
+
+    function updateScore() {
+      document.getElementById('quiz-score').textContent = `Score: ${correctCount} / ${currentQuizSize}`;
+    }
+
+    async function endQuiz() {
+      document.getElementById('quiz-bar').classList.remove('active');
+      setNortheastZoom(false);
+      document.getElementById('final-score').textContent = `Your score: ${correctCount} / ${currentQuizSize}`;
+      document.getElementById('quiz-end').classList.add('visible');
+      const earnedPrize = getRandomQuizPrize();
+      await showPrizeSplash(earnedPrize, correctCount, currentQuizSize);
+      const savedToScoreboard = await maybeSaveHighScore(correctCount, earnedPrize);
+
+      const scoreRatio = currentQuizSize > 0 ? correctCount / currentQuizSize : 0;
+      if (scoreRatio >= 0.8) {
+        launchConfetti();
+        speak("Amazing job! You're a geography superstar!");
+      } else if (scoreRatio >= 0.6) {
+        speak("Great work! Keep practicing!");
+      } else {
+        speak("Good try! Practice makes perfect!");
+      }
+
+      if (savedToScoreboard) {
+        setTimeout(() => {
+          speak("Your score and prize were added to the scoreboard!");
+        }, 500);
+      }
+    }
+
+    // === MODE TOGGLE ===
+    function setMode(newMode) {
+      mode = newMode;
+      const mapContainer = document.querySelector('.map-container');
+      const scoreboardPanel = document.getElementById('scoreboard-panel');
+      const quizSetup = document.getElementById('quiz-setup');
+      const quizBar = document.getElementById('quiz-bar');
+      const quizEnd = document.getElementById('quiz-end');
+      const prizeOverlay = document.getElementById('prize-overlay');
+      const resetConfirmOverlay = document.getElementById('reset-confirm-overlay');
+      const zoomButton = document.getElementById('map-zoom-btn');
+
+      document.querySelectorAll('.mode-toggle .btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      if (mode === 'home') {
+        document.body.classList.remove('menu-collapsed');
+        setNortheastZoom(false);
+        if (zoomButton) zoomButton.classList.remove('hidden');
+        quizSetup.classList.remove('active');
+        quizBar.classList.remove('active');
+        quizEnd.classList.remove('visible');
+        prizeOverlay.classList.remove('active');
+        resetConfirmOverlay.classList.remove('active');
+        scoreboardPanel.classList.remove('active');
+        mapContainer.classList.remove('hidden');
+        hideStateInfo();
+        resetMapColors();
+        fitMapToViewport();
+        cropSvgToStateBounds();
+        requestAnimationFrame(() => {
+          if (mode === 'home') {
+            fitMapToViewport();
+            cropSvgToStateBounds();
+          }
+        });
+        setTimeout(() => {
+          if (mode === 'home') {
+            fitMapToViewport();
+            cropSvgToStateBounds();
+          }
+        }, 480);
+        return;
+      }
+
+      document.body.classList.add('menu-collapsed');
+
+      if (mode === 'explore') {
+        document.querySelector('.btn-explore').classList.add('active');
+        if (zoomButton) zoomButton.classList.remove('hidden');
+        quizSetup.classList.remove('active');
+        quizBar.classList.remove('active');
+        quizEnd.classList.remove('visible');
+        prizeOverlay.classList.remove('active');
+        resetConfirmOverlay.classList.remove('active');
+        scoreboardPanel.classList.remove('active');
+        mapContainer.classList.remove('hidden');
+        hideStateInfo();
+        resetMapColors();
+      } else if (mode === 'quiz') {
+        document.querySelector('.btn-quiz').classList.add('active');
+        if (zoomButton) zoomButton.classList.remove('hidden');
+        quizSetup.classList.add('active');
+        quizBar.classList.remove('active');
+        prizeOverlay.classList.remove('active');
+        resetConfirmOverlay.classList.remove('active');
+        scoreboardPanel.classList.remove('active');
+        mapContainer.classList.remove('hidden');
+        quizEnd.classList.remove('visible');
+        hideStateInfo();
+        resetMapColors();
+      } else if (mode === 'scoreboard') {
+        document.querySelector('.btn-scoreboard').classList.add('active');
+        hideStateInfo();
+        setNortheastZoom(false);
+        if (zoomButton) zoomButton.classList.add('hidden');
+        quizSetup.classList.remove('active');
+        quizBar.classList.remove('active');
+        quizEnd.classList.remove('visible');
+        prizeOverlay.classList.remove('active');
+        resetConfirmOverlay.classList.remove('active');
+        resetMapColors();
+        mapContainer.classList.add('hidden');
+        scoreboardPanel.classList.add('active');
+        renderScoreboard();
+      } else {
+        setMode('home');
+        return;
+      }
+
+      fitMapToViewport();
+      if (mode !== 'scoreboard') {
+        cropSvgToStateBounds();
+      }
+    }
+
+    function handleStateClick(stateId) {
+      if (mode === 'explore') {
+        showStateInfo(stateId);
+      } else if (mode === 'quiz') {
+        const currentState = quizQueue[currentStateIndex];
+        if (!currentState) return;
+        if (stateId === currentState.id) {
+          handleCorrectAnswer(stateId);
+        } else {
+          handleWrongAnswer(stateId);
+        }
+      }
+    }
+
+    function resetMapColors() {
+      STATES.forEach(state => {
+        const path = document.querySelector(`.${state.id.toLowerCase()}`);
+        if (path) {
+          path.classList.remove('eliminated');
+          path.style.stroke = 'white';
+          path.style.strokeWidth = '1.5';
+        }
+      });
+    }
+
+    // === CONFETTI ===
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti');
+      canvas.classList.add('active');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = [COLORS.ROSE, COLORS.MINT, COLORS.SUNSHINE, COLORS.SKY, COLORS.LAVENDER, COLORS.PEACH, COLORS.CORAL, COLORS.TEAL];
+
+      for (let i = 0; i < 150; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 2,
+          d: Math.random() * 150,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          tilt: Math.random() * 10 - 10,
+          tiltAngleIncremental: Math.random() * 0.07 + 0.05,
+          tiltAngle: 0
+        });
+      }
+
+      let animationFrame;
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach((p, i) => {
+          ctx.beginPath();
+          ctx.lineWidth = p.r / 2;
+          ctx.strokeStyle = p.color;
+          ctx.moveTo(p.x + p.tilt + p.r, p.y);
+          ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
+          ctx.stroke();
+
+          p.tiltAngle += p.tiltAngleIncremental;
+          p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+          p.tilt = Math.sin(p.tiltAngle - i / 3) * 15;
+
+          if (p.y > canvas.height) {
+            particles[i] = {
+              x: Math.random() * canvas.width,
+              y: -20,
+              r: p.r,
+              d: p.d,
+              color: p.color,
+              tilt: p.tilt,
+              tiltAngleIncremental: p.tiltAngleIncremental,
+              tiltAngle: p.tiltAngle
+            };
+          }
+        });
+
+        animationFrame = requestAnimationFrame(draw);
+      }
+
+      draw();
+
+      setTimeout(() => {
+        cancelAnimationFrame(animationFrame);
+        canvas.classList.remove('active');
+      }, 5000);
+    }
+
+    // === INITIALIZATION ===
+    window.addEventListener('DOMContentLoaded', () => {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      }
+
+      fitMapToViewport();
+      cropSvgToStateBounds();
+      initializeMap();
+      rotateStateColors();
+      renderScoreboard();
+      setMode('home');
+
+      window.addEventListener('resize', () => {
+        fitMapToViewport();
+        if (mode !== 'scoreboard') {
+          cropSvgToStateBounds();
+        }
+      });
+
+      // Load voices - sometimes need to wait for them
+      loadVoices();
+      if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+      }
+    });
+
+    // Close info panel when clicking outside
+    document.addEventListener('click', (e) => {
+      if (mode === 'explore' &&
+          !e.target.closest('path') &&
+          !e.target.closest('#info-panel')) {
+        hideStateInfo();
+      }
+    });
+  </script>
+</body>
+</html>
