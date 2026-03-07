@@ -1690,6 +1690,7 @@ Place this code in the empty space below. */
 
     // === UTILITIES ===
     let selectedVoice = null;
+    let selectedVoiceKey = '';
     let useGoogleTTS = false;
     let exploreSpeechToken = 0;
     const GOOGLE_TTS_API_KEY = ''; // Add your API key here to automatically use Google's high-quality voice
@@ -1865,6 +1866,7 @@ Place this code in the empty space below. */
 
         if (applePreferred) {
           selectedVoice = applePreferred;
+          selectedVoiceKey = getVoiceKey(selectedVoice);
           console.log('Using Apple preferred voice:', selectedVoice.name);
           return;
         }
@@ -1876,6 +1878,7 @@ Place this code in the empty space below. */
 
         if (siriFallback) {
           selectedVoice = siriFallback;
+          selectedVoiceKey = getVoiceKey(selectedVoice);
           console.log('Using Apple Siri fallback voice:', selectedVoice.name);
           return;
         }
@@ -1889,6 +1892,7 @@ Place this code in the empty space below. */
 
       if (preferredMatch) {
         selectedVoice = preferredMatch;
+        selectedVoiceKey = getVoiceKey(selectedVoice);
         console.log('Using voice:', selectedVoice.name);
         return;
       }
@@ -1899,6 +1903,7 @@ Place this code in the empty space below. */
 
       if (secondaryMatch) {
         selectedVoice = secondaryMatch;
+        selectedVoiceKey = getVoiceKey(selectedVoice);
         console.log('Using fallback voice:', selectedVoice.name);
         return;
       }
@@ -1909,6 +1914,7 @@ Place this code in the empty space below. */
         usEnglishVoices[0] ||
         englishVoices[0] ||
         null;
+      selectedVoiceKey = getVoiceKey(selectedVoice);
 
       if (selectedVoice) {
         console.log('Using fallback voice:', selectedVoice.name);
@@ -1920,6 +1926,46 @@ Place this code in the empty space below. */
       const haystack = `${voice.name || ''} ${voice.voiceURI || ''}`.toLowerCase();
       const allAppleHints = APPLE_ZOE_VOICE_HINTS.concat(APPLE_SIRI_VOICE_HINTS);
       return allAppleHints.some(h => haystack.includes(h));
+    }
+
+    function getVoiceKey(voice) {
+      if (!voice) return '';
+      return `${voice.voiceURI || ''}|${voice.name || ''}|${voice.lang || ''}`;
+    }
+
+    function refreshSelectedVoiceReference(voices) {
+      if (!Array.isArray(voices) || voices.length === 0) return;
+      if (selectedVoiceKey) {
+        const byKey = voices.find(v => getVoiceKey(v) === selectedVoiceKey);
+        if (byKey) {
+          selectedVoice = byKey;
+          return;
+        }
+      }
+      if (selectedVoice) {
+        const byNameLang = voices.find(v => v.name === selectedVoice.name && v.lang === selectedVoice.lang);
+        if (byNameLang) {
+          selectedVoice = byNameLang;
+        }
+      }
+    }
+
+    async function ensureVoiceReady() {
+      if (GOOGLE_TTS_API_KEY && useGoogleTTS) return;
+      for (let i = 0; i < 5; i++) {
+        let voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+          refreshSelectedVoiceReference(voices);
+          if (!selectedVoice || (isApplePlatform() && !isApplePreferredSelectedVoice(selectedVoice))) {
+            loadVoices();
+            voices = window.speechSynthesis.getVoices();
+            refreshSelectedVoiceReference(voices);
+          }
+          if (selectedVoice) return;
+        }
+        loadVoices();
+        await pause(80);
+      }
     }
 
     async function speak(text, options = {}) {
@@ -1972,13 +2018,17 @@ Place this code in the empty space below. */
       }
 
       // Fall back to browser voice
+      await ensureVoiceReady();
       const availableVoices = window.speechSynthesis.getVoices();
-      const selectedStillAvailable = selectedVoice && availableVoices.some(v => v.name === selectedVoice.name && v.lang === selectedVoice.lang);
+      refreshSelectedVoiceReference(availableVoices);
+      const selectedStillAvailable = selectedVoice && availableVoices.some(v => getVoiceKey(v) === getVoiceKey(selectedVoice));
       if (!selectedVoice || !selectedStillAvailable) {
         loadVoices();
+        refreshSelectedVoiceReference(window.speechSynthesis.getVoices());
       }
       if (isApplePlatform() && !isApplePreferredSelectedVoice(selectedVoice)) {
         loadVoices();
+        refreshSelectedVoiceReference(window.speechSynthesis.getVoices());
       }
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
@@ -2006,7 +2056,8 @@ Place this code in the empty space below. */
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    function speakBrowserUtterance(text) {
+    async function speakBrowserUtterance(text) {
+      await ensureVoiceReady();
       return new Promise(resolve => {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 0.9;
@@ -2031,13 +2082,17 @@ Place this code in the empty space below. */
       const onDone = typeof options.onDone === 'function' ? options.onDone : null;
 
       // Keep iOS/browser voices in sync before speaking each sequence.
+      await ensureVoiceReady();
       const availableVoices = window.speechSynthesis.getVoices();
-      const selectedStillAvailable = selectedVoice && availableVoices.some(v => v.name === selectedVoice.name && v.lang === selectedVoice.lang);
+      refreshSelectedVoiceReference(availableVoices);
+      const selectedStillAvailable = selectedVoice && availableVoices.some(v => getVoiceKey(v) === getVoiceKey(selectedVoice));
       if (!selectedVoice || !selectedStillAvailable) {
         loadVoices();
+        refreshSelectedVoiceReference(window.speechSynthesis.getVoices());
       }
       if (isApplePlatform() && !isApplePreferredSelectedVoice(selectedVoice)) {
         loadVoices();
+        refreshSelectedVoiceReference(window.speechSynthesis.getVoices());
       }
 
       if (onStart) {
