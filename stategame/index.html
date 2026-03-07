@@ -1723,6 +1723,12 @@ Place this code in the empty space below. */
       'siri'
     ];
 
+    function isApplePlatform() {
+      const platformText = `${navigator.platform || ''} ${navigator.userAgent || ''}`.toLowerCase();
+      const isIpadDesktopMode = (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      return isIpadDesktopMode || /(iphone|ipad|ipod|macintosh|mac os x)/.test(platformText);
+    }
+
     function shuffle(array) {
       const arr = [...array];
       for (let i = arr.length - 1; i > 0; i--) {
@@ -1842,17 +1848,16 @@ Place this code in the empty space below. */
 
       const findByHints = (voiceList, hints) => {
         for (const hint of hints) {
-          const match = voiceList.find(v => (v.name || '').toLowerCase().includes(hint));
+          const match = voiceList.find(v => {
+            const haystack = `${v.name || ''} ${v.voiceURI || ''}`.toLowerCase();
+            return haystack.includes(hint);
+          });
           if (match) return match;
         }
         return null;
       };
 
-      const platformText = `${navigator.platform || ''} ${navigator.userAgent || ''}`.toLowerCase();
-      const isIpadDesktopMode = (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-      const isApplePlatform = isIpadDesktopMode || /(iphone|ipad|ipod|macintosh|mac os x)/.test(platformText);
-
-      if (isApplePlatform) {
+      if (isApplePlatform()) {
         const applePreferred =
           findByHints(usEnglishVoices, APPLE_ZOE_VOICE_HINTS) ||
           findByHints(englishVoices, APPLE_ZOE_VOICE_HINTS) ||
@@ -1910,6 +1915,13 @@ Place this code in the empty space below. */
       }
     }
 
+    function isApplePreferredSelectedVoice(voice) {
+      if (!voice) return false;
+      const haystack = `${voice.name || ''} ${voice.voiceURI || ''}`.toLowerCase();
+      const allAppleHints = APPLE_ZOE_VOICE_HINTS.concat(APPLE_SIRI_VOICE_HINTS);
+      return allAppleHints.some(h => haystack.includes(h));
+    }
+
     async function speak(text, options = {}) {
       const onStart = typeof options.onStart === 'function' ? options.onStart : null;
       const onDone = typeof options.onDone === 'function' ? options.onDone : null;
@@ -1963,6 +1975,9 @@ Place this code in the empty space below. */
       const availableVoices = window.speechSynthesis.getVoices();
       const selectedStillAvailable = selectedVoice && availableVoices.some(v => v.name === selectedVoice.name && v.lang === selectedVoice.lang);
       if (!selectedVoice || !selectedStillAvailable) {
+        loadVoices();
+      }
+      if (isApplePlatform() && !isApplePreferredSelectedVoice(selectedVoice)) {
         loadVoices();
       }
       window.speechSynthesis.cancel();
@@ -2019,6 +2034,9 @@ Place this code in the empty space below. */
       const availableVoices = window.speechSynthesis.getVoices();
       const selectedStillAvailable = selectedVoice && availableVoices.some(v => v.name === selectedVoice.name && v.lang === selectedVoice.lang);
       if (!selectedVoice || !selectedStillAvailable) {
+        loadVoices();
+      }
+      if (isApplePlatform() && !isApplePreferredSelectedVoice(selectedVoice)) {
         loadVoices();
       }
 
