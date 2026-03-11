@@ -268,7 +268,7 @@
     recentVisible: 'smsd-recent-visible-v1',
     prefsCollapsed: 'smsd-prefs-collapsed-v1'
   };
-  const REPO_VERSION = '283';
+  const REPO_VERSION = '284';
   const REPO_DATE = '3.11.26';
 
   const el = {
@@ -1041,6 +1041,7 @@
   loadPrefs();
   bindEvents();
   render();
+  el.searchInput?.focus();
 </script>
 </body>
 </html>
