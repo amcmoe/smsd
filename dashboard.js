@@ -150,6 +150,147 @@ const ALLOWED = Object.freeze({
     });
   };
 
+  const setDotState = (dot, state, title) => {
+    if (!dot) return;
+    dot.classList.remove("is-checking", "is-up", "is-down", "is-unsupported");
+    if (state === "checking") dot.classList.add("is-checking");
+    if (state === "up") dot.classList.add("is-up");
+    if (state === "down") dot.classList.add("is-down");
+    if (state === "unsupported") dot.classList.add("is-unsupported");
+    dot.setAttribute("title", title || "");
+    dot.setAttribute("aria-label", title || "");
+  };
+
+  const probeSwitchHttp = async (ip) => {
+    if (!ip) {
+      return { state: "unsupported", title: "No IP address available" };
+    }
+
+    // Browsers block mixed-content probes when this page is loaded over HTTPS.
+    if (window.location.protocol === "https:") {
+      return { state: "unsupported", title: "Status check unavailable on HTTPS pages for HTTP switch URLs" };
+    }
+
+    const timeoutMs = 2800;
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const url = `http://${ip}/?statusProbe=${Date.now()}`;
+      await fetch(url, {
+        method: "GET",
+        mode: "no-cors",
+        cache: "no-store",
+        signal: controller.signal,
+      });
+      return { state: "up", title: "Reachable (HTTP probe succeeded)" };
+    } catch (error) {
+      if (error?.name === "AbortError") {
+        return { state: "down", title: "Unreachable (request timed out)" };
+      }
+      return { state: "down", title: "Unreachable (network error)" };
+    } finally {
+      window.clearTimeout(timer);
+    }
+  };
+
+  const initSwitchStatusDots = () => {
+    const body = document.body;
+    if (!body || !body.classList.contains("switch-page")) return;
+
+    const rows = Array.from(document.querySelectorAll(".switch-list li"));
+    rows.forEach(async (row) => {
+      const ipNode = row.querySelector(".switch-ip");
+      const nameNode = row.querySelector(".switch-name");
+      if (!ipNode || !nameNode) return;
+
+      const ip = (ipNode.textContent || "").trim();
+      const dot = document.createElement("span");
+      dot.className = "switch-status-dot is-checking";
+      dot.setAttribute("role", "img");
+      dot.setAttribute("aria-hidden", "false");
+      dot.setAttribute("title", "Checking status...");
+      row.insertBefore(dot, nameNode);
+
+      const result = await probeSwitchHttp(ip);
+      setDotState(dot, result.state, result.title);
+    });
+  };
+
+  const initSwitchNameTooltips = () => {
+    const body = document.body;
+    if (!body || !body.classList.contains("switch-page")) return;
+
+    const links = Array.from(document.querySelectorAll(".switch-name a"));
+    if (!links.length) return;
+
+    const tooltip = document.createElement("div");
+    tooltip.className = "switch-name-tooltip";
+    tooltip.setAttribute("role", "tooltip");
+    tooltip.setAttribute("aria-hidden", "true");
+    document.body.appendChild(tooltip);
+
+    const hideTooltip = () => {
+      tooltip.classList.remove("is-visible");
+      tooltip.setAttribute("aria-hidden", "true");
+      tooltip.textContent = "";
+    };
+
+    const placeTooltip = (target) => {
+      const rect = target.getBoundingClientRect();
+      const ttRect = tooltip.getBoundingClientRect();
+      const margin = 8;
+      let left = rect.left;
+      let top = rect.top - ttRect.height - margin;
+
+      if (top < margin) top = rect.bottom + margin;
+      if (left + ttRect.width > window.innerWidth - margin) {
+        left = window.innerWidth - ttRect.width - margin;
+      }
+      if (left < margin) left = margin;
+
+      tooltip.style.left = `${Math.round(left)}px`;
+      tooltip.style.top = `${Math.round(top)}px`;
+    };
+
+    const showTooltip = (link) => {
+      if (!link.classList.contains("is-truncated")) return;
+      const fullName = link.dataset.fullName || link.textContent?.trim();
+      if (!fullName) return;
+
+      tooltip.textContent = fullName;
+      tooltip.classList.add("is-visible");
+      tooltip.setAttribute("aria-hidden", "false");
+      placeTooltip(link);
+    };
+
+    const refreshTruncation = () => {
+      links.forEach((link) => {
+        const host = link.closest(".switch-name");
+        if (!host) return;
+        const isTruncated = host.scrollWidth > host.clientWidth + 1;
+        link.classList.toggle("is-truncated", isTruncated);
+        if (isTruncated) {
+          link.dataset.fullName = link.textContent?.trim() || "";
+        } else {
+          delete link.dataset.fullName;
+        }
+      });
+      hideTooltip();
+    };
+
+    links.forEach((link) => {
+      link.addEventListener("mouseenter", () => showTooltip(link));
+      link.addEventListener("mouseleave", hideTooltip);
+      link.addEventListener("focus", () => showTooltip(link));
+      link.addEventListener("blur", hideTooltip);
+    });
+
+    window.addEventListener("resize", refreshTruncation);
+    window.addEventListener("scroll", hideTooltip, true);
+    refreshTruncation();
+  };
+
   // Public API (handy on switch pages too)
   window.SMSD_PREFS = Object.freeze({
     apply,
@@ -161,7 +302,11 @@ const ALLOWED = Object.freeze({
     defaults: DEFAULTS,
   });
 
-  document.addEventListener("DOMContentLoaded", apply);
+  document.addEventListener("DOMContentLoaded", () => {
+    apply();
+    initSwitchStatusDots();
+    initSwitchNameTooltips();
+  });
 })();
 
 
