@@ -1036,6 +1036,17 @@
       100% { transform: scale(1, 1); }
     }
 
+    @keyframes exploreBreath {
+      0%, 100% {
+        transform: scale(1);
+        filter: brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0.18));
+      }
+      50% {
+        transform: scale(1.03);
+        filter: brightness(1.08) drop-shadow(0 0 10px rgba(255,255,255,0.82));
+      }
+    }
+
     @keyframes popIn {
       0% { transform: translate(-50%, -50%) scale(0); }
       100% { transform: translate(-50%, -50%) scale(1); }
@@ -1062,6 +1073,25 @@
     .map-container svg path.explore-reading {
       stroke: #ffffff;
       stroke-width: 2.6;
+    }
+
+    .map-container svg path.explore-focus-target {
+      stroke: #ffffff;
+      stroke-width: 3.1;
+      transform-origin: center;
+      transform-box: fill-box;
+      animation: exploreBreath 2.4s ease-in-out infinite;
+      opacity: 1 !important;
+      filter: brightness(1.08) drop-shadow(0 0 8px rgba(255,255,255,0.75));
+    }
+
+    .map-container svg.explore-focus-active path {
+      transition: opacity 0.45s ease, filter 0.45s ease;
+    }
+
+    .map-container svg.explore-focus-active path:not(.explore-focus-target) {
+      opacity: 0.38;
+      filter: saturate(0.72) brightness(0.85);
     }
 
     /* Confetti canvas */
@@ -1663,7 +1693,6 @@ Place this code in the empty space below. */
     let eliminatedStates = [];
     let correctCount = 0;
     let wrongCount = 0;
-    let hasSpokenFunFactLabel = false;
     let defaultMapViewBox = null;
     let northeastMapViewBox = null;
     let isNortheastZoomed = false;
@@ -1693,6 +1722,7 @@ Place this code in the empty space below. */
     let selectedVoiceKey = '';
     let useGoogleTTS = false;
     let exploreSpeechToken = 0;
+    let exploreReadingCueToken = 0;
     let activeGoogleAudio = null;
     let quizInputLocked = false;
     const DEFAULT_GOOGLE_TTS_PROXY_URL = 'https://stategame-tts.amcmoe.workers.dev';
@@ -1965,6 +1995,28 @@ Place this code in the empty space below. */
       return `${voice.voiceURI || ''}|${voice.name || ''}|${voice.lang || ''}`;
     }
 
+    function createAudioSourceFromBase64(base64Content) {
+      const payload = String(base64Content || '').trim();
+      if (!payload) return { src: '', revoke: null };
+      try {
+        const binary = atob(payload);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+          bytes[i] = binary.charCodeAt(i);
+        }
+        const blob = new Blob([bytes], { type: 'audio/mpeg' });
+        const objectUrl = URL.createObjectURL(blob);
+        return {
+          src: objectUrl,
+          revoke: () => {
+            try { URL.revokeObjectURL(objectUrl); } catch (_) {}
+          }
+        };
+      } catch (_) {
+        return { src: `data:audio/mp3;base64,${payload}`, revoke: null };
+      }
+    }
+
     function refreshSelectedVoiceReference(voices) {
       if (!Array.isArray(voices) || voices.length === 0) return;
       if (selectedVoiceKey) {
@@ -2037,27 +2089,34 @@ Place this code in the empty space below. */
           }
           const data = await response.json();
           if (data.audioContent) {
-            const audio = new Audio('data:audio/mp3;base64,' + data.audioContent);
+            const source = createAudioSourceFromBase64(data.audioContent);
+            const audio = new Audio(source.src);
             activeGoogleAudio = audio;
             audio.onended = () => {
               if (activeGoogleAudio === audio) activeGoogleAudio = null;
+              if (source.revoke) source.revoke();
               if (onDone) {
                 try { onDone(); } catch (_) {}
               }
             };
             audio.onerror = () => {
               if (activeGoogleAudio === audio) activeGoogleAudio = null;
+              if (source.revoke) source.revoke();
               if (onDone) {
                 try { onDone(); } catch (_) {}
               }
             };
-            audio.play().catch(() => {
+
+            try {
+              await audio.play();
+              return;
+            } catch (playError) {
               if (activeGoogleAudio === audio) activeGoogleAudio = null;
-              if (onDone) {
-                try { onDone(); } catch (_) {}
-              }
-            });
-            return;
+              if (source.revoke) source.revoke();
+              audio.onended = null;
+              audio.onerror = null;
+              console.error('Google TTS play error, falling back to browser voice:', playError);
+            }
           }
         } catch (error) {
           console.error('Google TTS proxy error, falling back to browser voice:', error);
@@ -2189,6 +2248,30 @@ Place this code in the empty space below. */
       return abbr.split('').join('. ') + '.';
     }
 
+    function getChildFriendlyFactForSpeech(fact) {
+      let text = String(fact || '').trim();
+      if (!text) return 'Fun fact.';
+
+      text = text
+        .replace(/\bUnited States\b/gi, 'U.S.')
+        .replace(/\bapproximately\b/gi, 'about');
+
+      const firstSentenceMatch = text.match(/[^.!?]+[.!?]?/);
+      if (firstSentenceMatch && firstSentenceMatch[0]) {
+        text = firstSentenceMatch[0].trim();
+      }
+
+      if (text.length > 110) {
+        text = text.split(/[,;:]/)[0].trim();
+      }
+
+      if (!/[.!?]$/.test(text)) {
+        text = `${text}.`;
+      }
+
+      return `Fun fact: ${text}`;
+    }
+
     function normalizeScoreAward(award) {
       if (!award || typeof award !== 'object') {
         return { ...DEFAULT_QUIZ_PRIZE };
@@ -2296,52 +2379,42 @@ Place this code in the empty space below. */
 
     function animateExploreState(path) {
       if (!path) return;
-
-      const moves = [
-        { name: 'exploreWiggle', duration: 640, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
-        { name: 'exploreHopTilt', duration: 620, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' },
-        { name: 'exploreFloatSpin', duration: 700, easing: 'cubic-bezier(0.2, 0.9, 0.3, 1)' },
-        { name: 'exploreBounceSide', duration: 620, easing: 'cubic-bezier(0.25, 1.2, 0.35, 1)' },
-        { name: 'exploreJelly', duration: 560, easing: 'cubic-bezier(0.3, 0.9, 0.4, 1.2)' }
-      ];
-      const move = moves[Math.floor(Math.random() * moves.length)];
-
-      const clearAnimation = () => {
-        path.style.animation = '';
-        path.style.transformOrigin = '';
-      };
-
-      path.style.transformOrigin = '50% 50%';
-      path.style.animation = `${move.name} ${move.duration}ms ${move.easing}`;
-      path.addEventListener('animationend', clearAnimation, { once: true });
-      setTimeout(clearAnimation, move.duration + 140);
+      if (typeof path.animate !== 'function') return;
+      path.animate(
+        [
+          { transform: 'scale(1)', offset: 0 },
+          { transform: 'scale(1.03)', offset: 0.5 },
+          { transform: 'scale(1)', offset: 1 }
+        ],
+        {
+          duration: 620,
+          easing: 'ease-out',
+          iterations: 1
+        }
+      );
     }
 
     function startExploreReadingCue(path) {
       if (!path) return () => {};
-
-      path.classList.add('explore-reading');
-      let cueAnimation = null;
-      if (typeof path.animate === 'function') {
-        cueAnimation = path.animate([
-          { filter: 'brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0.15))', opacity: 1 },
-          { filter: 'brightness(1.12) drop-shadow(0 0 10px rgba(255,255,255,0.95))', opacity: 0.93 },
-          { filter: 'brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0.15))', opacity: 1 }
-        ], {
-          duration: 700,
-          iterations: Infinity,
-          easing: 'ease-in-out'
+      const svg = document.querySelector('.map-container svg');
+      exploreReadingCueToken++;
+      const cueToken = exploreReadingCueToken;
+      if (svg) {
+        svg.classList.add('explore-focus-active');
+        svg.querySelectorAll('path.explore-focus-target').forEach(p => {
+          if (p !== path) p.classList.remove('explore-focus-target');
         });
       }
+      path.classList.add('explore-focus-target');
 
       let stopped = false;
       return () => {
         if (stopped) return;
         stopped = true;
-        path.classList.remove('explore-reading');
-        if (cueAnimation) cueAnimation.cancel();
-        path.style.filter = '';
-        path.style.opacity = '';
+        path.classList.remove('explore-focus-target');
+        if (svg && cueToken === exploreReadingCueToken) {
+          svg.classList.remove('explore-focus-active');
+        }
       };
     }
 
@@ -2895,88 +2968,24 @@ Place this code in the empty space below. */
 
     function positionMapZoomButton() {
       const mapContainer = document.querySelector('.map-container');
-      const svg = document.querySelector('.map-container svg');
       const zoomButton = document.getElementById('map-zoom-btn');
-      const compass = document.querySelector('.compass-rose');
-      if (!mapContainer || !svg || !zoomButton || mapContainer.classList.contains('hidden')) return;
+      if (!mapContainer || !zoomButton || mapContainer.classList.contains('hidden')) return;
 
       const containerRect = mapContainer.getBoundingClientRect();
       if (containerRect.width <= 0 || containerRect.height <= 0) return;
 
       const buttonWidth = zoomButton.offsetWidth || 60;
       const buttonHeight = zoomButton.offsetHeight || 60;
-      const margin = 10;
+      const margin = 12;
       const minLeft = margin;
       const maxLeft = Math.max(minLeft, containerRect.width - buttonWidth - margin);
       const minTop = margin;
       const maxTop = Math.max(minTop, containerRect.height - buttonHeight - margin);
+      const anchoredLeft = maxLeft;
+      const anchoredTop = Math.min(maxTop, Math.max(minTop, containerRect.height * 0.14));
 
-      const defaultLeft = containerRect.width * 0.84 - (buttonWidth / 2);
-      const defaultTop = containerRect.height * 0.36 - (buttonHeight / 2);
-      let baseLeft = defaultLeft;
-      let baseTop = defaultTop;
-
-      const njPath = svg.querySelector('.nj');
-      if (njPath) {
-        const njBounds = njPath.getBBox();
-        const projected = projectSvgPointToContainer(
-          svg,
-          mapContainer,
-          njBounds.x + njBounds.width,
-          njBounds.y + (njBounds.height * 0.5)
-        );
-        if (projected) {
-          baseLeft = projected.x + 20;
-          baseTop = projected.y - (buttonHeight * 0.6);
-        }
-      }
-
-      const candidateOffsets = [
-        [0, 0], [38, -18], [38, -52], [0, -52], [58, -8], [58, -42],
-        [20, -70], [0, -80], [68, -76], [78, -26], [18, 24], [58, 22],
-        [-28, -28], [-48, -58], [80, 12]
-      ];
-
-      const stateRects = getVisibleStateRects(svg);
-      const compassRect = (compass && !compass.classList.contains('hidden'))
-        ? inflateRect(compass.getBoundingClientRect(), 8)
-        : null;
-      let best = null;
-
-      for (const [dx, dy] of candidateOffsets) {
-        const left = Math.min(maxLeft, Math.max(minLeft, baseLeft + dx));
-        const top = Math.min(maxTop, Math.max(minTop, baseTop + dy));
-        const buttonRect = {
-          left: containerRect.left + left,
-          top: containerRect.top + top,
-          right: containerRect.left + left + buttonWidth,
-          bottom: containerRect.top + top + buttonHeight
-        };
-
-        let overlapCount = 0;
-        for (const stateRect of stateRects) {
-          if (rectsOverlap(buttonRect, stateRect)) {
-            overlapCount++;
-          }
-        }
-
-        const overlapsCompass = compassRect ? rectsOverlap(buttonRect, compassRect) : false;
-        const score = overlapCount + (overlapsCompass ? 1000 : 0);
-
-        if (score === 0) {
-          best = { left, top, score };
-          break;
-        }
-
-        if (!best || score < best.score) {
-          best = { left, top, score };
-        }
-      }
-
-      if (best) {
-        zoomButton.style.left = `${best.left}px`;
-        zoomButton.style.top = `${best.top}px`;
-      }
+      zoomButton.style.left = `${anchoredLeft}px`;
+      zoomButton.style.top = `${anchoredTop}px`;
     }
 
     function animateSvgViewBox(targetViewBox, options = {}) {
@@ -3168,19 +3177,22 @@ Place this code in the empty space below. */
       document.getElementById('info-panel').classList.add('visible');
 
       const spokenAbbreviation = formatAbbreviationForSpeech(state.abbr);
-      const factLeadIn = hasSpokenFunFactLabel ? '' : 'Fun fact: ';
-      const spokenFact = `${factLeadIn}${randomFact}`;
-      const spokenFactSentence = /[.!?]$/.test(spokenFact) ? spokenFact : `${spokenFact}.`;
+      const spokenStateSentence = `This is ${state.name}.`;
+      const spokenCapitalSentence = `The capital is ${state.capital}.`;
+      const spokenAbbreviationSentence = `${state.name} is abbreviated ${spokenAbbreviation}`;
+      const spokenAbbreviationSentenceFinal = /[.!?]$/.test(spokenAbbreviationSentence)
+        ? spokenAbbreviationSentence
+        : `${spokenAbbreviationSentence}.`;
+      const spokenFactSentence = getChildFriendlyFactForSpeech(randomFact);
       const path = document.querySelector(`.${stateId.toLowerCase()}`);
       const stopReadingCue = startExploreReadingCue(path);
 
       speakExploreSegments([
-        `${state.name}.`,
-        `${spokenAbbreviation}...`,
-        spokenFactSentence,
-        `Capital: ${state.capital}.`
+        spokenStateSentence,
+        spokenCapitalSentence,
+        spokenAbbreviationSentenceFinal,
+        spokenFactSentence
       ], { pauseBeforeLastMs: 60, onDone: stopReadingCue });
-      hasSpokenFunFactLabel = true;
 
       const autoZoomOutDelay = Math.min(5200, Math.max(1800, (state.name.length + randomFact.length) * 42));
       setTimeout(() => {
