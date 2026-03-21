@@ -1042,8 +1042,8 @@
         filter: brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0.18));
       }
       50% {
-        transform: scale(1.03);
-        filter: brightness(1.08) drop-shadow(0 0 10px rgba(255,255,255,0.82));
+        transform: scale(1.06);
+        filter: brightness(1.14) drop-shadow(0 0 12px rgba(255,255,255,0.9));
       }
     }
 
@@ -1076,13 +1076,13 @@
     }
 
     .map-container svg path.explore-focus-target {
-      stroke: #ffffff;
+      stroke: #FFD93D;
       stroke-width: 3.1;
       transform-origin: center;
       transform-box: fill-box;
-      animation: exploreBreath 2.4s ease-in-out infinite;
+      animation: exploreBreath 2.1s ease-in-out infinite;
       opacity: 1 !important;
-      filter: brightness(1.08) drop-shadow(0 0 8px rgba(255,255,255,0.75));
+      filter: brightness(1.08) drop-shadow(0 0 8px rgba(255, 217, 61, 0.75));
     }
 
     .map-container svg.explore-focus-active path {
@@ -1090,8 +1090,8 @@
     }
 
     .map-container svg.explore-focus-active path:not(.explore-focus-target) {
-      opacity: 0.38;
-      filter: saturate(0.72) brightness(0.85);
+      opacity: 0.46;
+      filter: saturate(0.78) brightness(0.9);
     }
 
     /* Confetti canvas */
@@ -2265,11 +2265,32 @@ Place this code in the empty space below. */
         text = text.split(/[,;:]/)[0].trim();
       }
 
-      if (!/[.!?]$/.test(text)) {
-        text = `${text}.`;
+      const hasTerminalPunctuation = /[.!?]$/.test(text);
+      const terminalPunctuation = hasTerminalPunctuation ? text.slice(-1) : '.';
+      const core = text.replace(/[.!?]+$/, '').trim();
+      const coreLower = core.toLowerCase();
+      let spokenCore = core;
+
+      if (coreLower.startsWith('home to ')) {
+        spokenCore = `It is ${core.charAt(0).toLowerCase()}${core.slice(1)}`;
+      } else if (coreLower.startsWith('with ')) {
+        spokenCore = `It has ${core.slice(5)}`;
+      } else if (/^(over|more than|about|around|\d+)/i.test(core)) {
+        spokenCore = `There are ${core.charAt(0).toLowerCase()}${core.slice(1)}`;
+      } else if (/^(has|produces|grows|includes|contains|covers|boasts)\b/i.test(core)) {
+        spokenCore = `It ${core.charAt(0).toLowerCase()}${core.slice(1)}`;
+      } else if (/^(known as|famous for|named after)\b/i.test(core)) {
+        spokenCore = `It is ${core.charAt(0).toLowerCase()}${core.slice(1)}`;
       }
 
-      return `Fun fact: ${text}`;
+      spokenCore = spokenCore.replace(/\s+/g, ' ').trim();
+      if (!spokenCore) return 'Fun fact.';
+
+      if (!/[.!?]$/.test(spokenCore)) {
+        spokenCore = `${spokenCore}${terminalPunctuation}`;
+      }
+
+      return `Fun fact: ${spokenCore}`;
     }
 
     function normalizeScoreAward(award) {
@@ -2378,20 +2399,7 @@ Place this code in the empty space below. */
     }
 
     function animateExploreState(path) {
-      if (!path) return;
-      if (typeof path.animate !== 'function') return;
-      path.animate(
-        [
-          { transform: 'scale(1)', offset: 0 },
-          { transform: 'scale(1.03)', offset: 0.5 },
-          { transform: 'scale(1)', offset: 1 }
-        ],
-        {
-          duration: 620,
-          easing: 'ease-out',
-          iterations: 1
-        }
-      );
+      return;
     }
 
     function startExploreReadingCue(path) {
@@ -2399,6 +2407,8 @@ Place this code in the empty space below. */
       const svg = document.querySelector('.map-container svg');
       exploreReadingCueToken++;
       const cueToken = exploreReadingCueToken;
+      const previousStroke = path.style.stroke;
+      const previousStrokeWidth = path.style.strokeWidth;
       if (svg) {
         svg.classList.add('explore-focus-active');
         svg.querySelectorAll('path.explore-focus-target').forEach(p => {
@@ -2406,12 +2416,16 @@ Place this code in the empty space below. */
         });
       }
       path.classList.add('explore-focus-target');
+      path.style.stroke = '#FFD93D';
+      path.style.strokeWidth = '3.1';
 
       let stopped = false;
       return () => {
         if (stopped) return;
         stopped = true;
         path.classList.remove('explore-focus-target');
+        path.style.stroke = previousStroke || 'white';
+        path.style.strokeWidth = previousStrokeWidth || '1.5';
         if (svg && cueToken === exploreReadingCueToken) {
           svg.classList.remove('explore-focus-active');
         }
@@ -2422,13 +2436,8 @@ Place this code in the empty space below. */
       if (!path) return () => {};
 
       path.classList.add('explore-reading');
-      path.style.transformOrigin = '50% 50%';
       let cueAnimation = null;
-      const useWobble = Math.random() < 0.5;
-
-      if (useWobble) {
-        path.style.animation = 'exploreWiggle 560ms ease-in-out infinite';
-      } else if (typeof path.animate === 'function') {
+      if (typeof path.animate === 'function') {
         cueAnimation = path.animate([
           { filter: 'brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0.2))', opacity: 1 },
           { filter: 'brightness(1.15) drop-shadow(0 0 11px rgba(255,255,255,0.95))', opacity: 0.92 },
@@ -2446,8 +2455,6 @@ Place this code in the empty space below. */
         stopped = true;
         path.classList.remove('explore-reading');
         if (cueAnimation) cueAnimation.cancel();
-        path.style.animation = '';
-        path.style.transformOrigin = '';
         path.style.filter = '';
         path.style.opacity = '';
       };
@@ -2982,7 +2989,7 @@ Place this code in the empty space below. */
       const minTop = margin;
       const maxTop = Math.max(minTop, containerRect.height - buttonHeight - margin);
       const anchoredLeft = maxLeft;
-      const anchoredTop = Math.min(maxTop, Math.max(minTop, containerRect.height * 0.14));
+      const anchoredTop = Math.min(maxTop, Math.max(minTop, (containerRect.height * 0.14) + 16));
 
       zoomButton.style.left = `${anchoredLeft}px`;
       zoomButton.style.top = `${anchoredTop}px`;
