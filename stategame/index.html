@@ -1858,9 +1858,10 @@ Place this code in the empty space below. */
       applyStateColors();
     }
 
-    function loadVoices() {
-      // If Google TTS proxy is configured, use Google TTS automatically.
-      if (GOOGLE_TTS_PROXY_URL) {
+    function loadVoices(forceBrowserVoice = false) {
+      // If Google TTS proxy is configured, use Google TTS automatically unless
+      // we are explicitly forcing browser voice fallback for this utterance.
+      if (GOOGLE_TTS_PROXY_URL && useGoogleTTS && !forceBrowserVoice) {
         useGoogleTTS = true;
         console.log('Using Google Cloud Text-to-Speech via proxy endpoint');
         return; // Don't show voice selector
@@ -1979,20 +1980,20 @@ Place this code in the empty space below. */
       }
     }
 
-    async function ensureVoiceReady() {
-      if (GOOGLE_TTS_PROXY_URL && useGoogleTTS) return;
+    async function ensureVoiceReady(forceBrowserVoice = false) {
+      if (GOOGLE_TTS_PROXY_URL && useGoogleTTS && !forceBrowserVoice) return;
       for (let i = 0; i < 5; i++) {
         let voices = window.speechSynthesis.getVoices();
         if (voices.length > 0) {
           refreshSelectedVoiceReference(voices);
           if (!selectedVoice || (isApplePlatform() && !isApplePreferredSelectedVoice(selectedVoice))) {
-            loadVoices();
+            loadVoices(forceBrowserVoice);
             voices = window.speechSynthesis.getVoices();
             refreshSelectedVoiceReference(voices);
           }
           if (selectedVoice) return;
         }
-        loadVoices();
+        loadVoices(forceBrowserVoice);
         await pause(80);
       }
     }
@@ -2040,16 +2041,16 @@ Place this code in the empty space below. */
       }
 
       // Fall back to browser voice
-      await ensureVoiceReady();
+      await ensureVoiceReady(true);
       const availableVoices = window.speechSynthesis.getVoices();
       refreshSelectedVoiceReference(availableVoices);
       const selectedStillAvailable = selectedVoice && availableVoices.some(v => getVoiceKey(v) === getVoiceKey(selectedVoice));
       if (!selectedVoice || !selectedStillAvailable) {
-        loadVoices();
+        loadVoices(true);
         refreshSelectedVoiceReference(window.speechSynthesis.getVoices());
       }
       if (isApplePlatform() && !isApplePreferredSelectedVoice(selectedVoice)) {
-        loadVoices();
+        loadVoices(true);
         refreshSelectedVoiceReference(window.speechSynthesis.getVoices());
       }
       window.speechSynthesis.cancel();
