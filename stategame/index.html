@@ -2055,7 +2055,7 @@ Place this code in the empty space below. */
       }
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.9;
+      utterance.rate = 1.0;
       utterance.pitch = 1.0;
 
       if (selectedVoice) {
@@ -2083,7 +2083,7 @@ Place this code in the empty space below. */
       await ensureVoiceReady(true);
       return new Promise(resolve => {
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.9;
+        utterance.rate = 1.0;
         utterance.pitch = 1.0;
         if (selectedVoice) {
           utterance.voice = selectedVoice;
