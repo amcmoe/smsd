@@ -1,4 +1,4 @@
-const CACHE_NAME = 'stategame-v3';
+const CACHE_NAME = 'stategame-v4';
 const ASSETS = [
   './',
   './index.html',

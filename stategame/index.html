@@ -1693,6 +1693,8 @@ Place this code in the empty space below. */
     let selectedVoiceKey = '';
     let useGoogleTTS = false;
     let exploreSpeechToken = 0;
+    let activeGoogleAudio = null;
+    let quizInputLocked = false;
     const DEFAULT_GOOGLE_TTS_PROXY_URL = 'https://stategame-tts.amcmoe.workers.dev';
     const GOOGLE_TTS_PROXY_STORAGE_KEY = 'state-game-google-tts-proxy-url';
     const GOOGLE_TTS_PROXY_URL = getGoogleTtsProxyUrl();
@@ -2005,6 +2007,18 @@ Place this code in the empty space below. */
         try { onStart(); } catch (_) {}
       }
 
+      // Prevent overlapping clips between browser and Google playback.
+      window.speechSynthesis.cancel();
+      if (activeGoogleAudio) {
+        try {
+          activeGoogleAudio.onended = null;
+          activeGoogleAudio.onerror = null;
+          activeGoogleAudio.pause();
+          activeGoogleAudio.currentTime = 0;
+        } catch (_) {}
+        activeGoogleAudio = null;
+      }
+
       // Try Google TTS via secure proxy endpoint
       if (GOOGLE_TTS_PROXY_URL && useGoogleTTS) {
         try {
@@ -2024,15 +2038,25 @@ Place this code in the empty space below. */
           const data = await response.json();
           if (data.audioContent) {
             const audio = new Audio('data:audio/mp3;base64,' + data.audioContent);
-            if (onDone) {
-              audio.onended = () => {
+            activeGoogleAudio = audio;
+            audio.onended = () => {
+              if (activeGoogleAudio === audio) activeGoogleAudio = null;
+              if (onDone) {
                 try { onDone(); } catch (_) {}
-              };
-              audio.onerror = () => {
+              }
+            };
+            audio.onerror = () => {
+              if (activeGoogleAudio === audio) activeGoogleAudio = null;
+              if (onDone) {
                 try { onDone(); } catch (_) {}
-              };
-            }
-            audio.play();
+              }
+            };
+            audio.play().catch(() => {
+              if (activeGoogleAudio === audio) activeGoogleAudio = null;
+              if (onDone) {
+                try { onDone(); } catch (_) {}
+              }
+            });
             return;
           }
         } catch (error) {
@@ -2053,7 +2077,6 @@ Place this code in the empty space below. */
         loadVoices(true);
         refreshSelectedVoiceReference(window.speechSynthesis.getVoices());
       }
-      window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1.0;
       utterance.pitch = 1.0;
@@ -3183,6 +3206,7 @@ Place this code in the empty space below. */
       eliminatedStates = [];
       correctCount = 0;
       wrongCount = 0;
+      quizInputLocked = false;
 
       setNortheastZoom(false);
       resetMapColors();
@@ -3253,9 +3277,13 @@ Place this code in the empty space below. */
     }
 
     function handleCorrectAnswer(stateId) {
+      if (quizInputLocked) return;
+      quizInputLocked = true;
       correctCount++;
       const path = document.querySelector(`.${stateId.toLowerCase()}`);
-      path.classList.add('correct-flash');
+      if (path) {
+        path.classList.add('correct-flash');
+      }
 
       const state = getStateData(stateId);
       const praisePhrases = [
@@ -3270,17 +3298,24 @@ Place this code in the empty space below. */
         "Fantastic"
       ];
       const praise = praisePhrases[Math.floor(Math.random() * praisePhrases.length)];
-      speak(`${praise}! ${state.name}!`);
-
-      setTimeout(() => {
-        path.classList.remove('correct-flash');
-        setNortheastZoom(false);
-        currentStateIndex++;
-        askNextState();
-      }, 1500);
+      speak(`${praise}! ${state.name}!`, {
+        onDone: () => {
+          setTimeout(() => {
+            if (path) {
+              path.classList.remove('correct-flash');
+            }
+            setNortheastZoom(false);
+            currentStateIndex++;
+            quizInputLocked = false;
+            askNextState();
+          }, 150);
+        }
+      });
     }
 
     function handleWrongAnswer(clickedId) {
+      if (quizInputLocked) return;
+      quizInputLocked = true;
       attempts++;
       wrongCount++;
 
@@ -3311,20 +3346,28 @@ Place this code in the empty space below. */
         correctPath.style.stroke = '#FFD93D';
         correctPath.style.strokeWidth = '5';
 
-        speak(`Here is ${currentState.name}.`);
-
-        setTimeout(() => {
-          correctPath.classList.remove('correct-flash');
-          correctPath.style.stroke = 'white';
-          correctPath.style.strokeWidth = '1.5';
-          setNortheastZoom(false);
-          currentStateIndex++;
-          askNextState();
-        }, 2000);
+        speak(`Here is ${currentState.name}.`, {
+          onDone: () => {
+            setTimeout(() => {
+              correctPath.classList.remove('correct-flash');
+              correctPath.style.stroke = 'white';
+              correctPath.style.strokeWidth = '1.5';
+              setNortheastZoom(false);
+              currentStateIndex++;
+              quizInputLocked = false;
+              askNextState();
+            }, 150);
+          }
+        });
       }
 
       if (wrongSpeechText) {
-        speak(wrongSpeechText, { onDone: stopWrongCue });
+        speak(wrongSpeechText, {
+          onDone: () => {
+            stopWrongCue();
+            quizInputLocked = false;
+          }
+        });
       }
 
       if (attempts <= 3) {
@@ -3489,6 +3532,7 @@ Place this code in the empty space below. */
       if (mode === 'explore') {
         showStateInfo(stateId);
       } else if (mode === 'quiz') {
+        if (quizInputLocked) return;
         const currentState = quizQueue[currentStateIndex];
         if (!currentState) return;
         if (stateId === currentState.id) {
