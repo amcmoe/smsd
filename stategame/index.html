@@ -2080,7 +2080,7 @@ Place this code in the empty space below. */
     }
 
     async function speakBrowserUtterance(text) {
-      await ensureVoiceReady();
+      await ensureVoiceReady(true);
       return new Promise(resolve => {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 0.9;
@@ -2123,23 +2123,33 @@ Place this code in the empty space below. */
       }
 
       try {
-        window.speechSynthesis.cancel();
+        if (!(GOOGLE_TTS_PROXY_URL && useGoogleTTS)) {
+          window.speechSynthesis.cancel();
+        }
         if (token !== exploreSpeechToken) return;
 
         const pauseBeforeLastMs = Math.max(0, Number(options.pauseBeforeLastMs) || 0);
+        const speakSegment = async (segmentText) => {
+          if (GOOGLE_TTS_PROXY_URL && useGoogleTTS) {
+            await new Promise(resolve => speak(segmentText, { onDone: resolve }));
+            return;
+          }
+          await speakBrowserUtterance(segmentText);
+        };
+
         if (cleanSegments.length > 1 && pauseBeforeLastMs > 0) {
           const firstSpeech = cleanSegments.slice(0, -1).join(' ');
           const lastSpeech = cleanSegments[cleanSegments.length - 1];
-          await speakBrowserUtterance(firstSpeech);
+          await speakSegment(firstSpeech);
           if (token !== exploreSpeechToken) return;
           await pause(pauseBeforeLastMs);
           if (token !== exploreSpeechToken) return;
-          await speakBrowserUtterance(lastSpeech);
+          await speakSegment(lastSpeech);
           return;
         }
 
         const combinedSpeech = cleanSegments.join(' ');
-        await speakBrowserUtterance(combinedSpeech);
+        await speakSegment(combinedSpeech);
       } finally {
         if (onDone) {
           try { onDone(); } catch (_) {}
