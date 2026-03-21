@@ -1693,7 +1693,10 @@ Place this code in the empty space below. */
     let selectedVoiceKey = '';
     let useGoogleTTS = false;
     let exploreSpeechToken = 0;
-    const GOOGLE_TTS_API_KEY = ''; // Add your API key here to automatically use Google's high-quality voice
+    const DEFAULT_GOOGLE_TTS_PROXY_URL = 'https://stategame-tts.amcmoe.workers.dev';
+    const GOOGLE_TTS_PROXY_STORAGE_KEY = 'state-game-google-tts-proxy-url';
+    const GOOGLE_TTS_PROXY_URL = getGoogleTtsProxyUrl();
+    useGoogleTTS = Boolean(GOOGLE_TTS_PROXY_URL);
     const USER_PREFERRED_VOICE = 'Microsoft Jenny Online (Natural)';
     const PREFERRED_JENNY_HINTS = [
       'microsoft jenny online (natural)',
@@ -1723,6 +1726,32 @@ Place this code in the empty space below. */
       'siri male',
       'siri'
     ];
+
+    function normalizeProxyUrl(value) {
+      return String(value || '').trim();
+    }
+
+    function getGoogleTtsProxyUrl() {
+      const query = new URLSearchParams(window.location.search || '');
+      const queryProxyUrl = normalizeProxyUrl(query.get('ttsProxy') || query.get('googleTtsProxy'));
+      const configProxyUrl = normalizeProxyUrl(window.STATE_GAME_CONFIG?.googleTtsProxyUrl);
+      let storedProxyUrl = '';
+
+      try {
+        storedProxyUrl = normalizeProxyUrl(localStorage.getItem(GOOGLE_TTS_PROXY_STORAGE_KEY));
+      } catch (_) {}
+
+      const resolved = queryProxyUrl || configProxyUrl || storedProxyUrl || DEFAULT_GOOGLE_TTS_PROXY_URL;
+
+      // Keep the latest valid proxy URL for future launches.
+      if (resolved && resolved !== storedProxyUrl) {
+        try {
+          localStorage.setItem(GOOGLE_TTS_PROXY_STORAGE_KEY, resolved);
+        } catch (_) {}
+      }
+
+      return resolved;
+    }
 
     function isApplePlatform() {
       const platformText = `${navigator.platform || ''} ${navigator.userAgent || ''}`.toLowerCase();
@@ -1830,17 +1859,17 @@ Place this code in the empty space below. */
     }
 
     function loadVoices() {
+      // If Google TTS proxy is configured, use Google TTS automatically.
+      if (GOOGLE_TTS_PROXY_URL) {
+        useGoogleTTS = true;
+        console.log('Using Google Cloud Text-to-Speech via proxy endpoint');
+        return; // Don't show voice selector
+      }
+
       const voices = window.speechSynthesis.getVoices();
 
       if (voices.length === 0) {
         return; // Voices not loaded yet
-      }
-
-      // If Google API key is provided, use Google TTS automatically
-      if (GOOGLE_TTS_API_KEY) {
-        useGoogleTTS = true;
-        console.log('Using Google Cloud Text-to-Speech (high quality)');
-        return; // Don't show voice selector
       }
 
       // Filter to English voices only
@@ -1951,7 +1980,7 @@ Place this code in the empty space below. */
     }
 
     async function ensureVoiceReady() {
-      if (GOOGLE_TTS_API_KEY && useGoogleTTS) return;
+      if (GOOGLE_TTS_PROXY_URL && useGoogleTTS) return;
       for (let i = 0; i < 5; i++) {
         let voices = window.speechSynthesis.getVoices();
         if (voices.length > 0) {
@@ -1975,29 +2004,22 @@ Place this code in the empty space below. */
         try { onStart(); } catch (_) {}
       }
 
-      // Try Google TTS if API key is provided
-      if (GOOGLE_TTS_API_KEY && useGoogleTTS) {
+      // Try Google TTS via secure proxy endpoint
+      if (GOOGLE_TTS_PROXY_URL && useGoogleTTS) {
         try {
-          const response = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${GOOGLE_TTS_API_KEY}`, {
+          const response = await fetch(GOOGLE_TTS_PROXY_URL, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              input: { text: text },
-              voice: {
-                languageCode: 'en-US',
-                name: 'en-US-Neural2-F', // High quality female voice
-                ssmlGender: 'FEMALE'
-              },
-              audioConfig: {
-                audioEncoding: 'MP3',
-                speakingRate: 0.9,
-                pitch: 0
-              }
+              text: text
             })
           });
 
+          if (!response.ok) {
+            throw new Error(`Google TTS proxy failed: ${response.status}`);
+          }
           const data = await response.json();
           if (data.audioContent) {
             const audio = new Audio('data:audio/mp3;base64,' + data.audioContent);
@@ -2013,7 +2035,7 @@ Place this code in the empty space below. */
             return;
           }
         } catch (error) {
-          console.error('Google TTS error, falling back to browser voice:', error);
+          console.error('Google TTS proxy error, falling back to browser voice:', error);
         }
       }
 

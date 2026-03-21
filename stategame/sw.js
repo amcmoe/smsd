@@ -1,11 +1,11 @@
-const CACHE_NAME = 'stategame-v1';
+const CACHE_NAME = 'stategame-v3';
 const ASSETS = [
   './',
   './index.html',
-  './manifest.webmanifest',
+  './manifest.webmanifest?v=2',
   './icons/icon-192.png',
   './icons/icon-512.png',
-  './icons/apple-touch-icon.png'
+  './icons/apple-touch-icon.png?v=2'
 ];
 
 self.addEventListener('install', event => {
