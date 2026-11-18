@@ -182,13 +182,12 @@
         { id: 'azure', title: 'Azure Portal', meta: 'Cloud resources', href: 'https://portal.azure.com/#home', img: 'https://cmd-q.net/Icons/azure.png' },
         { id: 'intune-ed', title: 'Intune Education', meta: 'Education policies', href: 'https://intuneeducation.portal.azure.com', img: 'https://cmd-q.net/Icons/intuneeducation.png' },
         { id: 'ms-admin', title: 'Microsoft Admin Center', meta: 'Tenant admin', href: 'https://admin.microsoft.com', img: 'https://cmd-q.net/Icons/MSAdmin.svg' },
-        { id: 'microsoft-purview', title: 'Purview', meta: 'Data Security and Governance', href: 'https://ms.web.purview.azure.com', img: 'https://cmd-q.net/Icons/purview.png' }
+        { id: 'microsoft-purview', title: 'Purview', meta: 'Data Security and Governance', href: 'https://purview.microsoft.com/', img: 'https://cmd-q.net/Icons/purview.png' }
       ]
     },
     {
       name: "Security", icon: "lock", color: "#a78bfa",
       items: [
-        { id: 'contentkeeper', title: 'ContentKeeper', meta: 'Filtering console', href: 'https://filter.smsd.local/ck/#/login', img: 'https://cmd-q.net/Icons/contentkeeper.png' },
         { id: 'blocksi', title: 'Blocksi', meta: 'Web filtering', href: 'https://bm.blocksi.net/', img: 'Icons/blocksi.png' },
         { id: 'mimecast', title: 'Mimecast', meta: 'Email security', href: 'https://login.mimecast.com', img: 'https://cmd-q.net/Icons/mimecast.png' },
         { id: 'sentinelone', title: 'SentinelOne', meta: 'EDR console', href: 'https://usea1-paiu.sentinelone.net/login', img: 'https://cmd-q.net/Icons/SentinelOne.png' },
@@ -225,6 +224,7 @@
         { id: 'sapphire', title: 'Sapphire Suite', meta: 'Gradebook / SIS', href: 'https://smsd-sapphire.k12system.com/Gradebook/main.cfm', img: 'https://cmd-q.net/Icons/Sapphire.png' },
         { id: 'apple-school', title: 'Apple School Manager', meta: 'Devices & accounts', href: 'https://school.apple.com/', img: 'https://cmd-q.net/Icons/Apple.png' },
         { id: 'clever', title: 'Clever Admin', meta: 'SSO / rostering', href: 'https://clever.com/oauth/district_admin/login?target=%3BbzRrcGh2aDJ5Z252eDgzdnhjNjQ%3D%3BaHR0cHM6Ly9zY2hvb2xzLmNsZXZlci5jb20vYXV0aC1jYWxsYmFjaw%3D%3D%3BNmNhMWZlZWNmZDQyNDA4NjRhMDE3YzU5NDUxZTUzMTgzMjg3OGE1NTIxOTZiZWU0M2UxZDZjOGU2ZTc0ZDZiZQ%3D%3D%3BY29kZQ%3D%3D%3BZGlzdHJpY3RfYWRtaW4%3D', img: 'https://cmd-q.net/Icons/clever.png' },
+        { id: 'classlink', title: 'ClassLink Launchpad', meta: 'SSO / app launcher', href: 'https://launchpad.classlink.com/', img: 'Icons/classlink.png' },
         { id: 'papercut', title: 'Papercut', meta: 'Print management', href: 'http://papercut.smsd.local:9191/admin', img: 'https://cmd-q.net/Icons/papercutnewlogo.webp' },
         { id: 'calendar', title: '2026–27 Calendar', meta: 'Instructional calendar (PDF)', href: 'https://cdnsm5-ss13.sharpschool.com/UserFiles/Servers/Server_297173/File/Calendars/2026%202027%20Instructional%20Calendar%201.12.26.pdf', img: 'https://cmd-q.net/Icons/calendar.png' },
         { id: 'smsd', title: 'SMSD Homepage', meta: 'Public site', href: 'https://smsd.us/', img: 'https://cmd-q.net/Icons/smsd.png' }
@@ -270,8 +270,8 @@
     recentVisible: 'smsd-recent-visible-v1',
     prefsCollapsed: 'smsd-prefs-collapsed-v1'
   };
-  const REPO_VERSION = '299';
-  const REPO_DATE = '5.6.26';
+  const REPO_VERSION = '300';
+  const REPO_DATE = '11.18.26';
 
   const el = {
     topbarInner: document.querySelector('.topbar-inner'),
